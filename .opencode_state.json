@@ -38,7 +38,10 @@
     "Resolved calendar drag-and-drop timezone shift by using local date getters (getFullYear, getMonth, getDate) instead of toISOString",
     "Added commitment Delete buttons for managers in the calendar details modal, list view rows, and as a small hoverable quick icon in the calendar view cards",
     "Implemented full Manager Project Editor Modal in the sidebar, replacing the static help icon with a pencil Edit button, and hooked active single-click/double-click project details routing",
-    "Restyled inactive buttons (sidebar, view switchers, and tabs) to increase visual contrast and hover haptic color feedbacks"
+    "Restyled inactive buttons (sidebar, view switchers, and tabs) to increase visual contrast and hover haptic color feedbacks",
+    "Corrected update_projects RLS policy by adding the missing USING clause to authorize manager renames and updates in PostgreSQL",
+    "Programmed client-side auto-status restoration resetting status from 'expired' back to 'to_check' (actual) if the deadline is updated to a future date during editing",
+    "Overrode dark leaked input fields inside the light white modal by applying explicit bg-white and text-slate-800, providing premium high-contrast editing forms"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
