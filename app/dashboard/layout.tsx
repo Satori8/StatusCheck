@@ -42,7 +42,8 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   // Fetch checkers (all users with profiles)
   const { data: checkersData } = await supabase
     .from('profiles')
-    .select('id, email, name');
+    .select('id, email')
+    .order('email', { ascending: true });
 
   const checkers = checkersData || [];
 
