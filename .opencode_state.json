@@ -9,7 +9,8 @@
     "Refactored CommitmentList to remove redundant local searchQuery state and double-filtering inputs",
     "Refactored CommitmentForm to use correct profile UUIDs for assignee and checker instead of raw emails, resolving PostgreSQL type casting failures",
     "Cleaned up imports, unused variables, and ref-casting in CommitmentCalendar to satisfy compiler and linter",
-    "Ran project-wide Next.js and TypeScript compilation with 100% success rate"
+    "Ran project-wide Next.js and TypeScript compilation with 100% success rate",
+    "Resolved Vercel ESLint peer dependency conflict by aligning @typescript-eslint/eslint-plugin to version ^7.2.0 matching Next.js 14.2.3 and successfully rebuilt/pushed package lock updates"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
