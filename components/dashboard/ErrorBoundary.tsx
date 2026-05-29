@@ -41,7 +41,7 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
           </div>
           <h3 className="text-lg font-semibold text-slate-800">Something went wrong</h3>
           <p className="text-slate-600 text-center max-w-md">
-            We couldn't load the dashboard. Please refresh the page or try again later.
+            We couldn&apos;t load the dashboard. Please refresh the page or try again later.
           </p>
           <button
             onClick={() => window.location.reload()}

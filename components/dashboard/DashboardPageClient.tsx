@@ -154,7 +154,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
           <div>
             <h1 className="text-2xl font-bold text-slate-800">Commitments Overview</h1>
-            <p className="text-sm text-slate-500">Manage and track your team's commitments</p>
+            <p className="text-sm text-slate-500">Manage and track your team&apos;s commitments</p>
           </div>
 
           <div className="flex items-center space-x-3">

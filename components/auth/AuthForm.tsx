@@ -138,7 +138,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
 
       <div className="text-center text-sm text-gray-400">
         {type === 'signin' ? (
-          <>Don't have an account? <button
+          <>Don&apos;t have an account? <button
             type="button"
             onClick={() => setActiveTab?.('register')}
             className="text-white hover:underline hover:text-gray-200 transition-colors bg-transparent border-0 p-0"
