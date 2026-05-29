@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { login, register } from '@/app/actions/auth';
-import { Loader2, CheckCircle } from 'lucide-react';
+import { CircleNotch, CheckCircle, Warning } from '@phosphor-icons/react';
 
 interface AuthFormProps {
   type: 'signin' | 'register';
@@ -24,7 +24,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
 
         if (result?.error) {
           if (result.error.includes('over_email_send_rate_limit') || result.error.includes('rate_limit') || result.error.includes('email_send')) {
-            setError('Supabase free-tier SMTP email rate limit reached. To bypass this permanently, please go to your Supabase Auth Dashboard -> Providers -> Email and turn OFF "Confirm Email". Your account may have already been registered, you can try signing in directly.');
+            setError('Supabase SMTP email rate limit reached. To bypass this, go to your Supabase Auth Dashboard -> Providers -> Email and disable "Confirm Email". You can also try signing in directly.');
           } else {
             setError(result.error);
           }
@@ -32,7 +32,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
           setIsRegistered(true);
         }
       } catch {
-        setError('An unexpected error occurred');
+        setError('An unexpected error occurred. Please try again.');
       }
     });
   };
@@ -41,14 +41,14 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
     return (
       <div className="glass-panel space-y-6 text-center py-8 fade-in">
         <div className="flex justify-center">
-          <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center text-emerald-400">
-            <CheckCircle className="w-8 h-8" />
+          <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
+            <CheckCircle size={32} weight="bold" />
           </div>
         </div>
         
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold tracking-tight text-white">Registration Confirmed</h2>
-          <p className="text-gray-400 text-sm max-w-xs mx-auto">
+          <h2 className="text-xl font-bold tracking-tight text-white uppercase tracking-widest text-xs">Registration Confirmed</h2>
+          <p className="text-[#64748b] text-sm max-w-xs mx-auto leading-relaxed">
             Your account has been successfully created. Email confirmation check has been bypassed.
           </p>
         </div>
@@ -59,7 +59,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
             setIsRegistered(false);
             setActiveTab?.('signin');
           }}
-          className="w-full flex items-center justify-center space-x-2 bg-slate-700 hover:bg-slate-600 active:scale-[0.98] transition-transform duration-100 ease-out font-medium rounded-md py-3 text-white"
+          className="w-full flex items-center justify-center space-x-2 bg-[#24263b] hover:bg-[#313552] border border-[#24263b] text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-wider rounded-xl py-3 text-xs"
         >
           <span>Continue to Sign In</span>
         </button>
@@ -68,11 +68,11 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
   }
 
   return (
-    <form action={handleSubmit} className="glass-panel space-y-6">
+    <form action={handleSubmit} className="glass-panel space-y-6 bg-[#11121d] border border-[#24263b] shadow-2xl p-6 rounded-2xl">
       <div className="space-y-4">
         {type === 'register' && (
-          <div>
-            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+          <div className="space-y-1.5">
+            <label htmlFor="name" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
               Full Name
             </label>
             <input
@@ -80,14 +80,14 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
               name="name"
               type="text"
               required
-              placeholder="John Doe"
-              className="w-full text-white bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
+              placeholder="e.g. Liam Sterling"
+              className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all focus:border-blue-500/40"
             />
           </div>
         )}
 
-        <div>
-          <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
+        <div className="space-y-1.5">
+          <label htmlFor="email" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
             Email Address
           </label>
           <input
@@ -95,13 +95,13 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
             name="email"
             type="email"
             required
-            placeholder="your@company.com"
-            className="w-full"
+            placeholder="e.g. liam@statuscheck.com"
+            className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all focus:border-blue-500/40"
           />
         </div>
 
-        <div>
-          <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-1">
+        <div className="space-y-1.5">
+          <label htmlFor="password" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
             Password
           </label>
           <input
@@ -111,64 +111,77 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
             required
             minLength={8}
             placeholder="••••••••"
-            className="w-full"
+            className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all focus:border-blue-500/40"
           />
-          <p className="text-xs text-gray-500 mt-1">Minimum 8 characters</p>
+          <p className="text-[10px] text-[#64748b] font-mono leading-none">Minimum 8 characters required</p>
         </div>
 
         {type === 'register' && (
-          <div>
-            <label htmlFor="role" className="block text-sm font-medium text-gray-300 mb-1">
+          <div className="space-y-1.5">
+            <label htmlFor="role" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
               Role
             </label>
-            <select
-              id="role"
-              name="role"
-              required
-              className="w-full"
-              defaultValue=""
-            >
-              <option value="" disabled>Select your role</option>
-              <option value="manager">Manager</option>
-              <option value="member">Member</option>
-            </select>
-            <p className="text-xs text-gray-500 mt-1">
-              Managers create commitments, Members track progress
+            <div className="relative">
+              <select
+                id="role"
+                name="role"
+                required
+                className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all appearance-none"
+                defaultValue=""
+              >
+                <option value="" disabled className="bg-[#11121d] text-[#64748b]">Select your team role</option>
+                <option value="manager" className="bg-[#11121d] text-[#f1f5f9]">Manager</option>
+                <option value="member" className="bg-[#11121d] text-[#f1f5f9]">Member</option>
+              </select>
+            </div>
+            <p className="text-[10px] text-[#64748b] font-mono leading-relaxed">
+              Managers create and verify commitments, Members execute commitments
             </p>
           </div>
         )}
       </div>
 
       {error && (
-        <div className="p-3 bg-red-900/30 border border-red-500/20 rounded-md text-red-200 text-sm">
-          {error}
+        <div className="p-3.5 bg-red-500/5 border border-red-500/20 rounded-xl text-red-400 text-xs font-medium leading-relaxed flex items-start space-x-2">
+          <Warning size={14} className="flex-shrink-0 mt-0.5" />
+          <span>{error}</span>
         </div>
       )}
 
       <button
         type="submit"
         disabled={isPending}
-        className="w-full flex items-center justify-center space-x-2 active:scale-[0.98] transition-transform duration-100 ease-out"
+        className="w-full flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-wider rounded-xl py-3 text-xs border-none shadow-lg shadow-blue-500/10 disabled:bg-[#24263b] disabled:text-[#64748b]"
       >
-        {isPending && <Loader2 className="h-4 w-4 animate-spin" />}
+        {isPending && <CircleNotch size={14} className="animate-spin" />}
         <span>
           {type === 'signin' ? 'Sign In' : 'Create Account'}
         </span>
       </button>
 
-      <div className="text-center text-sm text-gray-400">
+      <div className="text-center text-xs font-semibold uppercase tracking-wider text-[#64748b]">
         {type === 'signin' ? (
-          <>Don&apos;t have an account? <button
-            type="button"
-            onClick={() => setActiveTab?.('register')}
-            className="text-white hover:underline hover:text-gray-200 transition-colors bg-transparent border-0 p-0"
-          >Create one</button></>
+          <>
+            Don&apos;t have an account?{' '}
+            <button
+              type="button"
+              onClick={() => setActiveTab?.('register')}
+              className="text-blue-400 hover:text-blue-300 font-bold bg-transparent border-0 p-0 active:scale-95 transition-transform"
+            >
+              Create one
+            </button>
+          </>
         ) : (
-          <>Already have an account? <button
-            type="button"
-            onClick={() => setActiveTab?.('signin')}
-            className="text-white hover:underline hover:text-gray-200 transition-colors bg-transparent border-0 p-0"
-          >Sign in</button></>
+          <>
+            Already have an account?{' '}
+            <button
+              type="button"
+              onClick={() => setActiveTab?.('signin')}
+              className="text-blue-400 hover:text-blue-300 font-bold bg-transparent border-0 p-0 active:scale-95 transition-transform"
+            >
+              Sign in
+            </button>
+          </>
         )}
       </div>
     </form>

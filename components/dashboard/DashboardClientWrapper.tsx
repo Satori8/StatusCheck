@@ -33,7 +33,7 @@ export const DashboardClientWrapper: React.FC<DashboardClientWrapperProps> = ({
           isMobile={isMobileMenuOpen}
           onToggleMobile={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
         />
-        <main className="flex-1 md:ml-72 p-4 md:p-8 bg-slate-50">
+        <main className="flex-1 md:ml-72 p-4 md:p-8 bg-[#0d0e15] min-h-[100dvh]">
           {children}
         </main>
       </div>

@@ -5,9 +5,18 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check, Trash2 } from 'lucide-react';
+import { 
+  X, 
+  Check, 
+  Trash, 
+  CalendarBlank, 
+  Clock, 
+  User, 
+  FileText 
+} from '@phosphor-icons/react';
 import { updateCommitment, deleteCommitment } from '@/app/actions/commitments';
 import { useRouter } from 'next/navigation';
+import { StatusBadge } from './StatusBadge';
 
 interface Commitment {
   id: string;
@@ -41,7 +50,6 @@ interface CommitmentCalendarProps {
   };
 }
 
-// Status color mapping
 const statusColors = {
   to_check: 'bg-amber-500',
   done: 'bg-emerald-500',
@@ -49,15 +57,6 @@ const statusColors = {
   not_actual: 'bg-slate-500',
   ideas_backlog: 'bg-indigo-500'
 };
-
-// Status icon mapping - used in CommitmentList
-// const statusIcons = {
-//   to_check: Clock,
-//   done: Check,
-//   expired: AlertTriangle,
-//   not_actual: Trash2,
-//   ideas_backlog: FileText
-// };
 
 export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   commitments,
@@ -156,26 +155,26 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     const statusColor = statusColors[commitment?.status as keyof typeof statusColors] || 'bg-slate-500';
 
     return (
-      <div className="flex flex-col p-1 relative group/event w-full">
+      <div className="flex flex-col p-1.5 relative group/event w-full overflow-hidden">
         {currentUserProfile.role === 'manager' && commitment && (
           <button
             onClick={(e) => {
               e.stopPropagation();
               handleDeleteCommitment(commitment.id);
             }}
-            className="absolute top-0 right-0 p-0.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded bg-white border border-slate-100 opacity-0 group-hover/event:opacity-100 transition-opacity z-20"
+            className="absolute top-1 right-1 p-1 text-[#64748b] hover:text-red-400 hover:bg-red-500/10 rounded-md border border-[#24263b] bg-[#11121d] opacity-0 group-hover/event:opacity-100 transition-all duration-200 z-20 active:scale-95"
             title="Delete Commitment"
           >
-            <X className="w-3 h-3" />
+            <X size={10} weight="bold" />
           </button>
         )}
-        <div className="flex items-center space-x-1">
-          <div className={`w-2 h-2 rounded-full ${statusColor}`} />
-          <span className="text-xs font-bold text-slate-700 truncate max-w-[80%]">
+        <div className="flex items-center space-x-1.5 min-w-0">
+          <div className={`w-1.5 h-1.5 rounded-full ${statusColor} flex-shrink-0`} />
+          <span className="text-[10px] font-bold text-[#64748b] truncate max-w-[80%] uppercase tracking-wider">
             {commitment?.project}
           </span>
         </div>
-        <div className="text-[11px] text-slate-600 truncate mt-0.5">
+        <div className="text-xs font-semibold text-[#f1f5f9] truncate mt-1">
           {eventInfo.event.title}
         </div>
       </div>
@@ -185,18 +184,16 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   return (
     <div className="relative">
       {/* FullCalendar Component */}
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div className="bg-[#0d0e15] rounded-xl shadow-2xl border border-[#24263b] overflow-hidden">
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
-          headerToolbar={
-            {
-              left: 'prev,next today',
-              center: 'title',
-              right: 'dayGridMonth,dayGridWeek'
-            }
-          }
+          headerToolbar={{
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,dayGridWeek'
+          }}
           events={commitments
             .filter(c => c.deadline)
             .map(commitment => ({
@@ -219,22 +216,20 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
           contentHeight={600}
           aspectRatio={1.5}
           
-          // Custom styling
-          eventClassNames="bg-slate-900/40 border border-slate-700/20 rounded-full py-1 px-2 hover:bg-slate-800/30 transition-colors"
-          dayCellClassNames="hover:bg-slate-50 transition-colors"
+          // Custom styling classes
+          eventClassNames="bg-[#161726]/40 border border-[#24263b]/50 rounded-xl hover:bg-[#161726]/80 transition-all"
+          dayCellClassNames="hover:bg-white/[0.01] transition-colors"
           
-          // Executive Slate theme
+          // Theme system
           themeSystem="standard"
           
           // Custom button text
-          buttonText={
-            {
-              today: 'Today',
-              month: 'Month',
-              week: 'Week',
-              day: 'Day'
-            }
-          }
+          buttonText={{
+            today: 'Today',
+            month: 'Month',
+            week: 'Week',
+            day: 'Day'
+          }}
         />
       </div>
 
@@ -245,23 +240,27 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050508]/60 backdrop-blur-md p-4"
           >
-            <div
+            <motion.div
               ref={popoverRef}
-              className="w-[500px] max-w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-[500px] max-w-full bg-[#11121d] border border-[#24263b] rounded-2xl shadow-2xl overflow-hidden"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 className="font-bold text-slate-800 text-lg truncate pr-4">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#24263b] bg-[#0d0e15]/40">
+                <h3 className="font-bold text-white text-sm truncate pr-4 leading-normal font-sans">
                   {selectedEvent.title}
                 </h3>
                 <button
                   onClick={() => setIsPopoverOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0 p-1 hover:bg-slate-200/50 rounded-md"
+                  className="text-[#64748b] hover:text-[#f1f5f9] transition-colors p-1.5 hover:bg-[#161726] rounded-full border border-[#24263b] flex items-center justify-center bg-transparent active:scale-95 duration-200"
                   aria-label="Close"
                 >
-                  <X className="w-5 h-5" />
+                  <X size={14} weight="bold" />
                 </button>
               </div>
 
@@ -269,72 +268,66 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
               <div className="px-6 py-5 space-y-5">
                 {/* Description */}
                 {selectedEvent.description && (
-                  <div className="border-b border-slate-100 pb-3">
-                    <p className="text-sm text-slate-600 leading-relaxed break-words whitespace-pre-wrap max-h-48 overflow-y-auto pr-1">
+                  <div className="border-b border-[#24263b]/60 pb-3">
+                    <p className="text-sm text-[#f1f5f9] leading-relaxed break-words whitespace-pre-wrap max-h-48 overflow-y-auto pr-1 bg-[#161726]/30 border border-[#24263b]/45 p-3 rounded-xl">
                       {selectedEvent.description}
                     </p>
                   </div>
                 )}
 
                 {/* Metadata Stack */}
-                <div className="space-y-3.5 text-sm">
+                <div className="space-y-3.5 text-xs font-semibold">
                   {/* Project */}
-                  <div className="flex items-center space-x-3 py-1 border-b border-slate-50">
+                  <div className="flex items-center space-x-3 py-1 border-b border-[#24263b]/40">
                     <div className={`w-3.5 h-3.5 rounded-full ${statusColors[selectedEvent.status as keyof typeof statusColors] || 'bg-slate-500'} flex-shrink-0`} />
-                    <span className="text-slate-500 w-24">Project:</span>
-                    <span className="text-slate-800 font-semibold truncate flex-1">
+                    <span className="text-[#64748b] uppercase tracking-widest text-[9px] w-24">Project</span>
+                    <span className="text-[#f1f5f9] truncate flex-1 font-bold">
                       {selectedEvent.project}
                     </span>
                   </div>
 
                   {/* Assignee */}
-                  <div className="flex items-center space-x-3 py-1 border-b border-slate-50">
-                    <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span className="text-slate-500 w-24">Assignee:</span>
-                    <span className="text-slate-800 font-medium truncate flex-1">
+                  <div className="flex items-center space-x-3 py-1 border-b border-[#24263b]/40">
+                    <User size={14} className="text-[#64748b] flex-shrink-0" />
+                    <span className="text-[#64748b] uppercase tracking-widest text-[9px] w-24">Assignee</span>
+                    <span className="text-[#f1f5f9] truncate flex-1 font-medium">
                       {selectedEvent.assignee?.name || selectedEvent.assignee?.email || 'Unassigned'}
                     </span>
                   </div>
 
                   {/* Checker */}
-                  <div className="flex items-center space-x-3 py-1 border-b border-slate-50">
-                    <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                    </svg>
-                    <span className="text-slate-500 w-24">Checker:</span>
-                    <span className="text-slate-800 font-medium truncate flex-1">
+                  <div className="flex items-center space-x-3 py-1 border-b border-[#24263b]/40">
+                    <User size={14} className="text-[#64748b] flex-shrink-0" />
+                    <span className="text-[#64748b] uppercase tracking-widest text-[9px] w-24">Checker</span>
+                    <span className="text-[#f1f5f9] truncate flex-1 font-medium">
                       {selectedEvent.checker?.name || selectedEvent.checker?.email || 'Unassigned'}
                     </span>
                   </div>
 
                   {/* Deadline */}
-                  <div className="flex items-center space-x-3 py-1 border-b border-slate-50">
-                    <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                    </svg>
-                    <span className="text-slate-500 w-24">Deadline:</span>
-                    <span className="text-slate-800 font-medium flex-1">
+                  <div className="flex items-center space-x-3 py-1 border-b border-[#24263b]/40">
+                    <CalendarBlank size={14} className="text-[#64748b] flex-shrink-0" />
+                    <span className="text-[#64748b] uppercase tracking-widest text-[9px] w-24">Deadline</span>
+                    <span className="text-[#f1f5f9] flex-1 font-medium font-mono">
                       {selectedEvent.deadline ? (
                         new Date(selectedEvent.deadline).toLocaleDateString('en-US', {
                           year: 'numeric',
                           month: 'long',
-                          day: 'numeric'
+                          day: 'numeric',
+                          hour: '2-digit',
+                          minute: '2-digit'
                         })
                       ) : (
-                        <span className="text-slate-400 italic">No deadline</span>
+                        <span className="text-[#64748b] italic">No deadline configured</span>
                       )}
                     </span>
                   </div>
 
                   {/* Created At */}
-                  <div className="flex items-center space-x-3 py-1 border-b border-slate-50">
-                    <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-slate-500 w-24">Created:</span>
-                    <span className="text-slate-800 font-medium flex-1">
+                  <div className="flex items-center space-x-3 py-1 border-b border-[#24263b]/40">
+                    <Clock size={14} className="text-[#64748b] flex-shrink-0" />
+                    <span className="text-[#64748b] uppercase tracking-widest text-[9px] w-24">Created</span>
+                    <span className="text-[#f1f5f9] flex-1 font-medium font-mono">
                       {new Date(selectedEvent.created_at).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
@@ -345,40 +338,28 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
 
                   {/* Status */}
                   <div className="flex items-center space-x-3 py-1">
-                    <svg className="w-4 h-4 text-slate-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                    <span className="text-slate-500 w-24">Status:</span>
-                    <span className={`text-xs font-semibold px-2.5 py-1 rounded-full ${
-                      selectedEvent.status === 'done' ? 'bg-emerald-100 text-emerald-700' :
-                        selectedEvent.status === 'expired' ? 'bg-red-100 text-red-700' :
-                          selectedEvent.status === 'to_check' ? 'bg-amber-100 text-amber-700' :
-                            selectedEvent.status === 'not_actual' ? 'bg-slate-100 text-slate-700' :
-                              'bg-indigo-100 text-indigo-700'
-                    }`}>
-                      {selectedEvent.status === 'to_check' ? 'Pending Review' :
-                        selectedEvent.status === 'done' ? 'Verified Done' :
-                          selectedEvent.status === 'expired' ? 'Expired' :
-                            selectedEvent.status === 'not_actual' ? 'Not Actual' :
-                              'Ideas Backlog'}
-                    </span>
+                    <FileText size={14} className="text-[#64748b] flex-shrink-0" />
+                    <span className="text-[#64748b] uppercase tracking-widest text-[9px] w-24">Status</span>
+                    <div className="flex-1">
+                      <StatusBadge status={selectedEvent.status} />
+                    </div>
                   </div>
                 </div>
 
                 {/* Actions */}
-                <div className="flex space-x-2 pt-4 border-t border-slate-100">
+                <div className="flex space-x-2 pt-4 border-t border-[#24263b]/60">
                   {canEditCommitment(selectedEvent) && (
                     <>
                       <button
                         onClick={handleMarkAsDone}
                         disabled={selectedEvent.status === 'done'}
-                        className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-1.5 ${
+                        className={`flex-1 px-4 py-2.5 text-xs font-bold uppercase tracking-wider rounded-xl transition-all flex items-center justify-center space-x-1.5 border-none ${
                           selectedEvent.status === 'done'
-                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                            ? 'bg-[#161726] text-[#64748b] cursor-not-allowed border border-[#24263b]'
+                            : 'bg-emerald-500/10 text-emerald-400 hover:bg-emerald-500 hover:text-white'
                         }`}
                       >
-                        <Check className="w-4 h-4" />
+                        <Check size={14} weight="bold" />
                         <span>Mark as Done</span>
                       </button>
                       <button
@@ -386,7 +367,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
                           onEditCommitment(selectedEvent);
                           setIsPopoverOpen(false);
                         }}
-                        className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 transition-colors border border-slate-700"
+                        className="flex-1 px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-white bg-[#24263b] hover:bg-[#313552] rounded-xl border border-[#24263b] transition-all"
                       >
                         Edit Details
                       </button>
@@ -395,15 +376,15 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
                   {currentUserProfile.role === 'manager' && (
                     <button
                       onClick={() => handleDeleteCommitment(selectedEvent.id)}
-                      className="px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200 flex items-center justify-center space-x-1.5"
+                      className="px-4 py-2.5 text-xs font-bold uppercase tracking-wider text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white rounded-xl border border-red-500/20 flex items-center justify-center space-x-1.5 transition-all"
                     >
-                      <Trash2 className="w-4 h-4" />
+                      <Trash size={14} weight="bold" />
                       <span>Delete</span>
                     </button>
                   )}
                 </div>
               </div>
-            </div>
+            </motion.div>
           </motion.div>
         )}
       </AnimatePresence>

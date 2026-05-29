@@ -1,62 +1,67 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&family=Geist+Mono:wght@100..900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
-  --background: #090a0f;
-  --panel-bg: rgba(22, 23, 38, 0.7);
-  --panel-border: rgba(255, 255, 255, 0.07);
-  --panel-highlight: rgba(255, 255, 255, 0.05);
-  --text-primary: #ffffff;
-  --text-secondary: #a1a1aa;
-  --scrollbar-thumb: #3f3f46;
-  --scrollbar-track: #18181b;
-  --accent-subtle: #3f3f46;
-  --accent-emphasis: #71717a;
+  --background: #0d0e15;
+  --panel-bg: #161726;
+  --panel-border: #24263b;
+  --panel-highlight: rgba(255, 255, 255, 0.03);
+  --text-primary: #f1f5f9;
+  --text-secondary: #64748b;
+  --scrollbar-thumb: #24263b;
+  --scrollbar-track: #0d0e15;
+  --accent-subtle: #1e293b;
+  --accent-emphasis: #3b82f6;
 }
 
 body {
   background-color: var(--background);
   color: var(--text-primary);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+  font-family: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   min-height: 100dvh;
-  background-image: radial-gradient(var(--panel-highlight) 1px, transparent 1px);
-  background-size: 24px 24px;
+  background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.font-mono {
+  font-family: 'Geist Mono', monospace;
 }
 
 .glass-panel {
   background-color: var(--panel-bg);
   border: 1px solid var(--panel-border);
-  box-shadow: inset 0 1px 0 var(--panel-highlight);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.02);
   backdrop-filter: blur(16px);
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1.5rem;
-  transition: all 0.2s ease;
+  transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
 }
 
 .glass-panel:hover {
-  box-shadow: inset 0 1px 0 var(--panel-highlight), 0 0 20px rgba(0, 0, 0, 0.1);
+  border-color: rgba(59, 130, 246, 0.3);
+  box-shadow: 0 12px 40px -12px rgba(0, 0, 0, 0.5);
 }
 
 /* Dark scrollbar styling */
 ::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 8px;
+  height: 8px;
 }
 
 ::-webkit-scrollbar-track {
   background: var(--scrollbar-track);
-  border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   background: var(--scrollbar-thumb);
-  border-radius: 10px;
-  border: 2px solid var(--scrollbar-track);
+  border-radius: 4px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: var(--accent-emphasis);
+  background: #313552;
 }
 
 /* FullCalendar overrides */
@@ -214,14 +219,14 @@ button:active {
 .gradient-border {
   position: relative;
   background: var(--panel-bg);
-  border-radius: 12px;
+  border-radius: 16px;
 }
 
 .gradient-border::before {
   content: '';
   position: absolute;
   inset: 0;
-  border-radius: 12px;
+  border-radius: 16px;
   padding: 1px;
   background: linear-gradient(90deg, var(--panel-border), transparent);
   -webkit-mask:
@@ -229,6 +234,45 @@ button:active {
     linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
+}
+
+/* Slide-over custom elements */
+.slide-over-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(5, 5, 8, 0.6);
+  backdrop-filter: blur(12px);
+  z-index: 50;
+}
+
+.slide-over-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 100%;
+  max-width: 500px;
+  background-color: #11121d;
+  border-left: 1px solid #24263b;
+  box-shadow: -20px 0 80px -15px rgba(0, 0, 0, 0.7);
+  z-index: 51;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Focus states */
+input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-visible {
+  outline: 2px solid var(--accent-emphasis) !important;
+  outline-offset: 2px !important;
+}
+
+/* Custom interactive element active transition */
+.btn-premium {
+  transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.btn-premium:active {
+  transform: scale(0.98);
 }
 
 /* Responsive grid */
@@ -242,11 +286,11 @@ button:active {
 .loader {
   width: 24px;
   height: 24px;
-  border: 3px solid var(--panel-border);
-  border-bottom-color: var(--text-primary);
+  border: 2px solid var(--panel-border);
+  border-bottom-color: var(--accent-emphasis);
   border-radius: 50%;
   display: inline-block;
-  animation: spin 1s linear infinite;
+  animation: spin 0.8s cubic-bezier(0.32, 0.72, 0, 1) infinite;
 }
 
 @keyframes spin {

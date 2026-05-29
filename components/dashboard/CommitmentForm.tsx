@@ -1,8 +1,15 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
-import { X } from 'lucide-react';
+import { FormShell } from './FormShell';
+import { 
+  CalendarBlank, 
+  Clock, 
+  CaretDown, 
+  CaretLeft, 
+  CaretRight, 
+  Check
+} from '@phosphor-icons/react';
 
 type CommitmentStatus = 'to_check' | 'done' | 'expired' | 'not_actual' | 'ideas_backlog';
 
@@ -249,262 +256,212 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  if (!isOpen) return null;
-
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm">
-      <AnimatePresence>
-        <motion.div
-          initial={{ opacity: 0, y: 20, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: -20, scale: 0.95 }}
-          transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-          className="w-full max-w-md mx-4 md:mx-0"
-        >
-          <div className="bg-white rounded-xl shadow-2xl">
-            {/* Header with close button */}
-            <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-              <h2 className="text-lg font-semibold text-slate-800">
-                {editingCommitment ? 'Edit Commitment' : 'Add New Commitment'}
-              </h2>
+    <FormShell
+      isOpen={isOpen}
+      onClose={onClose}
+      title={editingCommitment ? 'Edit Commitment' : 'Add New Commitment'}
+    >
+      <form onSubmit={handleSubmit} className="space-y-5 text-[#f1f5f9]">
+        {/* Title */}
+        <div className="space-y-1.5">
+          <label htmlFor="title" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+            Title <span className="text-red-500">*</span>
+          </label>
+          <input
+            type="text"
+            id="title"
+            name="title"
+            value={formData.title}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            className={`w-full px-3 py-2.5 bg-[#161726] border text-[#f1f5f9] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all ${
+              errors.title ? 'border-red-500/55 focus:ring-red-500/30' : 'border-[#24263b] focus:border-blue-500/40'
+            }`}
+            placeholder="Enter a clear, concise title"
+          />
+          {errors.title && <p className="text-xs text-red-400 mt-1">{errors.title}</p>}
+        </div>
+
+        {/* Description */}
+        <div className="space-y-1.5">
+          <label htmlFor="description" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+            Description
+          </label>
+          <textarea
+            id="description"
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            disabled={isSubmitting}
+            rows={4}
+            className="w-full px-3 py-2.5 bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 resize-none transition-all"
+            placeholder="Provide additional details about this commitment"
+          />
+        </div>
+
+        {/* Project Selection */}
+        <div className="space-y-1.5">
+          <label htmlFor="project" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+            Project <span className="text-red-500">*</span>
+          </label>
+          {!showNewProjectInput ? (
+            <CustomDropdown
+              id="project-select"
+              value={formData.project}
+              onChange={handleProjectSelect}
+              options={projectOptions}
+              placeholder="Select Project"
+              disabled={isSubmitting}
+              error={!!errors.project}
+            />
+          ) : (
+            <div className="flex space-x-2">
+              <input
+                type="text"
+                value={newProjectName}
+                onChange={(e) => {
+                  setNewProjectName(e.target.value);
+                  setFormData(prev => ({ ...prev, project: e.target.value }));
+                }}
+                placeholder="Enter new project name"
+                className="flex-1 px-3 py-2 bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
+              />
               <button
-                onClick={onClose}
-                disabled={isSubmitting}
-                className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-200/50 rounded-md border-0 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label="Close form"
+                type="button"
+                onClick={() => {
+                  setShowNewProjectInput(false);
+                  setNewProjectName('');
+                  setFormData(prev => ({ ...prev, project: projects[0]?.name || '' }));
+                }}
+                className="px-4 py-2 bg-[#161726] hover:bg-[#1e2035] text-[#64748b] hover:text-[#f1f5f9] rounded-xl border border-[#24263b] text-xs font-bold uppercase tracking-wider"
               >
-                <X className="w-5 h-5" />
+                Cancel
               </button>
             </div>
+          )}
+          {!showNewProjectInput && projects.find(p => p.name === formData.project)?.description && (
+            <p className="text-xs text-[#64748b] italic bg-[#161726]/40 border border-[#24263b]/60 p-3 rounded-xl">
+              Description: {projects.find(p => p.name === formData.project)?.description}
+            </p>
+          )}
+          {errors.project && <p className="text-xs text-red-400 mt-1">{errors.project}</p>}
+        </div>
 
-            {/* Form content */}
-            <form onSubmit={handleSubmit} className="px-6 py-4 space-y-4">
-              {/* Title */}
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-slate-700 mb-1">
-                  Title <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="text"
-                  id="title"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
-                    errors.title ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                  }`}
-                  placeholder="Enter a clear, concise title"
-                />
-                {errors.title && <p className="mt-1 text-sm text-red-600">{errors.title}</p>}
-              </div>
+        {/* Assignee */}
+        <div className="space-y-1.5">
+          <label htmlFor="assignee" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+            Assignee <span className="text-red-500">*</span>
+          </label>
+          <CustomDropdown
+            id="assignee"
+            value={formData.assignee}
+            onChange={(val) => setFormData(prev => ({ ...prev, assignee: val }))}
+            options={assigneeOptions}
+            placeholder="Select Assignee"
+            disabled={isSubmitting}
+            error={!!errors.assignee}
+          />
+          {errors.assignee && <p className="text-xs text-red-400 mt-1">{errors.assignee}</p>}
+        </div>
 
-              {/* Description */}
-              <div>
-                <label htmlFor="description" className="block text-sm font-medium text-slate-700 mb-1">
-                  Description
-                </label>
-                <textarea
-                  id="description"
-                  name="description"
-                  value={formData.description}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  rows={3}
-                  className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 resize-none"
-                  placeholder="Provide additional details about this commitment"
-                />
-              </div>
+        {/* Checker */}
+        <div className="space-y-1.5">
+          <label htmlFor="checker" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+            Checker <span className="text-red-500">*</span>
+          </label>
+          <CustomDropdown
+            id="checker"
+            value={formData.checker}
+            onChange={(val) => setFormData(prev => ({ ...prev, checker: val }))}
+            options={checkerOptions}
+            placeholder="Select Checker"
+            disabled={isSubmitting}
+            error={!!errors.checker}
+          />
+          {errors.checker && <p className="text-xs text-red-400 mt-1">{errors.checker}</p>}
+        </div>
 
-              {/* Project Selection */}
-              <div>
-                <label htmlFor="project" className="block text-sm font-medium text-slate-700 mb-1">
-                  Project <span className="text-red-500">*</span>
-                </label>
-                {!showNewProjectInput ? (
-                  <CustomDropdown
-                    id="project-select"
-                    value={formData.project}
-                    onChange={handleProjectSelect}
-                    options={projectOptions}
-                    placeholder="Select Project"
-                    disabled={isSubmitting}
-                    error={!!errors.project}
-                  />
-                ) : (
-                  <div className="flex space-x-2">
-                    <input
-                      type="text"
-                      value={newProjectName}
-                      onChange={(e) => {
-                        setNewProjectName(e.target.value);
-                        setFormData(prev => ({ ...prev, project: e.target.value }));
-                      }}
-                      placeholder="Enter new project name"
-                      className="flex-1 px-3 py-2 border border-slate-300 bg-white text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
-                    />
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setShowNewProjectInput(false);
-                        setNewProjectName('');
-                        setFormData(prev => ({ ...prev, project: projects[0]?.name || '' }));
-                      }}
-                      className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 text-sm font-medium"
-                    >
-                      Cancel
-                    </button>
-                  </div>
-                )}
-                {!showNewProjectInput && projects.find(p => p.name === formData.project)?.description && (
-                  <p className="mt-1 text-xs text-slate-500 italic leading-relaxed">
-                    Description: {projects.find(p => p.name === formData.project)?.description}
-                  </p>
-                )}
-                {errors.project && <p className="mt-1 text-sm text-red-600">{errors.project}</p>}
-              </div>
-
-              {/* Assignee */}
-              <div>
-                <label htmlFor="assignee" className="block text-sm font-medium text-slate-700 mb-1">
-                  Assignee <span className="text-red-500">*</span>
-                </label>
-                <CustomDropdown
-                  id="assignee"
-                  value={formData.assignee}
-                  onChange={(val) => setFormData(prev => ({ ...prev, assignee: val }))}
-                  options={assigneeOptions}
-                  placeholder="Select Assignee"
-                  disabled={isSubmitting}
-                  error={!!errors.assignee}
-                />
-                {errors.assignee && <p className="mt-1 text-sm text-red-600">{errors.assignee}</p>}
-              </div>
-
-              {/* Checker */}
-              <div>
-                <label htmlFor="checker" className="block text-sm font-medium text-slate-700 mb-1">
-                  Checker <span className="text-red-500">*</span>
-                </label>
-                <CustomDropdown
-                  id="checker"
-                  value={formData.checker}
-                  onChange={(val) => setFormData(prev => ({ ...prev, checker: val }))}
-                  options={checkerOptions}
-                  placeholder="Select Checker"
-                  disabled={isSubmitting}
-                  error={!!errors.checker}
-                />
-                {errors.checker && <p className="mt-1 text-sm text-red-600">{errors.checker}</p>}
-              </div>
-
-              {/* Deadline */}
-              <div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label htmlFor="deadline" className="block text-sm font-medium text-slate-700 mb-1">
-                      Deadline <span className="text-red-500">*</span>
-                    </label>
-                    <CustomDatePicker
-                      value={formData.deadline}
-                      onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
-                      disabled={isSubmitting}
-                      error={!!errors.deadline}
-                    />
-                  </div>
-                  <div>
-                    <label htmlFor="time" className="block text-sm font-medium text-slate-700 mb-1">
-                      Time (optional)
-                    </label>
-                    <CustomTimePicker
-                      value={formData.time}
-                      onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </div>
-                {errors.deadline && <p className="mt-1 text-sm text-red-600">{errors.deadline}</p>}
-              </div>
-
-              {/* Status */}
-              <div>
-                <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1">
-                  Status
-                </label>
-                <CustomDropdown
-                  id="status"
-                  value={formData.status}
-                  onChange={(val) => setFormData(prev => ({ ...prev, status: val as CommitmentStatus }))}
-                  options={statusOptionsMapped}
-                  disabled={isSubmitting}
-                />
-              </div>
-
-              {/* Backend error display */}
-              {backendError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
-                  <p className="text-sm text-red-600">{backendError}</p>
-                </div>
-              )}
-
-              {/* Form actions */}
-              <div className="flex justify-end space-x-3 pt-4">
-                <button
-                  type="button"
-                  onClick={onClose}
-                  disabled={isSubmitting}
-                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-sm border border-slate-200/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  Cancel
-                </button>
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className={`px-4 py-2 text-white rounded-lg transition-colors font-semibold ${
-                    isSubmitting 
-                      ? 'bg-slate-400 cursor-not-allowed'
-                      : 'bg-slate-600 hover:bg-slate-700 shadow-sm'
-                  }`}
-                >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center">
-                      <LoadingSpinner size="sm" className="mr-2" />
-                      {editingCommitment ? 'Updating...' : 'Submitting...'}
-                    </span>
-                  ) : (
-                    editingCommitment ? 'Update Commitment' : 'Add Commitment'
-                  )}
-                </button>
-              </div>
-            </form>
+        {/* Deadline */}
+        <div className="space-y-1.5">
+          <div className="grid grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <label htmlFor="deadline" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+                Deadline <span className="text-red-500">*</span>
+              </label>
+              <CustomDatePicker
+                value={formData.deadline}
+                onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
+                disabled={isSubmitting}
+                error={!!errors.deadline}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="time" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+                Time (optional)
+              </label>
+              <CustomTimePicker
+                value={formData.time}
+                onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
+                disabled={isSubmitting}
+              />
+            </div>
           </div>
-        </motion.div>
-      </AnimatePresence>
-    </div>
-  );
-};
+          {errors.deadline && <p className="text-xs text-red-400 mt-1">{errors.deadline}</p>}
+        </div>
 
-// LoadingSpinner component (copied from existing implementation)
-const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }> = ({ 
-  size = 'md', 
-  className = '' 
-}) => {
-  const sizeClasses = {
-    sm: 'h-4 w-4 border-2',
-    md: 'h-6 w-6 border-2',
-    lg: 'h-8 w-8 border-3',
-  };
+        {/* Status */}
+        <div className="space-y-1.5">
+          <label htmlFor="status" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+            Status
+          </label>
+          <CustomDropdown
+            id="status"
+            value={formData.status}
+            onChange={(val) => setFormData(prev => ({ ...prev, status: val as CommitmentStatus }))}
+            options={statusOptionsMapped}
+            disabled={isSubmitting}
+          />
+        </div>
 
-  return (
-    <div className={`flex justify-center items-center ${className}`}>
-      <div
-        className={`animate-spin rounded-full border-slate-300 border-t-slate-700 ${sizeClasses[size]}`}
-        role="status"
-        aria-live="polite"
-      >
-        <span className="sr-only">Loading...</span>
-      </div>
-    </div>
+        {/* Backend error display */}
+        {backendError && (
+          <div className="p-3 bg-red-500/10 border border-red-500/20 rounded-xl">
+            <p className="text-xs text-red-400 leading-relaxed">{backendError}</p>
+          </div>
+        )}
+
+        {/* Form actions */}
+        <div className="flex justify-end space-x-3 pt-4 border-t border-[#24263b]/60">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isSubmitting}
+            className="px-5 py-3 bg-[#161726] hover:bg-[#1e2035] text-[#64748b] hover:text-[#f1f5f9] border border-[#24263b] rounded-xl text-xs font-bold uppercase tracking-wider transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Cancel
+          </button>
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className={`px-5 py-3 text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider border-none shadow-lg shadow-blue-500/10 ${
+              isSubmitting 
+                ? 'bg-[#24263b] text-[#64748b] cursor-not-allowed'
+                : 'bg-blue-500 hover:bg-blue-600'
+            }`}
+          >
+            {isSubmitting ? (
+              <span className="flex items-center justify-center">
+                <div className="loader mr-2 h-3 w-3" />
+                <span>{editingCommitment ? 'Updating...' : 'Submitting...'}</span>
+              </span>
+            ) : (
+              editingCommitment ? 'Update Commitment' : 'Add Commitment'
+            )}
+          </button>
+        </div>
+      </form>
+    </FormShell>
   );
 };
 
@@ -536,37 +493,36 @@ const CustomDropdown: React.FC<DropdownProps> = ({
         role="button"
         tabIndex={disabled ? -1 : 0}
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left text-sm select-none ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-xl bg-[#161726] text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-left text-sm select-none transition-all ${
+          disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
         } ${
-          error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
+          error ? 'border-red-500/55 focus:ring-red-500/30' : 'border-[#24263b] focus:border-blue-500/40'
         }`}
       >
         <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
-        <svg className={`w-4 h-4 ml-2 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-        </svg>
+        <CaretDown size={14} weight="bold" className={`text-[#64748b] transition-transform duration-300 ${isOpen ? 'rotate-180' : ''}`} />
       </div>
       
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <ul className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto py-1 text-sm">
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <ul className="absolute z-50 w-full mt-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl max-h-60 overflow-y-auto py-1.5 text-sm">
             {options.map(opt => (
-              <li key={opt.value}>
+              <li key={opt.value} className="px-1">
                 <div
                   role="button"
                   onClick={() => {
                     onChange(opt.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 transition-colors cursor-pointer select-none text-sm ${
+                  className={`w-full text-left px-3 py-2 transition-colors rounded-lg cursor-pointer select-none text-xs font-semibold flex items-center justify-between ${
                     opt.value === value
-                      ? 'bg-slate-800 text-white font-semibold'
-                      : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
+                      ? 'bg-blue-500 text-white font-bold'
+                      : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]'
                   }`}
                 >
-                  {opt.label}
+                  <span className="truncate">{opt.label}</span>
+                  {opt.value === value && <Check size={12} weight="bold" />}
                 </div>
               </li>
             ))}
@@ -663,49 +619,43 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
         role="button"
         tabIndex={disabled ? -1 : 0}
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left text-sm select-none ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-xl bg-[#161726] text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-left text-sm select-none transition-all ${
+          disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
         } ${
-          error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
+          error ? 'border-red-500/55 focus:ring-red-500/30' : 'border-[#24263b] focus:border-blue-500/40'
         }`}
       >
         <span>{displayValue}</span>
-        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
+        <CalendarBlank size={16} className="text-[#64748b]" />
       </div>
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-20 bottom-full mb-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-80 left-0 md:left-auto md:right-0">
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute z-50 bottom-full mb-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-72 left-0 md:left-auto md:right-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <div
-                role="button"
+              <button
+                type="button"
                 onClick={handlePrevMonth}
-                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors cursor-pointer select-none"
+                className="p-1 bg-[#161726] hover:bg-[#1e2035] border border-[#24263b] rounded-lg text-[#64748b] hover:text-[#f1f5f9] transition-all"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </div>
-              <span className="font-semibold text-slate-800 text-sm select-none">
+                <CaretLeft size={14} weight="bold" />
+              </button>
+              <span className="font-bold text-[#f1f5f9] text-xs uppercase tracking-wider select-none">
                 {monthNames[month]} {year}
               </span>
-              <div
-                role="button"
+              <button
+                type="button"
                 onClick={handleNextMonth}
-                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors cursor-pointer select-none"
+                className="p-1 bg-[#161726] hover:bg-[#1e2035] border border-[#24263b] rounded-lg text-[#64748b] hover:text-[#f1f5f9] transition-all"
               >
-                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </div>
+                <CaretRight size={14} weight="bold" />
+              </button>
             </div>
 
             {/* Weekdays */}
-            <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500 mb-2 select-none">
+            <div className="grid grid-cols-7 gap-1 text-center text-[10px] font-bold text-[#64748b] mb-2 select-none uppercase tracking-widest">
               <div>Su</div>
               <div>Mo</div>
               <div>Tu</div>
@@ -727,23 +677,23 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                 const today = isToday(day);
 
                 return (
-                  <div
+                  <button
                     key={`day-${day}`}
-                    role="button"
-                    tabIndex={past ? -1 : 0}
-                    onClick={() => !past && handleDayClick(day)}
-                    className={`h-7 w-7 text-xs font-semibold rounded-full flex items-center justify-center transition-colors mx-auto select-none ${
+                    type="button"
+                    disabled={past}
+                    onClick={() => handleDayClick(day)}
+                    className={`h-7 w-7 text-xs font-semibold rounded-full flex items-center justify-center transition-all select-none border-none ${
                       selected
-                        ? 'bg-slate-800 text-white font-bold shadow-sm cursor-pointer'
+                        ? 'bg-blue-500 text-white font-bold shadow-md cursor-pointer'
                         : past
-                          ? 'bg-transparent text-slate-300 cursor-not-allowed'
+                          ? 'bg-transparent text-[#24263b] cursor-not-allowed'
                           : today
-                            ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50 cursor-pointer'
-                            : 'bg-transparent hover:bg-slate-100 text-slate-700 cursor-pointer'
+                            ? 'bg-blue-500/10 text-blue-400 font-bold border border-blue-500/20 hover:bg-blue-500/20 cursor-pointer'
+                            : 'bg-transparent hover:bg-[#161726] text-[#64748b] hover:text-[#f1f5f9] cursor-pointer'
                     }`}
                   >
                     {day}
-                  </div>
+                  </button>
                 );
               })}
             </div>
@@ -815,98 +765,96 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
         role="button"
         tabIndex={disabled ? -1 : 0}
         onClick={() => !disabled && setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left text-sm select-none ${
-          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-xl bg-[#161726] text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-left text-sm select-none transition-all border-[#24263b] ${
+          disabled ? 'opacity-40 cursor-not-allowed' : 'cursor-pointer'
         }`}
       >
         <span>{displayValue}</span>
-        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
+        <Clock size={16} className="text-[#64748b]" />
       </div>
 
       {isOpen && (
         <>
-          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-20 bottom-full mb-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64 right-0 flex flex-col">
+          <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
+          <div className="absolute z-50 bottom-full mb-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-60 right-0 flex flex-col">
             <style dangerouslySetInnerHTML={{ __html: `
               .custom-scrollbar::-webkit-scrollbar {
-                width: 5px;
+                width: 4px;
               }
               .custom-scrollbar::-webkit-scrollbar-track {
                 background: transparent;
               }
               .custom-scrollbar::-webkit-scrollbar-thumb {
-                background: #e2e8f0; /* slate-200 */
-                border-radius: 10px;
+                background: #24263b;
+                border-radius: 9999px;
               }
               .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-                background: #cbd5e1; /* slate-300 */
+                background: #313552;
               }
               .custom-scrollbar {
                 scrollbar-width: thin;
-                scrollbar-color: #e2e8f0 transparent;
+                scrollbar-color: #24263b transparent;
                 outline: none !important;
               }
               .custom-scrollbar * {
                 outline: none !important;
               }
             `}} />
-            <div className="flex gap-2 max-h-48 overflow-hidden mb-2 select-none">
+            <div className="flex gap-2 max-h-40 overflow-hidden mb-3 select-none">
               {/* Hours Column */}
-              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40 custom-scrollbar outline-none focus:outline-none">
-                <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Hour</div>
+              <div className="flex-1 overflow-y-auto border border-[#24263b] rounded-lg max-h-36 custom-scrollbar outline-none focus:outline-none bg-[#161726]">
+                <div className="text-center text-[9px] font-bold text-[#64748b] py-1 bg-[#11121d] border-b border-[#24263b] sticky top-0 uppercase tracking-wider">Hour</div>
                 {hours.map(h => (
-                  <div
+                  <button
                     key={`h-${h}`}
-                    role="button"
+                    type="button"
                     onClick={() => handleHourSelect(h)}
-                    className={`w-full text-center py-1 text-xs font-semibold cursor-pointer select-none ${
+                    className={`w-full text-center py-1 text-xs font-semibold cursor-pointer border-none select-none transition-colors ${
                       hour === h
-                        ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
-                        : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
+                        ? 'bg-blue-500 text-white font-bold'
+                        : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#11121d]'
                     }`}
                   >
                     {h}
-                  </div>
+                  </button>
                 ))}
               </div>
 
               {/* Minutes Column */}
-              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40 custom-scrollbar outline-none focus:outline-none">
-                <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Min</div>
+              <div className="flex-1 overflow-y-auto border border-[#24263b] rounded-lg max-h-36 custom-scrollbar outline-none focus:outline-none bg-[#161726]">
+                <div className="text-center text-[9px] font-bold text-[#64748b] py-1 bg-[#11121d] border-b border-[#24263b] sticky top-0 uppercase tracking-wider">Min</div>
                 {minutes.map(m => (
-                  <div
+                  <button
                     key={`m-${m}`}
-                    role="button"
+                    type="button"
                     onClick={() => handleMinuteSelect(m)}
-                    className={`w-full text-center py-1 text-xs font-semibold cursor-pointer select-none ${
+                    className={`w-full text-center py-1 text-xs font-semibold cursor-pointer border-none select-none transition-colors ${
                       minute === m
-                        ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
-                        : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
+                        ? 'bg-blue-500 text-white font-bold'
+                        : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#11121d]'
                     }`}
                   >
                     {m}
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between items-center border-t border-slate-100 pt-2 select-none">
-              <div
-                role="button"
+            <div className="flex justify-between items-center border-t border-[#24263b] pt-3 select-none">
+              <button
+                type="button"
                 onClick={handleClear}
-                className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/80 font-medium px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer select-none"
+                className="text-[10px] font-bold uppercase tracking-wider text-red-400 bg-red-500/10 hover:bg-red-500 hover:text-white border border-red-500/20 px-3 py-1.5 rounded-lg transition-all"
               >
                 Clear
-              </div>
-              <div
-                role="button"
+              </button>
+              <button
+                type="button"
                 onClick={() => setIsOpen(false)}
-                className="text-xs text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer select-none"
+                className="text-[10px] font-bold uppercase tracking-wider text-[#f1f5f9] bg-[#161726] hover:bg-[#1e2035] border border-[#24263b] px-3.5 py-1.5 rounded-lg transition-all"
               >
                 OK
-              </div>
+              </button>
             </div>
           </div>
         </>

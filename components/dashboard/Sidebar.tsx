@@ -5,7 +5,7 @@ import { useFilter } from './FilterContext';
 import { logout } from '@/app/actions/auth';
 import { createProject, deleteProject, updateProject } from '@/app/actions/projects';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash2, X, Edit, Info } from 'lucide-react';
+import { Plus, Trash, X, PencilSimple, Info, SignOut, List } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
@@ -118,179 +118,193 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Menu Toggle */}
       <button
         onClick={onToggleMobile}
-        className="fixed top-4 left-4 z-40 md:hidden p-2 bg-slate-800 text-white rounded-md shadow-md hover:bg-slate-700 transition-colors"
+        className="fixed top-4 left-4 z-40 md:hidden p-2.5 bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl shadow-lg hover:bg-[#1b1d30] hover:text-white transition-all active:scale-95 duration-200"
         aria-label="Toggle menu"
       >
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
-        </svg>
+        <List size={20} weight="bold" />
       </button>
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-72 bg-slate-100 border-r border-slate-200 transform transition-transform duration-200 ease-in-out md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-30 w-72 bg-[#11121d] border-r border-[#24263b] transform transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] md:translate-x-0 ${
           isMobile ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
-        <div className="p-6 border-b border-slate-200 bg-slate-50">
+        <div className="p-6 border-b border-[#24263b] bg-[#0d0e15]/40">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-white font-bold text-lg shadow-sm">
-              S
+            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm shadow-inner">
+              SC
             </div>
             <div>
-              <h2 className="font-bold text-slate-800 text-lg leading-tight">Status Check</h2>
-              <p className="text-xs text-slate-500 font-mono">MVP v1.0.0</p>
+              <h2 className="font-bold text-[#f1f5f9] text-sm tracking-wide leading-tight">Status Check</h2>
+              <p className="text-[10px] text-[#64748b] font-mono tracking-wider">MVP v1.0.0</p>
             </div>
           </div>
         </div>
 
         {/* User Profile */}
-        <div className="p-6 border-b border-slate-200">
-          <div className="space-y-2">
-            <p className="text-sm font-medium text-slate-600">Signed in as</p>
-            <p className="text-slate-800 truncate font-semibold">{currentUserProfile.name || currentUserProfile.email}</p>
+        <div className="p-6 border-b border-[#24263b] bg-[#0d0e15]/20">
+          <div className="space-y-3">
+            <div className="flex items-center space-x-3">
+              {/* Concentric Squircle Avatar Wrapper */}
+              <div className="p-0.5 bg-gradient-to-tr from-[#24263b] to-blue-500/30 rounded-xl">
+                <div className="w-10 h-10 rounded-[calc(0.75rem-2px)] bg-[#161726] border border-[#24263b] flex items-center justify-center text-xs font-mono font-bold text-[#f1f5f9]">
+                  {currentUserProfile.name ? currentUserProfile.name.slice(0, 2).toUpperCase() : currentUserProfile.email.slice(0, 2).toUpperCase()}
+                </div>
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-semibold text-[#64748b] tracking-wider uppercase">Account</p>
+                <p className="text-sm text-[#f1f5f9] font-medium truncate leading-tight">
+                  {currentUserProfile.name || currentUserProfile.email}
+                </p>
+              </div>
+            </div>
+
             <div
-              className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full border ${
+              className={`inline-flex items-center px-2.5 py-0.5 text-[9px] font-bold uppercase tracking-widest rounded-full border ${
                 currentUserProfile.role === 'manager'
-                  ? 'border-amber-300 text-amber-700 bg-amber-50'
-                  : 'border-emerald-300 text-emerald-700 bg-emerald-50'
+                  ? 'border-amber-500/20 text-amber-400 bg-amber-500/5'
+                  : 'border-emerald-500/20 text-emerald-400 bg-emerald-500/5'
               }`}
             >
-              {currentUserProfile.role.charAt(0).toUpperCase() + currentUserProfile.role.slice(1)}
+              <div className={`w-1 h-1 rounded-full mr-1.5 ${currentUserProfile.role === 'manager' ? 'bg-amber-400' : 'bg-emerald-400'}`} />
+              {currentUserProfile.role}
             </div>
           </div>
         </div>
 
-        {/* Projects Filter */}
-        <div className="p-6 border-b border-slate-200 max-h-[40vh] overflow-y-auto">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-xs font-bold text-slate-500 tracking-wider uppercase">Projects</h3>
-            {currentUserProfile.role === 'manager' && (
-              <button
-                onClick={() => {
-                  setNewProjectName('');
-                  setNewProjectDesc('');
-                  setFormError(null);
-                  setShowAddForm(true);
-                }}
-                className="p-1 text-slate-500 hover:text-slate-800 hover:bg-slate-200 rounded-md transition-colors border-0 bg-transparent"
-                title="Create Project"
-              >
-                <Plus className="w-4 h-4" />
-              </button>
-            )}
-          </div>
+        {/* Navigation / Filters Area */}
+        <div className="flex-1 py-4 overflow-y-auto max-h-[calc(100vh-270px)] space-y-6">
+          {/* Projects Filter */}
+          <div className="px-4">
+            <div className="flex items-center justify-between px-2 mb-2">
+              <h3 className="text-[10px] font-bold text-[#64748b] tracking-widest uppercase">Projects</h3>
+              {currentUserProfile.role === 'manager' && (
+                <button
+                  onClick={() => {
+                    setNewProjectName('');
+                    setNewProjectDesc('');
+                    setFormError(null);
+                    setShowAddForm(true);
+                  }}
+                  className="p-1 text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726] rounded-md transition-colors border-0 bg-transparent"
+                  title="Create Project"
+                >
+                  <Plus size={14} weight="bold" />
+                </button>
+              )}
+            </div>
 
-          <div className="space-y-1">
-            <button
-              onClick={() => setSelectedProject(null)}
-              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all border-0 ${
-                selectedProject === null
-                  ? 'bg-slate-700 text-white font-semibold shadow-sm'
-                  : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              All Projects
-            </button>
-            {projects.map((project) => (
-              <div
-                key={project.name}
-                className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm transition-all ${
-                  selectedProject === project.name
-                    ? 'bg-slate-700 text-white font-semibold shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+            <div className="space-y-1">
+              <button
+                onClick={() => setSelectedProject(null)}
+                className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-medium tracking-wide transition-all border-0 ${
+                  selectedProject === null
+                    ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold shadow-sm'
+                    : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                 }`}
-                onClick={() => {
-                  if (selectedProject === project.name) {
-                    openProjectDetails(project);
-                  } else {
-                    setSelectedProject(project.name);
-                  }
-                }}
-                onDoubleClick={() => openProjectDetails(project)}
-                style={{ cursor: 'pointer' }}
               >
-                <span className="truncate flex-1">
-                  {project.name}
-                </span>
-                
-                <div className="flex items-center space-x-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <button
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openProjectDetails(project, currentUserProfile.role === 'manager');
-                    }}
-                    className={`p-0.5 rounded border-0 bg-transparent transition-colors ${
-                      selectedProject === project.name
-                        ? 'text-slate-300 hover:text-white hover:bg-slate-600'
-                        : 'text-slate-400 hover:text-slate-800 hover:bg-slate-300'
-                    }`}
-                    title={currentUserProfile.role === 'manager' ? 'Edit Project' : 'Project Details'}
-                  >
-                    {currentUserProfile.role === 'manager' ? <Edit className="w-3.5 h-3.5" /> : <Info className="w-3.5 h-3.5" />}
-                  </button>
-                  {currentUserProfile.role === 'manager' && (
+                All Projects
+              </button>
+              {projects.map((project) => (
+                <div
+                  key={project.name}
+                  className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
+                    selectedProject === project.name
+                      ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold'
+                      : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
+                  }`}
+                  onClick={() => {
+                    if (selectedProject === project.name) {
+                      openProjectDetails(project);
+                    } else {
+                      setSelectedProject(project.name);
+                    }
+                  }}
+                  onDoubleClick={() => openProjectDetails(project)}
+                  style={{ cursor: 'pointer' }}
+                >
+                  <span className="truncate flex-1 mr-2">{project.name}</span>
+                  
+                  <div className="flex items-center space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                     <button
                       onClick={(e) => {
                         e.stopPropagation();
-                        handleDeleteProject(project.name, e);
+                        openProjectDetails(project, currentUserProfile.role === 'manager');
                       }}
-                      className={`p-0.5 rounded border-0 bg-transparent transition-colors ${
+                      className={`p-1 rounded border-0 bg-transparent transition-colors ${
                         selectedProject === project.name
-                          ? 'text-slate-300 hover:text-red-300 hover:bg-slate-600'
-                          : 'text-slate-400 hover:text-red-600 hover:bg-slate-300'
+                          ? 'text-blue-400/80 hover:text-blue-300 hover:bg-[#161726]'
+                          : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]'
                       }`}
-                      title="Delete Project"
+                      title={currentUserProfile.role === 'manager' ? 'Edit Project' : 'Project Details'}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />
+                      {currentUserProfile.role === 'manager' ? <PencilSimple size={12} weight="bold" /> : <Info size={12} weight="bold" />}
                     </button>
-                  )}
+                    {currentUserProfile.role === 'manager' && (
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteProject(project.name, e);
+                        }}
+                        className={`p-1 rounded border-0 bg-transparent transition-colors ${
+                          selectedProject === project.name
+                            ? 'text-red-400 hover:text-red-300 hover:bg-[#161726]'
+                            : 'text-[#64748b] hover:text-red-500 hover:bg-[#161726]'
+                        }`}
+                        title="Delete Project"
+                      >
+                        <Trash size={12} weight="bold" />
+                      </button>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
 
-        {/* Checkers Filter */}
-        <div className="p-6 border-b border-slate-200 max-h-[30vh] overflow-y-auto">
-          <h3 className="text-xs font-bold text-slate-500 tracking-wider uppercase mb-3">Checkers</h3>
-          <div className="space-y-1">
-            <button
-              onClick={() => setSelectedCheckerId(null)}
-              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all border-0 ${
-                selectedCheckerId === null
-                  ? 'bg-slate-700 text-white font-semibold shadow-sm'
-                  : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
-              }`}
-            >
-              All Checkers
-            </button>
-            {checkers.map((checker) => (
+          {/* Checkers Filter */}
+          <div className="px-4">
+            <h3 className="text-[10px] font-bold text-[#64748b] tracking-widest uppercase px-2 mb-2">Checkers</h3>
+            <div className="space-y-1">
               <button
-                key={checker.id}
-                onClick={() => setSelectedCheckerId(checker.id)}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all border-0 ${
-                  selectedCheckerId === checker.id
-                    ? 'bg-slate-700 text-white font-semibold shadow-sm'
-                    : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
+                onClick={() => setSelectedCheckerId(null)}
+                className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-medium tracking-wide transition-all border-0 ${
+                  selectedCheckerId === null
+                    ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold shadow-sm'
+                    : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                 }`}
               >
-                {checker.name || checker.email}
+                All Checkers
               </button>
-            ))}
+              {checkers.map((checker) => (
+                <button
+                  key={checker.id}
+                  onClick={() => setSelectedCheckerId(checker.id)}
+                  className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-medium transition-all border-0 ${
+                    selectedCheckerId === checker.id
+                      ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold'
+                      : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
+                  }`}
+                >
+                  <span className="truncate">{checker.name || checker.email}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
         {/* Footer */}
-        <div className="p-6 absolute bottom-0 w-full bg-slate-100 border-t border-slate-200/55">
+        <div className="p-6 border-t border-[#24263b] bg-[#0d0e15]/40 absolute bottom-0 w-full">
           <button
-            className="w-full px-4 py-2.5 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors text-sm font-medium shadow-sm"
+            className="w-full flex items-center justify-center space-x-2 px-4 py-2.5 bg-red-500/10 border border-red-500/20 text-red-400 rounded-xl hover:bg-red-500 hover:text-white transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
             onClick={async () => {
               await logout();
             }}
           >
-            Sign Out
+            <SignOut size={14} weight="bold" />
+            <span>Sign Out</span>
           </button>
         </div>
       </aside>
@@ -298,198 +312,224 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Floating Project View/Edit Modal Overlay */}
       <AnimatePresence>
         {selectedDetailProject && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050508]/60 backdrop-blur-md p-4"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="w-[450px] max-w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-full max-w-md bg-[#11121d] border border-[#24263b] rounded-2xl shadow-2xl overflow-hidden"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 className="font-bold text-slate-800 text-lg leading-tight">
-                  {isEditingProject ? 'Edit Project Settings' : 'Project Information'}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#24263b] bg-[#0d0e15]/40">
+                <h3 className="font-bold text-[#f1f5f9] text-xs uppercase tracking-widest">
+                  {isEditingProject ? 'Edit Project' : 'Project Details'}
                 </h3>
                 <button
                   onClick={() => setSelectedDetailProject(null)}
-                  className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-200/50 rounded-md border-0 bg-transparent"
+                  className="text-[#64748b] hover:text-[#f1f5f9] transition-colors p-1.5 hover:bg-[#161726] rounded-full border border-[#24263b] flex items-center justify-center bg-transparent active:scale-95 duration-200"
                 >
-                  <X className="w-5 h-5" />
+                  <X size={14} weight="bold" />
                 </button>
               </div>
 
-              {/* Modal Form Content */}
-              <form onSubmit={handleSaveProjectEdit}>
-                <div className="p-6 space-y-4">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 tracking-wider uppercase mb-1.5">Project Name</label>
-                    {isEditingProject ? (
+              {/* Modal Body */}
+              <div className="p-6 space-y-4">
+                {isEditingProject ? (
+                  <form onSubmit={handleSaveProjectEdit} className="space-y-4">
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase mb-1.5">
+                        Project Name
+                      </label>
                       <input
                         type="text"
                         value={editProjectName}
                         onChange={(e) => setEditProjectName(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-200 bg-white !text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 font-medium"
-                        required
                         disabled={isSubmitting}
+                        required
+                        className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                       />
-                    ) : (
-                      <p className="text-base font-semibold text-slate-800 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
-                        {selectedDetailProject.name}
-                      </p>
-                    )}
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-500 tracking-wider uppercase mb-1.5">Description</label>
-                    {isEditingProject ? (
+                    </div>
+                    <div>
+                      <label className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase mb-1.5">
+                        Description
+                      </label>
                       <textarea
                         value={editProjectDesc}
                         onChange={(e) => setEditProjectDesc(e.target.value)}
-                        rows={3}
-                        className="w-full px-3 py-2 border border-slate-200 bg-white !text-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 resize-none leading-relaxed"
-                        placeholder="Provide details about the focus area of this project"
                         disabled={isSubmitting}
+                        rows={3}
+                        className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 resize-none"
                       />
-                    ) : (
-                      <p className="text-sm text-slate-600 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 leading-relaxed min-h-[4.5rem] break-words whitespace-pre-wrap">
-                        {selectedDetailProject.description || <span className="text-slate-400 italic">No description provided for this project.</span>}
+                    </div>
+
+                    {editProjectError && (
+                      <p className="text-xs text-red-400 bg-red-500/5 border border-red-500/10 p-2.5 rounded-xl">
+                        {editProjectError}
                       </p>
                     )}
-                  </div>
 
-                  {editProjectError && <p className="text-xs text-red-600">{editProjectError}</p>}
-                </div>
-
-                {/* Modal Actions Footer */}
-                <div className="flex space-x-2 px-6 py-4 bg-slate-50 border-t border-slate-100 justify-end">
-                  {isEditingProject ? (
-                    <>
+                    <div className="flex space-x-3 pt-2">
                       <button
                         type="button"
                         onClick={() => setIsEditingProject(false)}
-                        className="px-4 py-2 text-sm font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                        className="flex-1 px-4 py-2.5 bg-[#161726] border border-[#24263b] text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#1b1d30] rounded-xl transition-colors text-xs font-bold uppercase tracking-wider"
                       >
-                        Back
+                        Cancel
                       </button>
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="px-4 py-2 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 border border-slate-700 rounded-lg transition-colors"
+                        className="flex-1 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
                       >
-                        Save Changes
+                        {isSubmitting ? 'Saving...' : 'Save Changes'}
                       </button>
-                    </>
-                  ) : (
-                    <>
+                    </div>
+                  </form>
+                ) : (
+                  <div className="space-y-4">
+                    <div>
+                      <h4 className="text-[10px] font-bold text-[#64748b] tracking-wider uppercase mb-1">
+                        Project Name
+                      </h4>
+                      <p className="text-sm font-semibold text-[#f1f5f9]">{selectedDetailProject.name}</p>
+                    </div>
+                    <div>
+                      <h4 className="text-[10px] font-bold text-[#64748b] tracking-wider uppercase mb-1">
+                        Description
+                      </h4>
+                      <p className="text-sm text-[#f1f5f9] leading-relaxed break-words whitespace-pre-wrap bg-[#161726]/40 p-3 rounded-xl border border-[#24263b]">
+                        {selectedDetailProject.description || (
+                          <span className="text-[#64748b] italic">No description provided</span>
+                        )}
+                      </p>
+                    </div>
+
+                    <div className="flex space-x-3 pt-2">
                       {currentUserProfile.role === 'manager' && (
                         <>
                           <button
-                            type="button"
-                            onClick={() => handleDeleteProject(selectedDetailProject.name)}
-                            className="px-4 py-2 text-sm font-medium text-red-600 bg-white hover:bg-red-50 border border-red-200 rounded-lg transition-colors mr-auto"
-                          >
-                            Delete
-                          </button>
-                          <button
-                            type="button"
                             onClick={() => setIsEditingProject(true)}
-                            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                            className="flex-1 px-4 py-2.5 bg-[#161726] border border-[#24263b] text-[#f1f5f9] hover:bg-[#1b1d30] rounded-xl transition-colors text-xs font-bold uppercase tracking-wider"
                           >
                             Edit
+                          </button>
+                          <button
+                            onClick={() => handleDeleteProject(selectedDetailProject.name)}
+                            className="px-4 py-2.5 bg-red-500/10 border border-red-500/20 text-red-400 hover:bg-red-500 hover:text-white rounded-xl transition-all text-xs font-bold uppercase tracking-wider"
+                          >
+                            Delete
                           </button>
                         </>
                       )}
                       <button
-                        type="button"
                         onClick={() => setSelectedDetailProject(null)}
-                        className="px-4 py-2 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 border border-slate-700 rounded-lg transition-colors"
+                        className={`px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all text-xs font-bold uppercase tracking-wider ${
+                          currentUserProfile.role === 'manager' ? 'w-auto' : 'w-full'
+                        }`}
                       >
                         Close
                       </button>
-                    </>
-                  )}
-                </div>
-              </form>
+                    </div>
+                  </div>
+                )}
+              </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
+      </AnimatePresence>
 
-        {/* Floating Project Creation Modal Overlay */}
+      {/* Floating Project Add Modal Overlay */}
+      <AnimatePresence>
         {showAddForm && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-[#050508]/60 backdrop-blur-md p-4"
+          >
             <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0, scale: 0.95 }}
-              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
-              className="w-[450px] max-w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+              initial={{ scale: 0.95, opacity: 0, y: 15 }}
+              animate={{ scale: 1, opacity: 1, y: 0 }}
+              exit={{ scale: 0.95, opacity: 0, y: 15 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 200 }}
+              className="w-full max-w-md bg-[#11121d] border border-[#24263b] rounded-2xl shadow-2xl overflow-hidden"
             >
               {/* Modal Header */}
-              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
-                <h3 className="font-bold text-slate-800 text-lg leading-tight">
+              <div className="flex items-center justify-between px-6 py-4 border-b border-[#24263b] bg-[#0d0e15]/40">
+                <h3 className="font-bold text-[#f1f5f9] text-xs uppercase tracking-widest">
                   Create New Project
                 </h3>
                 <button
-                  type="button"
                   onClick={() => setShowAddForm(false)}
-                  className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-200/50 rounded-md border-0 bg-transparent"
+                  className="text-[#64748b] hover:text-[#f1f5f9] transition-colors p-1.5 hover:bg-[#161726] rounded-full border border-[#24263b] flex items-center justify-center bg-transparent active:scale-95 duration-200"
                 >
-                  <X className="w-5 h-5" />
+                  <X size={14} weight="bold" />
                 </button>
               </div>
 
-              {/* Modal Form Content */}
-              <form onSubmit={handleAddProject}>
-                <div className="p-6 space-y-4">
+              {/* Modal Body */}
+              <div className="p-6">
+                <form onSubmit={handleAddProject} className="space-y-4">
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 tracking-wider uppercase mb-1.5">Project Name</label>
+                    <label className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase mb-1.5">
+                      Project Name <span className="text-red-500">*</span>
+                    </label>
                     <input
                       type="text"
                       value={newProjectName}
                       onChange={(e) => setNewProjectName(e.target.value)}
-                      className="w-full px-3 py-2 border border-slate-200 bg-white !text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 font-medium"
-                      required
-                      placeholder="Enter project name"
                       disabled={isSubmitting}
+                      required
+                      placeholder="e.g. Q4 Growth"
+                      className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
                     />
                   </div>
-
                   <div>
-                    <label className="block text-xs font-bold text-slate-500 tracking-wider uppercase mb-1.5">Description</label>
+                    <label className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase mb-1.5">
+                      Description
+                    </label>
                     <textarea
                       value={newProjectDesc}
                       onChange={(e) => setNewProjectDesc(e.target.value)}
-                      rows={3}
-                      className="w-full px-3 py-2 border border-slate-200 bg-white !text-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 resize-none leading-relaxed"
-                      placeholder="Provide details about the focus area of this project"
                       disabled={isSubmitting}
+                      rows={3}
+                      placeholder="e.g. Commitment tracking for our quarterly OKRs"
+                      className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 resize-none"
                     />
                   </div>
 
-                  {formError && <p className="text-xs text-red-600">{formError}</p>}
-                </div>
+                  {formError && (
+                    <p className="text-xs text-red-400 bg-red-500/5 border border-red-500/10 p-2.5 rounded-xl">
+                      {formError}
+                    </p>
+                  )}
 
-                {/* Modal Actions Footer */}
-                <div className="flex space-x-2 px-6 py-4 bg-slate-50 border-t border-slate-100 justify-end">
-                  <button
-                    type="button"
-                    onClick={() => setShowAddForm(false)}
-                    className="px-4 py-2 text-sm font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="px-4 py-2 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 border border-slate-700 rounded-lg transition-colors"
-                  >
-                    Create Project
-                  </button>
-                </div>
-              </form>
+                  <div className="flex space-x-3 pt-2">
+                    <button
+                      type="button"
+                      onClick={() => setShowAddForm(false)}
+                      className="flex-1 px-4 py-2.5 bg-[#161726] border border-[#24263b] text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#1b1d30] rounded-xl transition-colors text-xs font-bold uppercase tracking-wider"
+                    >
+                      Cancel
+                    </button>
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      className="flex-1 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
+                    >
+                      {isSubmitting ? 'Creating...' : 'Create Project'}
+                    </button>
+                  </div>
+                </form>
+              </div>
             </motion.div>
-          </div>
+          </motion.div>
         )}
       </AnimatePresence>
     </>
