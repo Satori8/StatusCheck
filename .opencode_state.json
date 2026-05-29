@@ -12,7 +12,9 @@
     "Ran project-wide Next.js and TypeScript compilation with 100% success rate",
     "Resolved Vercel ESLint peer dependency conflict by aligning @typescript-eslint/eslint-plugin to version ^7.2.0 matching Next.js 14.2.3 and successfully rebuilt/pushed package lock updates",
     "Resolved Vercel broken symlink error by replacing the absolute Windows-based symlink CLAUDE.md with a physical markdown file pointing to AGENTS.md",
-    "Resolved Supabase signup 500 error by schema-qualifying enum types and setting search_path on the auth trigger function"
+    "Resolved Supabase signup 500 error by schema-qualifying enum types and setting search_path on the auth trigger function",
+    "Polished landing page UI to look highly premium, high-contrast, and professional with modern container structures and precise feature cards",
+    "Implemented client-side registration confirmed flow with beautiful success cards and bypassed email confirmation checks gracefully"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
