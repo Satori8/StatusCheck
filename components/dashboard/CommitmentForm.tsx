@@ -64,6 +64,27 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
   const [showNewProjectInput, setShowNewProjectInput] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
 
+  const projectOptions = [
+    { value: '', label: 'Select Project' },
+    ...projects.map(p => ({ value: p.name, label: p.name })),
+    ...(currentUserProfile.role === 'manager' ? [{ value: '__new__', label: '+ Create New Project...' }] : [])
+  ];
+
+  const assigneeOptions = [
+    { value: '', label: 'Select Assignee' },
+    ...checkers.map(c => ({ value: c.id, label: c.name || c.email }))
+  ];
+
+  const checkerOptions = [
+    { value: '', label: 'Select Checker' },
+    ...checkers.map(c => ({ value: c.id, label: c.name || c.email }))
+  ];
+
+  const statusOptionsMapped = statusOptions.map(opt => ({
+    value: opt.value,
+    label: opt.label
+  }));
+
   // Reset form when opened or when editing commitment changes
   useEffect(() => {
     if (isOpen) {
@@ -105,8 +126,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     }
   }, [isOpen, editingCommitment, currentUserProfile.id, checkers, currentUserProfile.role]);
 
-  const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const val = e.target.value;
+  const handleProjectSelect = (val: string) => {
     if (val === '__new__') {
       setShowNewProjectInput(true);
       setFormData(prev => ({ ...prev, project: '' }));
@@ -303,25 +323,15 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   Project <span className="text-red-500">*</span>
                 </label>
                 {!showNewProjectInput ? (
-                  <select
+                  <CustomDropdown
                     id="project-select"
                     value={formData.project}
-                    onChange={handleProjectChange}
+                    onChange={handleProjectSelect}
+                    options={projectOptions}
+                    placeholder="Select Project"
                     disabled={isSubmitting}
-                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
-                      errors.project ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                    }`}
-                  >
-                    <option value="">Select Project</option>
-                    {projects.map(project => (
-                      <option key={project.name} value={project.name}>
-                        {project.name}
-                      </option>
-                    ))}
-                    {currentUserProfile.role === 'manager' && (
-                      <option value="__new__">+ Create New Project...</option>
-                    )}
-                  </select>
+                    error={!!errors.project}
+                  />
                 ) : (
                   <div className="flex space-x-2">
                     <input
@@ -332,7 +342,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                         setFormData(prev => ({ ...prev, project: e.target.value }));
                       }}
                       placeholder="Enter new project name"
-                      className="flex-1 px-3 py-2 border border-slate-300 bg-white text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+                      className="flex-1 px-3 py-2 border border-slate-300 bg-white text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-sm"
                     />
                     <button
                       type="button"
@@ -341,7 +351,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                         setNewProjectName('');
                         setFormData(prev => ({ ...prev, project: projects[0]?.name || '' }));
                       }}
-                      className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 text-sm"
+                      className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 text-sm font-medium"
                     >
                       Cancel
                     </button>
@@ -360,23 +370,15 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                 <label htmlFor="assignee" className="block text-sm font-medium text-slate-700 mb-1">
                   Assignee <span className="text-red-500">*</span>
                 </label>
-                <select
+                <CustomDropdown
                   id="assignee"
-                  name="assignee"
                   value={formData.assignee}
-                  onChange={handleChange}
+                  onChange={(val) => setFormData(prev => ({ ...prev, assignee: val }))}
+                  options={assigneeOptions}
+                  placeholder="Select Assignee"
                   disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
-                    errors.assignee ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                  }`}
-                >
-                  <option value="">Select Assignee</option>
-                  {checkers.map(profile => (
-                    <option key={profile.id} value={profile.id}>
-                      {profile.name || profile.email}
-                    </option>
-                  ))}
-                </select>
+                  error={!!errors.assignee}
+                />
                 {errors.assignee && <p className="mt-1 text-sm text-red-600">{errors.assignee}</p>}
               </div>
 
@@ -385,23 +387,15 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                 <label htmlFor="checker" className="block text-sm font-medium text-slate-700 mb-1">
                   Checker <span className="text-red-500">*</span>
                 </label>
-                <select
+                <CustomDropdown
                   id="checker"
-                  name="checker"
                   value={formData.checker}
-                  onChange={handleChange}
+                  onChange={(val) => setFormData(prev => ({ ...prev, checker: val }))}
+                  options={checkerOptions}
+                  placeholder="Select Checker"
                   disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
-                    errors.checker ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                  }`}
-                >
-                  <option value="">Select Checker</option>
-                  {checkers.map(checker => (
-                    <option key={checker.id} value={checker.id}>
-                      {checker.name || checker.email}
-                    </option>
-                  ))}
-                </select>
+                  error={!!errors.checker}
+                />
                 {errors.checker && <p className="mt-1 text-sm text-red-600">{errors.checker}</p>}
               </div>
 
@@ -410,33 +404,23 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                 <div className="grid grid-cols-2 gap-4">
                   <div>
                     <label htmlFor="deadline" className="block text-sm font-medium text-slate-700 mb-1">
-                      Deadline <span className="text-slate-500 text-xs font-normal">(date required, time optional)</span> <span className="text-red-500">*</span>
+                      Deadline <span className="text-red-500">*</span>
                     </label>
-                    <input
-                      type="date"
-                      id="deadline"
-                      name="deadline"
+                    <CustomDatePicker
                       value={formData.deadline}
-                      onChange={handleChange}
+                      onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
                       disabled={isSubmitting}
-                      min={new Date().toISOString().split('T')[0]}
-                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
-                        errors.deadline ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                      }`}
+                      error={!!errors.deadline}
                     />
                   </div>
                   <div>
                     <label htmlFor="time" className="block text-sm font-medium text-slate-700 mb-1">
                       Time (optional)
                     </label>
-                    <input
-                      type="time"
-                      id="time"
-                      name="time"
+                    <CustomTimePicker
                       value={formData.time}
-                      onChange={handleChange}
+                      onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
                       disabled={isSubmitting}
-                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 focus:border-slate-500"
                     />
                   </div>
                 </div>
@@ -448,20 +432,13 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                 <label htmlFor="status" className="block text-sm font-medium text-slate-700 mb-1">
                   Status
                 </label>
-                <select
+                <CustomDropdown
                   id="status"
-                  name="status"
                   value={formData.status}
-                  onChange={handleChange}
+                  onChange={(val) => setFormData(prev => ({ ...prev, status: val as CommitmentStatus }))}
+                  options={statusOptionsMapped}
                   disabled={isSubmitting}
-                  className="w-full px-3 py-2 border border-slate-300 bg-white text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
-                >
-                  {statusOptions.map(option => (
-                    <option key={option.value} value={option.value}>
-                      {option.label}
-                    </option>
-                  ))}
-                </select>
+                />
               </div>
 
               {/* Backend error display */}
@@ -528,6 +505,378 @@ const LoadingSpinner: React.FC<{ size?: 'sm' | 'md' | 'lg'; className?: string }
       >
         <span className="sr-only">Loading...</span>
       </div>
+    </div>
+  );
+};
+
+// Custom Dropdown Selection Component
+interface DropdownProps {
+  id?: string;
+  value: string;
+  onChange: (value: string) => void;
+  options: { value: string; label: string }[];
+  placeholder?: string;
+  disabled?: boolean;
+  error?: boolean;
+}
+
+const CustomDropdown: React.FC<DropdownProps> = ({
+  value,
+  onChange,
+  options,
+  placeholder = 'Select option',
+  disabled = false,
+  error = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const selectedOption = options.find(opt => opt.value === value);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left disabled:opacity-50 text-sm ${
+          error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
+        }`}
+      >
+        <span className="truncate">{selectedOption ? selectedOption.label : placeholder}</span>
+        <svg className={`w-4 h-4 ml-2 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+          <ul className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto py-1 text-sm">
+            {options.map(opt => (
+              <li key={opt.value}>
+                <button
+                  type="button"
+                  onClick={() => {
+                    onChange(opt.value);
+                    setIsOpen(false);
+                  }}
+                  className={`w-full text-left px-3 py-2 hover:bg-slate-50 transition-colors ${
+                    opt.value === value ? 'bg-slate-50 font-semibold text-slate-900' : 'text-slate-700'
+                  }`}
+                >
+                  {opt.label}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+};
+
+// Custom Interactive Calendar Date Picker
+interface DatePickerProps {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+  error?: boolean;
+}
+
+const CustomDatePicker: React.FC<DatePickerProps> = ({
+  value,
+  onChange,
+  disabled = false,
+  error = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  const [currentDate, setCurrentDate] = useState(new Date());
+
+  // value is in YYYY-MM-DD format
+  const selectedDate = value ? new Date(value) : null;
+
+  const year = currentDate.getFullYear();
+  const month = currentDate.getMonth();
+
+  // Get first day of the month and number of days in the month
+  const firstDayIndex = new Date(year, month, 1).getDay();
+  const totalDays = new Date(year, month + 1, 0).getDate();
+
+  // Month names
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+
+  const handlePrevMonth = () => {
+    setCurrentDate(new Date(year, month - 1, 1));
+  };
+
+  const handleNextMonth = () => {
+    setCurrentDate(new Date(year, month + 1, 1));
+  };
+
+  const handleDayClick = (day: number) => {
+    const formattedMonth = String(month + 1).padStart(2, '0');
+    const formattedDay = String(day).padStart(2, '0');
+    const dateStr = `${year}-${formattedMonth}-${formattedDay}`;
+    onChange(dateStr);
+    setIsOpen(false);
+  };
+
+  const isToday = (day: number) => {
+    const today = new Date();
+    return today.getDate() === day && today.getMonth() === month && today.getFullYear() === year;
+  };
+
+  const isSelected = (day: number) => {
+    if (!selectedDate) return false;
+    return selectedDate.getDate() === day && selectedDate.getMonth() === month && selectedDate.getFullYear() === year;
+  };
+
+  const isPast = (day: number) => {
+    const d = new Date(year, month, day);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    return d < today;
+  };
+
+  // Generate days array
+  const days = [];
+  for (let i = 0; i < firstDayIndex; i++) {
+    days.push(null);
+  }
+  for (let i = 1; i <= totalDays; i++) {
+    days.push(i);
+  }
+
+  // Format selected date for display
+  const displayValue = selectedDate 
+    ? selectedDate.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })
+    : 'Select date';
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left disabled:opacity-50 text-sm ${
+          error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
+        }`}
+      >
+        <span>{displayValue}</span>
+        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+          <div className="absolute z-20 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-4 w-72 left-0 md:left-auto md:right-0">
+            {/* Header */}
+            <div className="flex items-center justify-between mb-4">
+              <button
+                type="button"
+                onClick={handlePrevMonth}
+                className="p-1 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+              </button>
+              <span className="font-semibold text-slate-800 text-sm">
+                {monthNames[month]} {year}
+              </span>
+              <button
+                type="button"
+                onClick={handleNextMonth}
+                className="p-1 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Weekdays */}
+            <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500 mb-2">
+              <div>Su</div>
+              <div>Mo</div>
+              <div>Tu</div>
+              <div>We</div>
+              <div>Th</div>
+              <div>Fr</div>
+              <div>Sa</div>
+            </div>
+
+            {/* Days */}
+            <div className="grid grid-cols-7 gap-1">
+              {days.map((day, idx) => {
+                if (day === null) {
+                  return <div key={`empty-${idx}`} />;
+                }
+
+                const past = isPast(day);
+                const selected = isSelected(day);
+                const today = isToday(day);
+
+                return (
+                  <button
+                    key={`day-${day}`}
+                    type="button"
+                    disabled={past}
+                    onClick={() => handleDayClick(day)}
+                    className={`h-8 w-8 text-xs font-medium rounded-lg flex items-center justify-center transition-colors ${
+                      selected
+                        ? 'bg-slate-800 text-white font-semibold shadow-sm'
+                        : past
+                          ? 'text-slate-300 cursor-not-allowed'
+                          : today
+                            ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300'
+                            : 'text-slate-700 hover:bg-slate-100'
+                    }`}
+                  >
+                    {day}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+};
+
+// Custom Interactive Time Picker Component
+interface TimePickerProps {
+  value: string;
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}
+
+const CustomTimePicker: React.FC<TimePickerProps> = ({
+  value,
+  onChange,
+  disabled = false,
+}) => {
+  const [isOpen, setIsOpen] = useState(false);
+  
+  // value is in HH:MM format
+  const [hour, setHour] = useState(value ? value.split(':')[0] : '12');
+  const [minute, setMinute] = useState(value ? value.split(':')[1] : '00');
+
+  useEffect(() => {
+    if (value) {
+      const parts = value.split(':');
+      setHour(parts[0] || '12');
+      setMinute(parts[1] || '00');
+    } else {
+      setHour('');
+      setMinute('');
+    }
+  }, [value]);
+
+  const handleHourSelect = (h: string) => {
+    const m = minute || '00';
+    setHour(h);
+    onChange(`${h}:${m}`);
+  };
+
+  const handleMinuteSelect = (m: string) => {
+    const h = hour || '12';
+    setMinute(m);
+    onChange(`${h}:${m}`);
+  };
+
+  const handleClear = () => {
+    setHour('');
+    setMinute('');
+    onChange('');
+    setIsOpen(false);
+  };
+
+  const displayValue = value ? value : 'Select time';
+
+  // Hours: 00 to 23
+  const hours = Array.from({ length: 24 }, (_, i) => String(i).padStart(2, '0'));
+  // Minutes: 00, 05, 10, ... 55
+  const minutes = Array.from({ length: 12 }, (_, i) => String(i * 5).padStart(2, '0'));
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        disabled={disabled}
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left disabled:opacity-50 text-sm"
+      >
+        <span>{displayValue}</span>
+        <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </button>
+
+      {isOpen && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
+          <div className="absolute z-20 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64 right-0 flex flex-col">
+            <div className="flex gap-2 max-h-48 overflow-hidden mb-2">
+              {/* Hours Column */}
+              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40">
+                <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Hour</div>
+                {hours.map(h => (
+                  <button
+                    key={`h-${h}`}
+                    type="button"
+                    onClick={() => handleHourSelect(h)}
+                    className={`w-full text-center py-1 text-xs font-semibold hover:bg-slate-50 ${
+                      hour === h ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold' : 'text-slate-700'
+                    }`}
+                  >
+                    {h}
+                  </button>
+                ))}
+              </div>
+
+              {/* Minutes Column */}
+              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40">
+                <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Min</div>
+                {minutes.map(m => (
+                  <button
+                    key={`m-${m}`}
+                    type="button"
+                    onClick={() => handleMinuteSelect(m)}
+                    className={`w-full text-center py-1 text-xs font-semibold hover:bg-slate-50 ${
+                      minute === m ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold' : 'text-slate-700'
+                    }`}
+                  >
+                    {m}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="flex justify-between items-center border-t border-slate-100 pt-2">
+              <button
+                type="button"
+                onClick={handleClear}
+                className="text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1 hover:bg-red-50 rounded-lg"
+              >
+                Clear
+              </button>
+              <button
+                type="button"
+                onClick={() => setIsOpen(false)}
+                className="text-xs text-slate-700 hover:bg-slate-100 border border-slate-200 font-semibold px-2.5 py-1 rounded-lg"
+              >
+                OK
+              </button>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };
