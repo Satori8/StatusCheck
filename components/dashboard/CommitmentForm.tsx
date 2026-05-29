@@ -728,7 +728,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                     type="button"
                     disabled={past}
                     onClick={() => handleDayClick(day)}
-                    className={`h-8 w-8 text-xs font-medium rounded-lg flex items-center justify-center transition-colors ${
+                    className={`h-7 w-7 text-xs font-medium rounded-lg flex items-center justify-center transition-colors ${
                       selected
                         ? 'bg-slate-800 text-white font-semibold shadow-sm'
                         : past
