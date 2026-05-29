@@ -29,7 +29,12 @@
     "Engineered true, native drag & drop capability on FullCalendar, letting users visually move tasks between days, triggering instant database writes via server-actions and auto-reverting on failures",
     "Expanded the calendar details popover modal layout (width, padding) and added clean break-words/scroll configurations to display long descriptions perfectly without truncating or container overflowing",
     "Upgraded project field in task creation from an insecure plain textfield into a smart select dropdown containing all existing projects, plus a dynamic new project creation input for managers",
-    "Mapped list row clicks in CommitmentList to open the details/edit modal directly, stopping event propagation on sub-buttons"
+    "Mapped list row clicks in CommitmentList to open the details/edit modal directly, stopping event propagation on sub-buttons",
+    "Fixed silent column-name database crash on profiles by changing the auth query parameter from user_id to id in layout.tsx and page.tsx, restoring correct manager role detection",
+    "Architected and deployed a relational database table 'public.projects' in the SQL migration to store official projects with custom description metadata",
+    "Engineered interactive, backend-driven project CRUD Server Actions (get, create, delete, update) for managing projects seamlessly",
+    "Reworked the sidebar and filters list to show the live database projects, displaying a beautiful info tooltip description on hover, and giving managers a Plus button and inline form to manage projects with real-time deletions",
+    "Redesigned the details view in the calendar to be a gorgeous centered modal overlay with a frosted-glass backdrop, clean vertical stacked fields (no more truncation or wrapping), and direct display of creation dates alongside nullable deadlines"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
