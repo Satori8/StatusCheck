@@ -3,6 +3,7 @@
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 import { getCommitments, getProfiles } from '@/app/actions/commitments';
+import { getProjects } from '@/app/actions/projects';
 import { DashboardPageClient } from '@/components/dashboard/DashboardPageClient';
 
 export default async function DashboardPage() {
@@ -19,7 +20,7 @@ export default async function DashboardPage() {
   const { data: authData } = await supabase
     .from('profiles')
     .select('email, role, id')
-    .eq('user_id', user.id)
+    .eq('id', user.id)
     .single();
 
   const currentUserProfile = authData || {
@@ -29,14 +30,15 @@ export default async function DashboardPage() {
   };
 
   // Fetch data in parallel
-  const [commitmentsResult, profilesResult] = await Promise.all([
+  const [commitmentsResult, profilesResult, projectsResult] = await Promise.all([
     getCommitments(),
-    getProfiles()
+    getProfiles(),
+    getProjects()
   ]);
 
   // Handle errors
-  if (commitmentsResult.error || profilesResult.error) {
-    console.error('Failed to fetch data:', commitmentsResult.error || profilesResult.error);
+  if (commitmentsResult.error || profilesResult.error || projectsResult.error) {
+    console.error('Failed to fetch data:', commitmentsResult.error || profilesResult.error || projectsResult.error);
     // In a real app, you might want to show an error page
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -52,6 +54,7 @@ export default async function DashboardPage() {
     <DashboardPageClient
       commitments={commitmentsResult.data || []}
       profiles={profilesResult.data || []}
+      projects={projectsResult.data || []}
       currentUserProfile={currentUserProfile}
     />
   );

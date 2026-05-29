@@ -35,6 +35,7 @@ interface Commitment {
 interface DashboardPageClientProps {
   commitments: Commitment[]
   profiles: Profile[]
+  projects: { name: string; description?: string | null }[]
   currentUserProfile: {
     email: string
     role: 'manager' | 'member'
@@ -45,6 +46,7 @@ interface DashboardPageClientProps {
 export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
   commitments,
   profiles,
+  projects,
   currentUserProfile
 }) => {
   const router = useRouter();
@@ -128,11 +130,6 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
       email: profile.email
     }));
   }, [profiles]);
-
-  // Dynamically extract the list of existing projects
-  const projects = useMemo(() => {
-    return Array.from(new Set(commitments.map(c => c.project)));
-  }, [commitments]);
 
   return (
     <ErrorBoundary>

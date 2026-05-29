@@ -10,7 +10,7 @@ interface DashboardClientWrapperProps {
     email: string;
     role: 'manager' | 'member';
   };
-  projects: string[];
+  projects: { name: string; description?: string | null }[];
   checkers: { id: string; email: string }[];
 }
 

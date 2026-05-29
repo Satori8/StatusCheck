@@ -27,7 +27,7 @@ interface CommitmentFormProps {
   };
   checkers: { id: string; email: string }[];
   editingCommitment: Commitment | null;
-  projects: string[];
+  projects: { name: string; description?: string | null }[];
 }
 
 const statusOptions: { value: CommitmentStatus; label: string }[] = [
@@ -77,7 +77,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           project: editingCommitment.project,
           assignee: editingCommitment.assignee_id || currentUserProfile.id,
           checker: editingCommitment.checker_id || (currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || '')),
-          deadline: editingCommitment.deadline.split('T')[0],
+          deadline: editingCommitment.deadline ? editingCommitment.deadline.split('T')[0] : '',
           status: editingCommitment.status,
         });
       } else {
@@ -129,7 +129,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
       newErrors.checker = 'Checker is required';
     }
 
-    if (!formData.deadline) {
+    if (formData.status !== 'ideas_backlog' && !formData.deadline) {
       newErrors.deadline = 'Deadline is required';
     }
 
@@ -155,7 +155,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
         project: formData.project,
         assignee_id: formData.assignee,
         checker_id: formData.checker,
-        deadline: formData.deadline,
+        deadline: formData.deadline || null,
         status: formData.status,
       };
 
@@ -291,8 +291,8 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   >
                     <option value="">Select Project</option>
                     {projects.map(project => (
-                      <option key={project} value={project}>
-                        {project}
+                      <option key={project.name} value={project.name}>
+                        {project.name}
                       </option>
                     ))}
                     {currentUserProfile.role === 'manager' && (
@@ -316,13 +316,18 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                       onClick={() => {
                         setShowNewProjectInput(false);
                         setNewProjectName('');
-                        setFormData(prev => ({ ...prev, project: projects[0] || '' }));
+                        setFormData(prev => ({ ...prev, project: projects[0]?.name || '' }));
                       }}
                       className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 text-sm"
                     >
                       Cancel
                     </button>
                   </div>
+                )}
+                {!showNewProjectInput && projects.find(p => p.name === formData.project)?.description && (
+                  <p className="mt-1 text-xs text-slate-500 italic leading-relaxed">
+                    Description: {projects.find(p => p.name === formData.project)?.description}
+                  </p>
                 )}
                 {errors.project && <p className="mt-1 text-sm text-red-600">{errors.project}</p>}
               </div>

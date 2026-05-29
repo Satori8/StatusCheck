@@ -82,3 +82,35 @@ CREATE POLICY insert_commitments ON public.commitments FOR INSERT TO authenticat
 CREATE POLICY update_commitments ON public.commitments FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 
 CREATE POLICY delete_commitments ON public.commitments FOR DELETE TO authenticated USING (true);
+
+-- Make deadline column nullable to support backlog items without deadlines
+ALTER TABLE public.commitments ALTER COLUMN deadline DROP NOT NULL;
+
+-- Create projects table
+CREATE TABLE IF NOT EXISTS public.projects (
+  name TEXT PRIMARY KEY,
+  description TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+-- Pre-populate projects table with unique projects currently in commitments
+INSERT INTO public.projects (name)
+SELECT DISTINCT project FROM public.commitments
+ON CONFLICT (name) DO NOTHING;
+
+-- Enable RLS on projects
+ALTER TABLE public.projects ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY select_projects ON public.projects FOR SELECT TO authenticated USING (true);
+
+CREATE POLICY insert_projects ON public.projects FOR INSERT TO authenticated WITH CHECK (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
+);
+
+CREATE POLICY update_projects ON public.projects FOR UPDATE TO authenticated WITH CHECK (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
+);
+
+CREATE POLICY delete_projects ON public.projects FOR DELETE TO authenticated USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
+);

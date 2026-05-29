@@ -22,7 +22,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   const { data: authData } = await supabase
     .from('profiles')
     .select('email, role, id')
-    .eq('user_id', user.id)
+    .eq('id', user.id)
     .single();
 
   const userProfile = authData || {
@@ -31,16 +31,13 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     id: user.id,
   };
 
-  // Fetch unique projects for filter
-  // Note: In a real app, you would query your commitments table
+  // Fetch projects directly from the database table
   const { data: projectsData } = await supabase
-    .from('commitments')
-    .select('project')
-    .is('project', 'not.null');
+    .from('projects')
+    .select('name, description')
+    .order('name', { ascending: true });
 
-  const uniqueProjects = projectsData
-    ? Array.from(new Set(projectsData.map(p => p.project).filter((p): p is string => p !== null)))
-    : [];
+  const uniqueProjects = projectsData || [];
 
   // Fetch checkers (all users with profiles)
   const { data: checkersData } = await supabase
