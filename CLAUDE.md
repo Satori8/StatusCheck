@@ -1,1 +1,3 @@
-D:/Work/Active/Calendar/AGENTS.md
+# Claude Guidelines
+
+Please refer to [AGENTS.md](./AGENTS.md) for master regulatory rules and guidelines.
