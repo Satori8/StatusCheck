@@ -728,17 +728,21 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                     type="button"
                     disabled={past}
                     onClick={() => handleDayClick(day)}
-                    className={`h-7 w-7 text-xs font-medium rounded-lg flex items-center justify-center transition-colors ${
-                      selected
-                        ? 'bg-slate-800 text-white font-semibold shadow-sm'
-                        : past
-                          ? 'bg-transparent text-slate-300 cursor-not-allowed'
-                          : today
-                            ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50'
-                            : 'bg-transparent hover:bg-slate-100 text-slate-700'
-                    }`}
+                    className="h-8 w-8 flex items-center justify-center focus:outline-none relative mx-auto"
                   >
-                    {day}
+                    <span
+                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
+                        selected
+                          ? 'bg-slate-800 text-white font-semibold shadow-sm'
+                          : past
+                            ? 'bg-transparent text-slate-300 cursor-not-allowed'
+                            : today
+                              ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50'
+                              : 'bg-transparent hover:bg-slate-100 text-slate-700'
+                      }`}
+                    >
+                      {day}
+                    </span>
                   </button>
                 );
               })}
