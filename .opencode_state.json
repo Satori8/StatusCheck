@@ -41,7 +41,9 @@
     "Restyled inactive buttons (sidebar, view switchers, and tabs) to increase visual contrast and hover haptic color feedbacks",
     "Corrected update_projects RLS policy by adding the missing USING clause to authorize manager renames and updates in PostgreSQL",
     "Programmed client-side auto-status restoration resetting status from 'expired' back to 'to_check' (actual) if the deadline is updated to a future date during editing",
-    "Overrode dark leaked input fields inside the light white modal by applying explicit bg-white and text-slate-800, providing premium high-contrast editing forms"
+    "Overrode dark leaked input fields inside the light white modal by applying explicit bg-white and text-slate-800, providing premium high-contrast editing forms",
+    "Engineered automatic self-healing database sync inside getProjects action to auto-insert missing project categories from commitments and fix historical mismatch states",
+    "Refactored all dashboard commitment edit fields (inputs, textareas, and selects) to enforce the high-contrast light theme style matching the sidebar modal"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
