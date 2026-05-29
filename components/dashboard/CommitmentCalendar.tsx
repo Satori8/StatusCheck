@@ -6,6 +6,8 @@ import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Check } from 'lucide-react';
+import { updateCommitment } from '@/app/actions/commitments';
+import { useRouter } from 'next/navigation';
 
 interface Commitment {
   id: string;
@@ -61,11 +63,33 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   onEditCommitment,
   currentUserProfile
 }) => {
+  const router = useRouter();
   const [selectedEvent, setSelectedEvent] = useState<Commitment | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const [popoverPosition, setPopoverPosition] = useState({ top: 0, left: 0 });
   const calendarRef = useRef<FullCalendar | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+
+  // Handle event drag & drop (moving commitment to another day)
+  const handleEventDrop = async (dropInfo: { event: { id: string; start: Date | null }; revert: () => void }) => {
+    const { event } = dropInfo;
+    const commitment = commitments.find(c => c.id === event.id);
+    
+    if (commitment && event.start) {
+      const newDate = event.start.toISOString().split('T')[0] + 'T00:00:00';
+      
+      const result = await updateCommitment(commitment.id, {
+        deadline: newDate
+      });
+      
+      if (result.success) {
+        router.refresh();
+      } else {
+        alert(result.error || 'Failed to update date');
+        dropInfo.revert();
+      }
+    }
+  };
 
   // Close popover when clicking outside
   useEffect(() => {
@@ -170,6 +194,8 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
           }))}
           eventContent={renderEventContent}
           eventClick={handleEventClick}
+          editable={true}
+          eventDrop={handleEventDrop}
           height="auto"
           contentHeight={600}
           aspectRatio={1.5}
@@ -205,15 +231,15 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
             className="fixed z-50"
             style={{ top: popoverPosition.top, left: popoverPosition.left }}
           >
-            <div className="w-80 bg-white rounded-lg shadow-2xl border border-slate-200 overflow-hidden">
+            <div className="w-[400px] max-w-md bg-white rounded-xl shadow-2xl border border-slate-200 overflow-hidden">
               {/* Popover Header */}
               <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
-                <h3 className="font-semibold text-slate-800 truncate">
+                <h3 className="font-semibold text-slate-800 truncate pr-4">
                   {selectedEvent.title}
                 </h3>
                 <button
                   onClick={() => setIsPopoverOpen(false)}
-                  className="text-slate-400 hover:text-slate-600 transition-colors"
+                  className="text-slate-400 hover:text-slate-600 transition-colors flex-shrink-0"
                   aria-label="Close"
                 >
                   <X className="w-5 h-5" />
@@ -224,8 +250,8 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
               <div className="px-5 py-4 space-y-4">
                 {/* Description */}
                 {selectedEvent.description && (
-                  <div>
-                    <p className="text-sm text-slate-600 leading-relaxed">
+                  <div className="border-b border-slate-100 pb-3">
+                    <p className="text-sm text-slate-600 leading-relaxed break-words whitespace-pre-wrap max-h-48 overflow-y-auto pr-1">
                       {selectedEvent.description}
                     </p>
                   </div>

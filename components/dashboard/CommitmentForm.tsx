@@ -27,6 +27,7 @@ interface CommitmentFormProps {
   };
   checkers: { id: string; email: string }[];
   editingCommitment: Commitment | null;
+  projects: string[];
 }
 
 const statusOptions: { value: CommitmentStatus; label: string }[] = [
@@ -44,6 +45,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
   currentUserProfile,
   checkers,
   editingCommitment,
+  projects,
 }) => {
   const [formData, setFormData] = useState({
     title: '',
@@ -57,10 +59,16 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [backendError, setBackendError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  const [showNewProjectInput, setShowNewProjectInput] = useState(false);
+  const [newProjectName, setNewProjectName] = useState('');
 
   // Reset form when opened or when editing commitment changes
   useEffect(() => {
     if (isOpen) {
+      setShowNewProjectInput(false);
+      setNewProjectName('');
+      
       if (editingCommitment) {
         // Edit mode - populate form with existing commitment data
         setFormData({
@@ -88,6 +96,17 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
       setBackendError(null);
     }
   }, [isOpen, editingCommitment, currentUserProfile.id, checkers, currentUserProfile.role]);
+
+  const handleProjectChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const val = e.target.value;
+    if (val === '__new__') {
+      setShowNewProjectInput(true);
+      setFormData(prev => ({ ...prev, project: '' }));
+    } else {
+      setShowNewProjectInput(false);
+      setFormData(prev => ({ ...prev, project: val }));
+    }
+  };
 
   const validateForm = (): boolean => {
     const newErrors: Record<string, string> = {};
@@ -255,23 +274,56 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                 />
               </div>
 
-              {/* Project */}
+              {/* Project Selection */}
               <div>
                 <label htmlFor="project" className="block text-sm font-medium text-slate-700 mb-1">
                   Project <span className="text-red-500">*</span>
                 </label>
-                <input
-                  type="text"
-                  id="project"
-                  name="project"
-                  value={formData.project}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
-                    errors.project ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                  }`}
-                  placeholder="Enter project name"
-                />
+                {!showNewProjectInput ? (
+                  <select
+                    id="project-select"
+                    value={formData.project}
+                    onChange={handleProjectChange}
+                    disabled={isSubmitting}
+                    className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
+                      errors.project ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
+                    }`}
+                  >
+                    <option value="">Select Project</option>
+                    {projects.map(project => (
+                      <option key={project} value={project}>
+                        {project}
+                      </option>
+                    ))}
+                    {currentUserProfile.role === 'manager' && (
+                      <option value="__new__">+ Create New Project...</option>
+                    )}
+                  </select>
+                ) : (
+                  <div className="flex space-x-2">
+                    <input
+                      type="text"
+                      value={newProjectName}
+                      onChange={(e) => {
+                        setNewProjectName(e.target.value);
+                        setFormData(prev => ({ ...prev, project: e.target.value }));
+                      }}
+                      placeholder="Enter new project name"
+                      className="flex-1 px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowNewProjectInput(false);
+                        setNewProjectName('');
+                        setFormData(prev => ({ ...prev, project: projects[0] || '' }));
+                      }}
+                      className="px-3 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg border border-slate-200 text-sm"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                )}
                 {errors.project && <p className="mt-1 text-sm text-red-600">{errors.project}</p>}
               </div>
 

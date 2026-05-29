@@ -129,6 +129,11 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
     }));
   }, [profiles]);
 
+  // Dynamically extract the list of existing projects
+  const projects = useMemo(() => {
+    return Array.from(new Set(commitments.map(c => c.project)));
+  }, [commitments]);
+
   return (
     <ErrorBoundary>
       <div className="space-y-6">
@@ -311,6 +316,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
         currentUserProfile={currentUserProfile}
         checkers={checkers}
         editingCommitment={editingCommitment}
+        projects={projects}
       />
     </ErrorBoundary>
   );

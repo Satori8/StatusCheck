@@ -156,7 +156,8 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -5 }}
                   transition={{ duration: 0.2 }}
-                  className="bg-white rounded-lg border border-slate-100 shadow-sm hover:shadow-md transition-shadow"
+                  className="bg-white rounded-lg border border-slate-100 shadow-sm hover:shadow-md hover:border-slate-300 transition-all cursor-pointer"
+                  onClick={() => onEditCommitment(commitment)}
                 >
                   {/* Mobile Header */}
                   <div className="md:hidden px-4 py-3 border-b border-slate-100">
@@ -165,7 +166,10 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                         {commitment.title}
                       </h3>
                       <button
-                        onClick={() => setExpandedCommitmentId(isExpanded ? null : commitment.id)}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setExpandedCommitmentId(isExpanded ? null : commitment.id);
+                        }}
                         className="text-slate-400 hover:text-slate-600 transition-colors"
                       >
                         {isExpanded ? <ChevronUp className="w-5 h-5" /> : <ChevronDown className="w-5 h-5" />}
@@ -229,7 +233,10 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                       {canEditCommitment(commitment) && (
                         <div className="flex space-x-1">
                           <button
-                            onClick={() => handleMarkAsDone(commitment)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleMarkAsDone(commitment);
+                            }}
                             disabled={commitment.status === 'done'}
                             className={`p-1 rounded-md transition-colors ${commitment.status === 'done' ? 'text-slate-300 cursor-not-allowed' : 'text-emerald-600 hover:bg-emerald-50'}`}
                             title="Mark as Done"
@@ -237,7 +244,10 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                             <Check className="w-4 h-4" />
                           </button>
                           <button
-                            onClick={() => onEditCommitment(commitment)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              onEditCommitment(commitment);
+                            }}
                             className="p-1 text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
                             title="Edit"
                           >

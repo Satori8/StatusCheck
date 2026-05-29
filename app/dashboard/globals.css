@@ -38,3 +38,129 @@ button, a, input, select, textarea {
   background-clip: text;
   text-fill-color: transparent;
 }
+
+/* ==========================================
+   EXECUTIVE LIGHT-SLATE FULLCALENDAR STYLING
+   ========================================== */
+.fc {
+  --fc-border-color: #e2e8f0 !important; /* light, visible slate-200 grid lines */
+  --fc-page-bg-color: #ffffff !important;
+  --fc-text-color: #334155 !important; /* readable dark slate day numbers */
+  
+  --fc-button-bg-color: #f1f5f9 !important; /* soft slate-100 button backgrounds */
+  --fc-button-border-color: #e2e8f0 !important; /* slate-200 button borders */
+  --fc-button-text-color: #475569 !important; /* slate-600 button labels */
+  --fc-button-hover-bg-color: #e2e8f0 !important;
+  --fc-button-hover-border-color: #cbd5e1 !important;
+  --fc-button-active-bg-color: #cbd5e1 !important;
+  
+  --fc-today-bg-color: rgba(226, 232, 240, 0.4) !important; /* subtle today cell background */
+  font-family: inherit !important;
+}
+
+/* Grid layout line visible border fix */
+.fc-theme-standard td, .fc-theme-standard th {
+  border: 1px solid #e2e8f0 !important;
+}
+
+/* Table header cells background & text styling */
+.fc .fc-col-header-cell {
+  background-color: #f8fafc !important; /* elegant soft slate-50 background, NOT black */
+  padding: 0.75rem 0.25rem !important;
+  border-bottom: 2px solid #e2e8f0 !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+  color: #475569 !important; /* slate-600 headers */
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  font-size: 0.75rem !important;
+  letter-spacing: 0.05em !important;
+  text-decoration: none !important;
+}
+
+/* Today Day Cell Corner Radius */
+.fc .fc-day-today {
+  border-radius: 12px !important; /* Rounded corners for the active day cell! */
+  box-shadow: inset 0 0 0 2px #cbd5e1 !important; /* subtle inner ring highlighting today */
+}
+
+/* Highlight today's date number dynamically */
+.fc .fc-day-today .fc-daygrid-day-number {
+  background-color: #475569 !important; /* slate-600 circle bg */
+  color: #ffffff !important;
+  border-radius: 9999px !important;
+  padding: 0.25rem 0.5rem !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 1.75rem !important;
+  height: 1.75rem !important;
+}
+
+/* Day cell hovering transitions */
+.fc .fc-daygrid-day:hover {
+  background-color: #f8fafc !important;
+  transition: background-color 0.2s ease;
+}
+
+/* Link element decoration removals */
+.fc .fc-daygrid-day-number, .fc .fc-daygrid-day-top {
+  color: #64748b !important; /* slate-500 day numbers */
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  font-size: 0.875rem !important;
+}
+
+/* Event formatting custom classes override */
+.fc .custom-event {
+  background-color: #f8fafc !important; /* soft white card background */
+  border: 1px solid #e2e8f0 !important;
+  border-left: 4px solid #64748b !important; /* bold accent slate line on left */
+  border-radius: 8px !important;
+  padding: 4px 6px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  cursor: grab !important;
+  transition: transform 0.15s ease, box-shadow 0.15s ease !important;
+}
+
+.fc .custom-event:active {
+  cursor: grabbing !important;
+  transform: scale(0.98) !important;
+}
+
+.fc .custom-event:hover {
+  background-color: #ffffff !important;
+  border-color: #cbd5e1 !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Clean primary toolbar buttons */
+.fc .fc-button-primary {
+  border: 1px solid #e2e8f0 !important;
+  font-weight: 500 !important;
+  font-size: 0.875rem !important;
+  border-radius: 8px !important;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02) !important;
+  background-color: #ffffff !important;
+  color: #475569 !important;
+  text-transform: capitalize !important;
+}
+
+.fc .fc-button-primary:not(:disabled):active, 
+.fc .fc-button-primary:not(:disabled).fc-button-active {
+  background-color: #f1f5f9 !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.02) !important;
+}
+
+.fc .fc-button-primary:hover {
+  background-color: #f8fafc !important;
+  border-color: #cbd5e1 !important;
+  color: #1e293b !important;
+}
+
+.fc .fc-button-primary:focus {
+  box-shadow: 0 0 0 2px rgba(100, 116, 139, 0.15) !important;
+}
