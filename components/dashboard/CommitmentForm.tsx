@@ -2,6 +2,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { X } from 'lucide-react';
 
 type CommitmentStatus = 'to_check' | 'done' | 'expired' | 'not_actual' | 'ideas_backlog';
 
@@ -260,7 +261,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           transition={{ type: 'spring', damping: 25, stiffness: 300 }}
           className="w-full max-w-md mx-4 md:mx-0"
         >
-          <div className="bg-white rounded-xl shadow-2xl overflow-hidden">
+          <div className="bg-white rounded-xl shadow-2xl">
             {/* Header with close button */}
             <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
               <h2 className="text-lg font-semibold text-slate-800">
@@ -269,12 +270,10 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
               <button
                 onClick={onClose}
                 disabled={isSubmitting}
-                className="text-slate-400 hover:text-slate-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-200/50 rounded-md border-0 bg-transparent disabled:opacity-50 disabled:cursor-not-allowed"
                 aria-label="Close form"
               >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                </svg>
+                <X className="w-5 h-5" />
               </button>
             </div>
 
@@ -559,8 +558,10 @@ const CustomDropdown: React.FC<DropdownProps> = ({
                     onChange(opt.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 hover:bg-slate-50 transition-colors ${
-                    opt.value === value ? 'bg-slate-50 font-semibold text-slate-900' : 'text-slate-700'
+                  className={`w-full text-left px-3 py-2 transition-colors ${
+                    opt.value === value
+                      ? 'bg-slate-800 text-white font-semibold'
+                      : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                   }`}
                 >
                   {opt.label}
@@ -733,8 +734,8 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                         : past
                           ? 'text-slate-300 cursor-not-allowed'
                           : today
-                            ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300'
-                            : 'text-slate-700 hover:bg-slate-100'
+                            ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50'
+                            : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                     }`}
                   >
                     {day}
@@ -831,8 +832,10 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
                     key={`h-${h}`}
                     type="button"
                     onClick={() => handleHourSelect(h)}
-                    className={`w-full text-center py-1 text-xs font-semibold hover:bg-slate-50 ${
-                      hour === h ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold' : 'text-slate-700'
+                    className={`w-full text-center py-1 text-xs font-semibold ${
+                      hour === h
+                        ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
+                        : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                     }`}
                   >
                     {h}
@@ -848,8 +851,10 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
                     key={`m-${m}`}
                     type="button"
                     onClick={() => handleMinuteSelect(m)}
-                    className={`w-full text-center py-1 text-xs font-semibold hover:bg-slate-50 ${
-                      minute === m ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold' : 'text-slate-700'
+                    className={`w-full text-center py-1 text-xs font-semibold ${
+                      minute === m
+                        ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
+                        : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                     }`}
                   >
                     {m}
