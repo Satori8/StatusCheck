@@ -77,21 +77,8 @@ CREATE POLICY update_profiles ON public.profiles FOR UPDATE TO authenticated USI
 -- RLS Policies for commitments
 CREATE POLICY select_commitments ON public.commitments FOR SELECT TO authenticated USING (true);
 
-CREATE POLICY insert_commitments ON public.commitments FOR INSERT TO authenticated WITH CHECK (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
-);
+CREATE POLICY insert_commitments ON public.commitments FOR INSERT TO authenticated WITH CHECK (true);
 
-CREATE POLICY update_commitments ON public.commitments FOR UPDATE TO authenticated USING (
-  (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')) OR
-  (auth.uid() = assignee_id)
-) WITH CHECK (
-  (EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')) OR
-  (
-    auth.uid() = assignee_id AND
-    (title = title AND description = description AND author_id = author_id AND project = project AND assignee_id = assignee_id AND checker_id = checker_id AND deadline = deadline AND created_at = created_at)
-  )
-);
+CREATE POLICY update_commitments ON public.commitments FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 
-CREATE POLICY delete_commitments ON public.commitments FOR DELETE TO authenticated USING (
-  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager' AND id = author_id)
-);
+CREATE POLICY delete_commitments ON public.commitments FOR DELETE TO authenticated USING (true);

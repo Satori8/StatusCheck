@@ -49,13 +49,22 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
 }) => {
   const router = useRouter();
   const { selectedProject, selectedCheckerId, searchQuery } = useFilter();
-  const [activeView, setActiveView] = useState<'calendar' | 'list'>('calendar');
+  const [activeView, setActiveView] = useState<'calendar' | 'list' | 'backlog'>('calendar');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCommitment, setEditingCommitment] = useState<Commitment | null>(null);
 
   // Filter commitments based on current filter state
   const filteredCommitments = useMemo(() => {
     let result = [...commitments];
+
+    // Isolate Backlog versus scheduled commitments
+    if (activeView === 'calendar') {
+      result = result.filter(c => c.status !== 'ideas_backlog');
+    } else if (activeView === 'backlog') {
+      result = result.filter(c => c.status === 'ideas_backlog');
+    } else {
+      result = result.filter(c => c.status !== 'ideas_backlog');
+    }
 
     // Apply project filter
     if (selectedProject) {
@@ -83,7 +92,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
     }
 
     return result;
-  }, [commitments, selectedProject, selectedCheckerId, searchQuery]);
+  }, [commitments, selectedProject, selectedCheckerId, searchQuery, activeView]);
 
   // Calculate stats for the header
   const stats = useMemo(() => {
@@ -180,20 +189,28 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
               >
                 List
               </button>
+              <button
+                onClick={() => setActiveView('backlog')}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  activeView === 'backlog'
+                    ? 'bg-white text-slate-800 shadow-sm'
+                    : 'bg-transparent text-slate-600 hover:text-slate-800'
+                }`}
+              >
+                Backlog
+              </button>
             </div>
 
-            {/* Add Commitment Button - only visible to managers */}
-            {currentUserProfile.role === 'manager' && (
-              <button
-                onClick={() => {
-                  setEditingCommitment(null);
-                  setIsFormOpen(true);
-                }}
-                className="px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors"
-              >
-                + Add Commitment
-              </button>
-            )}
+            {/* Add Commitment Button - visible to all authenticated users */}
+            <button
+              onClick={() => {
+                setEditingCommitment(null);
+                setIsFormOpen(true);
+              }}
+              className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm shadow-sm"
+            >
+              + Add Commitment
+            </button>
           </div>
         </div>
 
@@ -217,14 +234,12 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                   ? 'Your current filters don\'t match any commitments.'
                   : 'There are no commitments to display.'}
               </p>
-              {currentUserProfile.role === 'manager' && (
-                <button
-                  onClick={() => setIsFormOpen(true)}
-                  className="px-4 py-2 bg-slate-700 text-white rounded-md hover:bg-slate-800 transition-colors"
-                >
-                  Create First Commitment
-                </button>
-              )}
+              <button
+                onClick={() => setIsFormOpen(true)}
+                className="px-4 py-2 bg-slate-700 text-white rounded-lg hover:bg-slate-800 transition-colors font-medium text-sm shadow-sm"
+              >
+                Create First Commitment
+              </button>
             </div>
           ) : (
             <AnimatePresence mode="wait">
@@ -245,7 +260,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                     />
                   </div>
                 </motion.div>
-              ) : (
+              ) : activeView === 'list' ? (
                 <motion.div
                   key="list"
                   initial={{ opacity: 0, y: 10 }}
@@ -255,6 +270,23 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                 >
                   <div className="bg-white rounded-xl p-6 border border-slate-200">
                     <h2 className="text-xl font-semibold text-slate-800 mb-4">Detailed Commitments</h2>
+                    <CommitmentList
+                      commitments={filteredCommitments}
+                      onEditCommitment={handleEditCommitment}
+                      currentUserProfile={currentUserProfile}
+                    />
+                  </div>
+                </motion.div>
+              ) : (
+                <motion.div
+                  key="backlog"
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  transition={{ duration: 0.2 }}
+                >
+                  <div className="bg-white rounded-xl p-6 border border-slate-200">
+                    <h2 className="text-xl font-semibold text-slate-800 mb-4">Ideas Backlog</h2>
                     <CommitmentList
                       commitments={filteredCommitments}
                       onEditCommitment={handleEditCommitment}
