@@ -107,7 +107,9 @@ CREATE POLICY insert_projects ON public.projects FOR INSERT TO authenticated WIT
   EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
 );
 
-CREATE POLICY update_projects ON public.projects FOR UPDATE TO authenticated WITH CHECK (
+CREATE POLICY update_projects ON public.projects FOR UPDATE TO authenticated USING (
+  EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
+) WITH CHECK (
   EXISTS (SELECT 1 FROM public.profiles WHERE id = auth.uid() AND role = 'manager')
 );
 

@@ -364,7 +364,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         type="text"
                         value={editProjectName}
                         onChange={(e) => setEditProjectName(e.target.value)}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 font-medium text-slate-800"
+                        className="w-full px-3 py-2 border border-slate-200 bg-white !text-slate-800 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 font-medium"
                         required
                         disabled={isSubmitting}
                       />
@@ -380,9 +380,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     {isEditingProject ? (
                       <textarea
                         value={editProjectDesc}
-                        onChange={(e) => editProjectDesc !== e.target.value && setEditProjectDesc(e.target.value)}
+                        onChange={(e) => setEditProjectDesc(e.target.value)}
                         rows={3}
-                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-slate-600 resize-none leading-relaxed"
+                        className="w-full px-3 py-2 border border-slate-200 bg-white !text-slate-700 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 resize-none leading-relaxed"
                         placeholder="Provide details about the focus area of this project"
                         disabled={isSubmitting}
                       />

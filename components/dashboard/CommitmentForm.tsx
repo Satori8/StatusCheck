@@ -148,6 +148,16 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     setBackendError(null);
 
     try {
+      // Auto-transition: if deadline is shifted from past to future, restore 'expired' status to 'to_check' (actual)
+      let finalStatus = formData.status;
+      if (formData.deadline) {
+        const deadlineDate = new Date(formData.deadline);
+        const isFuture = deadlineDate > new Date();
+        if (isFuture && formData.status === 'expired') {
+          finalStatus = 'to_check';
+        }
+      }
+
       // Prepare data for submission
       const submissionData = {
         title: formData.title,
@@ -156,7 +166,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
         assignee_id: formData.assignee,
         checker_id: formData.checker,
         deadline: formData.deadline || null,
-        status: formData.status,
+        status: finalStatus,
       };
 
       let result;
