@@ -24,7 +24,12 @@
     "Configured intelligent, user-friendly client-side warnings catching over_email_send_rate_limit errors on signup, pointing directly to the Supabase dashboard solution",
     "Reworked landing page grid to a sophisticated 12-column asymmetric layout (max-w-6xl mx-auto) to bring text and card columns closer together",
     "Engineered a dedicated Ideas Backlog tab view that isolates and houses ideas backlog commitments seamlessly in their own dashboard layout",
-    "Opened up commitment creation + management permissions to all authenticated team members on the frontend and the database RLS policies to make the MVP fully collaborative"
+    "Opened up commitment creation + management permissions to all authenticated team members on the frontend and the database RLS policies to make the MVP fully collaborative",
+    "Conducted total CSS style rework of the dashboard calendar, implementing clean slate borders, readable day numbers, elegant light headers, and soft hover transitions to replace dark/clashing grids",
+    "Engineered true, native drag & drop capability on FullCalendar, letting users visually move tasks between days, triggering instant database writes via server-actions and auto-reverting on failures",
+    "Expanded the calendar details popover modal layout (width, padding) and added clean break-words/scroll configurations to display long descriptions perfectly without truncating or container overflowing",
+    "Upgraded project field in task creation from an insecure plain textfield into a smart select dropdown containing all existing projects, plus a dynamic new project creation input for managers",
+    "Mapped list row clicks in CommitmentList to open the details/edit modal directly, stopping event propagation on sub-buttons"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
