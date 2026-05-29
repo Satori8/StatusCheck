@@ -15,7 +15,11 @@
     "Resolved Supabase signup 500 error by schema-qualifying enum types and setting search_path on the auth trigger function",
     "Polished landing page UI to look highly premium, high-contrast, and professional with modern container structures and precise feature cards",
     "Implemented client-side registration confirmed flow with beautiful success cards and bypassed email confirmation checks gracefully",
-    "Integrated Next.js Core Web Vitals ESLint rules and safely escaped all JSX unescaped entities (e.g. apostrophes) to achieve 100% clean Next.js lint runs"
+    "Integrated Next.js Core Web Vitals ESLint rules and safely escaped all JSX unescaped entities (e.g. apostrophes) to achieve 100% clean Next.js lint runs",
+    "Documented Supabase SMTP rate limit bypass guide to toggle Email Confirmation settings off in the cloud dashboard",
+    "Renamed all border-radius elements to rounded-lg across the form inputs and dropdown select selectors to match site-wide token schemas",
+    "Fixed global CSS leakage in dashboard where inactive sidebar project/checker filters and view switcher buttons inherited dark gray backgrounds by explicitly defining bg-transparent on inactive states",
+    "Designed and engineered an elite sliding segmented control tab switcher for AuthPortal with spring physics (layoutId) and precise vector icons (LogIn, UserPlus), removing ugly horizontal lines"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
