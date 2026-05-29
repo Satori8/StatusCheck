@@ -453,17 +453,17 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   type="button"
                   onClick={onClose}
                   disabled={isSubmitting}
-                  className="px-4 py-2 text-slate-600 hover:text-slate-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold rounded-lg text-sm border border-slate-200/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`px-4 py-2 text-white rounded-lg transition-colors ${
+                  className={`px-4 py-2 text-white rounded-lg transition-colors font-semibold ${
                     isSubmitting 
                       ? 'bg-slate-400 cursor-not-allowed'
-                      : 'bg-slate-700 hover:bg-slate-800'
+                      : 'bg-slate-600 hover:bg-slate-700 shadow-sm'
                   }`}
                 >
                   {isSubmitting ? (
@@ -680,7 +680,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
               <button
                 type="button"
                 onClick={handlePrevMonth}
-                className="p-1 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"
+                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -692,7 +692,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
               <button
                 type="button"
                 onClick={handleNextMonth}
-                className="p-1 hover:bg-slate-100 rounded-lg text-slate-600 transition-colors"
+                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -712,7 +712,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
             </div>
 
             {/* Days */}
-            <div className="grid grid-cols-7 gap-1">
+            <div className="grid grid-cols-7 gap-1 justify-items-center">
               {days.map((day, idx) => {
                 if (day === null) {
                   return <div key={`empty-${idx}`} />;
@@ -732,10 +732,10 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                       selected
                         ? 'bg-slate-800 text-white font-semibold shadow-sm'
                         : past
-                          ? 'text-slate-300 cursor-not-allowed'
+                          ? 'bg-transparent text-slate-300 cursor-not-allowed'
                           : today
                             ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50'
-                            : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
+                            : 'bg-transparent hover:bg-slate-100 text-slate-700'
                     }`}
                   >
                     {day}
@@ -823,16 +823,39 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
           <div className="absolute z-20 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64 right-0 flex flex-col">
+            <style dangerouslySetInnerHTML={{ __html: `
+              .custom-scrollbar::-webkit-scrollbar {
+                width: 5px;
+              }
+              .custom-scrollbar::-webkit-scrollbar-track {
+                background: transparent;
+              }
+              .custom-scrollbar::-webkit-scrollbar-thumb {
+                background: #e2e8f0; /* slate-200 */
+                border-radius: 10px;
+              }
+              .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+                background: #cbd5e1; /* slate-300 */
+              }
+              .custom-scrollbar {
+                scrollbar-width: thin;
+                scrollbar-color: #e2e8f0 transparent;
+                outline: none !important;
+              }
+              .custom-scrollbar * {
+                outline: none !important;
+              }
+            `}} />
             <div className="flex gap-2 max-h-48 overflow-hidden mb-2">
               {/* Hours Column */}
-              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40">
+              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40 custom-scrollbar outline-none focus:outline-none">
                 <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Hour</div>
                 {hours.map(h => (
                   <button
                     key={`h-${h}`}
                     type="button"
                     onClick={() => handleHourSelect(h)}
-                    className={`w-full text-center py-1 text-xs font-semibold ${
+                    className={`w-full text-center py-1 text-xs font-semibold outline-none focus:outline-none ${
                       hour === h
                         ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
                         : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
@@ -844,14 +867,14 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
               </div>
 
               {/* Minutes Column */}
-              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40">
+              <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40 custom-scrollbar outline-none focus:outline-none">
                 <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Min</div>
                 {minutes.map(m => (
                   <button
                     key={`m-${m}`}
                     type="button"
                     onClick={() => handleMinuteSelect(m)}
-                    className={`w-full text-center py-1 text-xs font-semibold ${
+                    className={`w-full text-center py-1 text-xs font-semibold outline-none focus:outline-none ${
                       minute === m
                         ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
                         : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
@@ -867,14 +890,14 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
               <button
                 type="button"
                 onClick={handleClear}
-                className="text-xs text-red-500 hover:text-red-700 font-medium px-2 py-1 hover:bg-red-50 rounded-lg"
+                className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/80 font-medium px-2.5 py-1.5 rounded-lg transition-colors"
               >
                 Clear
               </button>
               <button
                 type="button"
                 onClick={() => setIsOpen(false)}
-                className="text-xs text-slate-700 hover:bg-slate-100 border border-slate-200 font-semibold px-2.5 py-1 rounded-lg"
+                className="text-xs text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 font-semibold px-3 py-1.5 rounded-lg transition-colors"
               >
                 OK
               </button>
