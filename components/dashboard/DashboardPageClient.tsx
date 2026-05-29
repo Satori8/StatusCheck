@@ -176,7 +176,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   activeView === 'calendar' 
                     ? 'bg-white text-slate-800 shadow-sm' 
-                    : 'bg-transparent text-slate-600 hover:text-slate-800'
+                    : 'bg-transparent text-slate-600 hover:text-slate-900 font-medium'
                 }`}
               >
                 Calendar
@@ -186,7 +186,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   activeView === 'list'
                     ? 'bg-white text-slate-800 shadow-sm'
-                    : 'bg-transparent text-slate-600 hover:text-slate-800'
+                    : 'bg-transparent text-slate-600 hover:text-slate-900 font-medium'
                 }`}
               >
                 List
@@ -196,7 +196,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   activeView === 'backlog'
                     ? 'bg-white text-slate-800 shadow-sm'
-                    : 'bg-transparent text-slate-600 hover:text-slate-800'
+                    : 'bg-transparent text-slate-600 hover:text-slate-900 font-medium'
                 }`}
               >
                 Backlog

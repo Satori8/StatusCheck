@@ -242,20 +242,9 @@ export async function deleteCommitment(id: string): Promise<{ success?: boolean,
       return { error: 'Unauthorized: User profile not found' };
     }
     
-    // Get the commitment to check author
-    const { data: commitment, error: commitmentError } = await supabase
-      .from('commitments')
-      .select('author_id')
-      .eq('id', id)
-      .single();
-    
-    if (commitmentError || !commitment) {
-      return { error: 'Commitment not found' };
-    }
-    
-    // Only managers who are also the authors can delete commitments
-    if (profile.role !== 'manager' || user.id !== commitment.author_id) {
-      return { error: 'Unauthorized' };
+    // Only managers can delete commitments
+    if (profile.role !== 'manager') {
+      return { error: 'Unauthorized: Only managers can delete commitments' };
     }
     
     // Execute delete

@@ -26,15 +26,25 @@ export async function createProject(name: string, description?: string) {
   return { success: true };
 }
 
-export async function updateProject(name: string, description: string) {
+export async function updateProject(oldName: string, newName: string, description?: string) {
   const supabase = createClient();
   
-  const { error } = await supabase
+  // 1. Update the project record name and description
+  const { error: projectError } = await supabase
     .from('projects')
-    .update({ description })
-    .eq('name', name);
+    .update({ name: newName, description })
+    .eq('name', oldName);
     
-  if (error) return { error: error.message };
+  if (projectError) return { error: projectError.message };
+  
+  // 2. Cascade update all commitments project references
+  const { error: commitmentError } = await supabase
+    .from('commitments')
+    .update({ project: newName })
+    .eq('project', oldName);
+    
+  if (commitmentError) return { error: commitmentError.message };
+  
   revalidatePath('/dashboard');
   return { success: true };
 }

@@ -3,9 +3,10 @@
 import React, { useState } from 'react';
 import { useFilter } from './FilterContext';
 import { logout } from '@/app/actions/auth';
-import { createProject, deleteProject } from '@/app/actions/projects';
+import { createProject, deleteProject, updateProject } from '@/app/actions/projects';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash2, HelpCircle, Check, X } from 'lucide-react';
+import { Plus, Trash2, Check, X, Edit, Info } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
   currentUserProfile: {
@@ -28,12 +29,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const router = useRouter();
   const { selectedProject, setSelectedProject, selectedCheckerId, setSelectedCheckerId } = useFilter();
   
-  // Project creation form states
+  // Project creation states
   const [showAddForm, setShowAddForm] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
   const [newProjectDesc, setNewProjectDesc] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [formError, setFormError] = useState<string | null>(null);
+
+  // Project details / editing modal states
+  const [selectedDetailProject, setSelectedDetailProject] = useState<{ name: string; description?: string | null } | null>(null);
+  const [isEditingProject, setIsEditingProject] = useState(false);
+  const [editProjectName, setEditProjectName] = useState('');
+  const [editProjectDesc, setEditProjectDesc] = useState('');
+  const [editProjectError, setEditProjectError] = useState<string | null>(null);
 
   const handleAddProject = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,9 +63,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
     }
   };
 
-  const handleDeleteProject = async (name: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!confirm(`Are you sure you want to delete project "${name}"?`)) return;
+  const handleDeleteProject = async (name: string, e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!confirm(`Are you sure you want to delete project "${name}"? All tasks assigned to this project will remain but the project categorization will be removed.`)) return;
     
     const result = await deleteProject(name);
     if (result.error) {
@@ -66,8 +74,42 @@ export const Sidebar: React.FC<SidebarProps> = ({
       if (selectedProject === name) {
         setSelectedProject(null);
       }
+      setSelectedDetailProject(null);
       router.refresh();
     }
+  };
+
+  const handleSaveProjectEdit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!selectedDetailProject || !editProjectName.trim()) return;
+
+    setIsSubmitting(true);
+    setEditProjectError(null);
+
+    const result = await updateProject(
+      selectedDetailProject.name,
+      editProjectName.trim(),
+      editProjectDesc.trim() || undefined
+    );
+
+    setIsSubmitting(false);
+    if (result.error) {
+      setEditProjectError(result.error);
+    } else {
+      if (selectedProject === selectedDetailProject.name) {
+        setSelectedProject(editProjectName.trim());
+      }
+      setSelectedDetailProject(null);
+      setIsEditingProject(false);
+      router.refresh();
+    }
+  };
+
+  const openProjectDetails = (project: { name: string; description?: string | null }, editMode = false) => {
+    setSelectedDetailProject(project);
+    setEditProjectName(project.name);
+    setEditProjectDesc(project.description || '');
+    setIsEditingProject(editMode && currentUserProfile.role === 'manager');
   };
 
   return (
@@ -92,7 +134,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Brand Header */}
         <div className="p-6 border-b border-slate-200 bg-slate-50">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-8 h-8 rounded-lg bg-slate-800 flex items-center justify-center text-white font-bold text-lg shadow-sm">
               S
             </div>
             <div>
@@ -178,10 +220,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="space-y-1">
             <button
               onClick={() => setSelectedProject(null)}
-              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all border-0 ${
                 selectedProject === null
-                  ? 'bg-slate-700 text-white font-medium shadow-sm'
-                  : 'bg-transparent text-slate-700 hover:bg-slate-200'
+                  ? 'bg-slate-700 text-white font-semibold shadow-sm'
+                  : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
               All Projects
@@ -189,27 +231,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
             {projects.map((project) => (
               <div
                 key={project.name}
-                className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm transition-colors ${
+                className={`group flex items-center justify-between px-3 py-2 rounded-md text-sm transition-all ${
                   selectedProject === project.name
-                    ? 'bg-slate-700 text-white font-medium shadow-sm'
-                    : 'hover:bg-slate-200'
+                    ? 'bg-slate-700 text-white font-semibold shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                 }`}
-                onClick={() => setSelectedProject(project.name)}
+                onClick={() => {
+                  if (selectedProject === project.name) {
+                    openProjectDetails(project);
+                  } else {
+                    setSelectedProject(project.name);
+                  }
+                }}
+                onDoubleClick={() => openProjectDetails(project)}
                 style={{ cursor: 'pointer' }}
               >
-                <span className={`truncate flex-1 ${selectedProject === project.name ? 'text-white' : 'text-slate-700'}`}>
+                <span className="truncate flex-1">
                   {project.name}
                 </span>
                 
                 <div className="flex items-center space-x-1.5 opacity-0 group-hover:opacity-100 transition-opacity">
-                  {project.description && (
-                    <div className="relative inline-block" title={project.description}>
-                      <HelpCircle className={`w-3.5 h-3.5 ${selectedProject === project.name ? 'text-slate-300 hover:text-white' : 'text-slate-400 hover:text-slate-600'}`} />
-                    </div>
-                  )}
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      openProjectDetails(project, currentUserProfile.role === 'manager');
+                    }}
+                    className={`p-0.5 rounded border-0 bg-transparent transition-colors ${
+                      selectedProject === project.name
+                        ? 'text-slate-300 hover:text-white hover:bg-slate-600'
+                        : 'text-slate-400 hover:text-slate-800 hover:bg-slate-300'
+                    }`}
+                    title={currentUserProfile.role === 'manager' ? 'Edit Project' : 'Project Details'}
+                  >
+                    {currentUserProfile.role === 'manager' ? <Edit className="w-3.5 h-3.5" /> : <Info className="w-3.5 h-3.5" />}
+                  </button>
                   {currentUserProfile.role === 'manager' && (
                     <button
-                      onClick={(e) => handleDeleteProject(project.name, e)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleDeleteProject(project.name, e);
+                      }}
                       className={`p-0.5 rounded border-0 bg-transparent transition-colors ${
                         selectedProject === project.name
                           ? 'text-slate-300 hover:text-red-300 hover:bg-slate-600'
@@ -232,10 +293,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <div className="space-y-1">
             <button
               onClick={() => setSelectedCheckerId(null)}
-              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+              className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all border-0 ${
                 selectedCheckerId === null
-                  ? 'bg-slate-700 text-white font-medium shadow-sm'
-                  : 'bg-transparent text-slate-700 hover:bg-slate-200'
+                  ? 'bg-slate-700 text-white font-semibold shadow-sm'
+                  : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
               }`}
             >
               All Checkers
@@ -244,10 +305,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <button
                 key={checker.id}
                 onClick={() => setSelectedCheckerId(checker.id)}
-                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
+                className={`w-full text-left px-3 py-2 rounded-md text-sm transition-all border-0 ${
                   selectedCheckerId === checker.id
-                    ? 'bg-slate-700 text-white font-medium shadow-sm'
-                    : 'bg-transparent text-slate-700 hover:bg-slate-200'
+                    ? 'bg-slate-700 text-white font-semibold shadow-sm'
+                    : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                 }`}
               >
                 {checker.email}
@@ -268,6 +329,127 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </button>
         </div>
       </aside>
+
+      {/* Floating Project View/Edit Modal Overlay */}
+      <AnimatePresence>
+        {selectedDetailProject && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0, scale: 0.95 }}
+              transition={{ type: 'spring', damping: 25, stiffness: 300 }}
+              className="w-[450px] max-w-full bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden"
+            >
+              {/* Modal Header */}
+              <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100 bg-slate-50">
+                <h3 className="font-bold text-slate-800 text-lg leading-tight">
+                  {isEditingProject ? 'Edit Project Settings' : 'Project Information'}
+                </h3>
+                <button
+                  onClick={() => setSelectedDetailProject(null)}
+                  className="text-slate-400 hover:text-slate-600 transition-colors p-1 hover:bg-slate-200/50 rounded-md border-0 bg-transparent"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              {/* Modal Form Content */}
+              <form onSubmit={handleSaveProjectEdit}>
+                <div className="p-6 space-y-4">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 tracking-wider uppercase mb-1.5">Project Name</label>
+                    {isEditingProject ? (
+                      <input
+                        type="text"
+                        value={editProjectName}
+                        onChange={(e) => setEditProjectName(e.target.value)}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 font-medium text-slate-800"
+                        required
+                        disabled={isSubmitting}
+                      />
+                    ) : (
+                      <p className="text-base font-semibold text-slate-800 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100">
+                        {selectedDetailProject.name}
+                      </p>
+                    )}
+                  </div>
+
+                  <div>
+                    <label className="block text-xs font-bold text-slate-500 tracking-wider uppercase mb-1.5">Description</label>
+                    {isEditingProject ? (
+                      <textarea
+                        value={editProjectDesc}
+                        onChange={(e) => editProjectDesc !== e.target.value && setEditProjectDesc(e.target.value)}
+                        rows={3}
+                        className="w-full px-3 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 text-slate-600 resize-none leading-relaxed"
+                        placeholder="Provide details about the focus area of this project"
+                        disabled={isSubmitting}
+                      />
+                    ) : (
+                      <p className="text-sm text-slate-600 bg-slate-50 px-3 py-2 rounded-lg border border-slate-100 leading-relaxed min-h-[4.5rem] break-words whitespace-pre-wrap">
+                        {selectedDetailProject.description || <span className="text-slate-400 italic">No description provided for this project.</span>}
+                      </p>
+                    )}
+                  </div>
+
+                  {editProjectError && <p className="text-xs text-red-600">{editProjectError}</p>}
+                </div>
+
+                {/* Modal Actions Footer */}
+                <div className="flex space-x-2 px-6 py-4 bg-slate-50 border-t border-slate-100 justify-end">
+                  {isEditingProject ? (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setIsEditingProject(false)}
+                        className="px-4 py-2 text-sm font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                      >
+                        Back
+                      </button>
+                      <button
+                        type="submit"
+                        disabled={isSubmitting}
+                        className="px-4 py-2 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 border border-slate-700 rounded-lg transition-colors"
+                      >
+                        Save Changes
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      {currentUserProfile.role === 'manager' && (
+                        <>
+                          <button
+                            type="button"
+                            onClick={() => handleDeleteProject(selectedDetailProject.name)}
+                            className="px-4 py-2 text-sm font-medium text-red-600 bg-white hover:bg-red-50 border border-red-200 rounded-lg transition-colors mr-auto"
+                          >
+                            Delete
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setIsEditingProject(true)}
+                            className="px-4 py-2 text-sm font-medium text-slate-700 bg-white hover:bg-slate-100 border border-slate-200 rounded-lg transition-colors"
+                          >
+                            Edit
+                          </button>
+                        </>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => setSelectedDetailProject(null)}
+                        className="px-4 py-2 text-sm font-medium text-white bg-slate-700 hover:bg-slate-800 border border-slate-700 rounded-lg transition-colors"
+                      >
+                        Close
+                      </button>
+                    </>
+                  )}
+                </div>
+              </form>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </>
   );
 };

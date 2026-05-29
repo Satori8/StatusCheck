@@ -5,8 +5,8 @@ import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import interactionPlugin from '@fullcalendar/interaction';
 import { motion, AnimatePresence } from 'framer-motion';
-import { X, Check } from 'lucide-react';
-import { updateCommitment } from '@/app/actions/commitments';
+import { X, Check, Trash2 } from 'lucide-react';
+import { updateCommitment, deleteCommitment } from '@/app/actions/commitments';
 import { useRouter } from 'next/navigation';
 
 interface Commitment {
@@ -75,7 +75,10 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     const commitment = commitments.find(c => c.id === event.id);
     
     if (commitment && event.start) {
-      const newDate = event.start.toISOString().split('T')[0] + 'T00:00:00';
+      const year = event.start.getFullYear();
+      const month = String(event.start.getMonth() + 1).padStart(2, '0');
+      const day = String(event.start.getDate()).padStart(2, '0');
+      const newDate = `${year}-${month}-${day}T00:00:00`;
       
       const result = await updateCommitment(commitment.id, {
         deadline: newDate
@@ -126,6 +129,19 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     }
   };
 
+  // Handle commitment deletion (managers only)
+  const handleDeleteCommitment = async (id: string) => {
+    if (confirm('Are you sure you want to delete this commitment?')) {
+      const result = await deleteCommitment(id);
+      if (result.error) {
+        alert(result.error);
+      } else {
+        setIsPopoverOpen(false);
+        router.refresh();
+      }
+    }
+  };
+
   // Check if user can edit this commitment
   const canEditCommitment = (commitment: Commitment) => {
     return currentUserProfile.role === 'manager' || 
@@ -139,14 +155,26 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     const statusColor = statusColors[commitment?.status as keyof typeof statusColors] || 'bg-slate-500';
 
     return (
-      <div className="flex flex-col p-1">
+      <div className="flex flex-col p-1 relative group/event w-full">
+        {currentUserProfile.role === 'manager' && commitment && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteCommitment(commitment.id);
+            }}
+            className="absolute top-0 right-0 p-0.5 text-slate-400 hover:text-red-600 hover:bg-red-50 rounded bg-white border border-slate-100 opacity-0 group-hover/event:opacity-100 transition-opacity z-20"
+            title="Delete Commitment"
+          >
+            <X className="w-3 h-3" />
+          </button>
+        )}
         <div className="flex items-center space-x-1">
           <div className={`w-2 h-2 rounded-full ${statusColor}`} />
-          <span className="text-xs font-medium text-slate-800 truncate">
+          <span className="text-xs font-bold text-slate-700 truncate max-w-[80%]">
             {commitment?.project}
           </span>
         </div>
-        <div className="text-xs text-slate-600 truncate">
+        <div className="text-[11px] text-slate-600 truncate mt-0.5">
           {eventInfo.event.title}
         </div>
       </div>
@@ -337,31 +365,42 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
                 </div>
 
                 {/* Actions */}
-                {canEditCommitment(selectedEvent) && (
-                  <div className="flex space-x-2 pt-4 border-t border-slate-100">
+                <div className="flex space-x-2 pt-4 border-t border-slate-100">
+                  {canEditCommitment(selectedEvent) && (
+                    <>
+                      <button
+                        onClick={handleMarkAsDone}
+                        disabled={selectedEvent.status === 'done'}
+                        className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-1.5 ${
+                          selectedEvent.status === 'done'
+                            ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
+                            : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
+                        }`}
+                      >
+                        <Check className="w-4 h-4" />
+                        <span>Mark as Done</span>
+                      </button>
+                      <button
+                        onClick={() => {
+                          onEditCommitment(selectedEvent);
+                          setIsPopoverOpen(false);
+                        }}
+                        className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 transition-colors border border-slate-700"
+                      >
+                        Edit Details
+                      </button>
+                    </>
+                  )}
+                  {currentUserProfile.role === 'manager' && (
                     <button
-                      onClick={handleMarkAsDone}
-                      disabled={selectedEvent.status === 'done'}
-                      className={`flex-1 px-4 py-2.5 text-sm font-medium rounded-lg transition-colors flex items-center justify-center space-x-1.5 ${
-                        selectedEvent.status === 'done'
-                          ? 'bg-slate-100 text-slate-400 cursor-not-allowed border border-slate-200'
-                          : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100 border border-emerald-200'
-                      }`}
+                      onClick={() => handleDeleteCommitment(selectedEvent.id)}
+                      className="px-4 py-2.5 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 rounded-lg transition-colors border border-red-200 flex items-center justify-center space-x-1.5"
                     >
-                      <Check className="w-4 h-4" />
-                      <span>Mark as Done</span>
+                      <Trash2 className="w-4 h-4" />
+                      <span>Delete</span>
                     </button>
-                    <button
-                      onClick={() => {
-                        onEditCommitment(selectedEvent);
-                        setIsPopoverOpen(false);
-                      }}
-                      className="flex-1 px-4 py-2.5 text-sm font-medium text-white bg-slate-700 rounded-lg hover:bg-slate-800 transition-colors border border-slate-700"
-                    >
-                      Edit Details
-                    </button>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
           </motion.div>

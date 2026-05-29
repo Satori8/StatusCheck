@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, Clock, AlertTriangle, Trash2, FileText, ChevronDown, ChevronUp } from 'lucide-react';
+import { deleteCommitment } from '@/app/actions/commitments';
+import { useRouter } from 'next/navigation';
 
 interface Commitment {
   id: string;
@@ -87,26 +89,30 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
   onEditCommitment,
   currentUserProfile
 }) => {
+  const router = useRouter();
   const [expandedCommitmentId, setExpandedCommitmentId] = useState<string | null>(null);
 
   // Since commitments are already filtered in the parent DashboardPageClient,
   // we can use them directly.
   const filteredCommitments = commitments;
 
-  // Toggle sort direction - currently unused but available for future implementation
-  // const requestSort = (key: keyof Commitment) => {
-  //   let direction: 'ascending' | 'descending' = 'ascending';
-  //   if (sortConfig.key === key && sortConfig.direction === 'ascending') {
-  //     direction = 'descending';
-  //   }
-  //   setSortConfig({ key, direction });
-  // };
-
   // Check if user can edit this commitment
   const canEditCommitment = (commitment: Commitment) => {
     return currentUserProfile.role === 'manager' || 
            commitment.assignee?.email === currentUserProfile.email ||
            commitment.checker?.email === currentUserProfile.email;
+  };
+
+  // Handle commitment deletion (managers only)
+  const handleDeleteCommitment = async (id: string) => {
+    if (confirm('Are you sure you want to delete this commitment?')) {
+      const result = await deleteCommitment(id);
+      if (result.error) {
+        alert(result.error);
+      } else {
+        router.refresh();
+      }
+    }
   };
 
   // Handle mark as done
@@ -269,6 +275,18 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
                             </svg>
                           </button>
+                          {currentUserProfile.role === 'manager' && (
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteCommitment(commitment.id);
+                              }}
+                              className="p-1 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="w-4 h-4" />
+                            </button>
+                          )}
                         </div>
                       )}
                     </div>
