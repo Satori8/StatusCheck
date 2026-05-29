@@ -30,10 +30,17 @@ CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
   INSERT INTO public.profiles (id, email, role)
-  VALUES (NEW.id, NEW.email, COALESCE((NEW.raw_user_meta_data->>'role')::user_role, 'member'::user_role));
+  VALUES (
+    NEW.id,
+    NEW.email,
+    CASE 
+      WHEN NEW.raw_user_meta_data->>'role' = 'manager' THEN 'manager'::public.user_role
+      ELSE 'member'::public.user_role
+    END
+  );
   RETURN NEW;
 END;
-$$ LANGUAGE plpgsql SECURITY DEFINER;
+$$ LANGUAGE plpgsql SECURITY DEFINER SET search_path = public;
 
 -- Trigger for new user
 CREATE TRIGGER on_auth_user_created
