@@ -1,0 +1,40 @@
+/* Executive Slate Theme - Dashboard Specific Styles */
+
+/* Custom scrollbar for Executive Slate aesthetic */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f5f9; /* slate-100 */
+}
+
+::-webkit-scrollbar-thumb {
+  background: #64748b; /* slate-500 */
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #475569; /* slate-600 */
+}
+
+/* Focus ring consistent with Executive Slate */
+:focus-visible {
+  outline: 2px solid #64748b; /* slate-500 */
+  outline-offset: 2px;
+}
+
+/* Smooth transitions for interactive elements */
+button, a, input, select, textarea {
+  transition: all 0.2s ease;
+}
+
+/* Custom gradient for StatusCheck brand */
+.text-gradient {
+  background: linear-gradient(135deg, #334155 0%, #64748b 50%, #94a3b8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-fill-color: transparent;
+}
