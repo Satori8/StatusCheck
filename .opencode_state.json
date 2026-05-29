@@ -34,7 +34,11 @@
     "Architected and deployed a relational database table 'public.projects' in the SQL migration to store official projects with custom description metadata",
     "Engineered interactive, backend-driven project CRUD Server Actions (get, create, delete, update) for managing projects seamlessly",
     "Reworked the sidebar and filters list to show the live database projects, displaying a beautiful info tooltip description on hover, and giving managers a Plus button and inline form to manage projects with real-time deletions",
-    "Redesigned the details view in the calendar to be a gorgeous centered modal overlay with a frosted-glass backdrop, clean vertical stacked fields (no more truncation or wrapping), and direct display of creation dates alongside nullable deadlines"
+    "Redesigned the details view in the calendar to be a gorgeous centered modal overlay with a frosted-glass backdrop, clean vertical stacked fields (no more truncation or wrapping), and direct display of creation dates alongside nullable deadlines",
+    "Resolved calendar drag-and-drop timezone shift by using local date getters (getFullYear, getMonth, getDate) instead of toISOString",
+    "Added commitment Delete buttons for managers in the calendar details modal, list view rows, and as a small hoverable quick icon in the calendar view cards",
+    "Implemented full Manager Project Editor Modal in the sidebar, replacing the static help icon with a pencil Edit button, and hooked active single-click/double-click project details routing",
+    "Restyled inactive buttons (sidebar, view switchers, and tabs) to increase visual contrast and hover haptic color feedbacks"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
