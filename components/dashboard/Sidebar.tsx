@@ -82,7 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                 selectedProject === null
                   ? 'bg-slate-700 text-white'
-                  : 'text-slate-700 hover:bg-slate-200'
+                  : 'bg-transparent text-slate-700 hover:bg-slate-200'
               }`}
             >
               All Projects
@@ -94,7 +94,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                   selectedProject === project
                     ? 'bg-slate-700 text-white'
-                    : 'text-slate-700 hover:bg-slate-200'
+                    : 'bg-transparent text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {project}
@@ -112,7 +112,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                 selectedCheckerId === null
                   ? 'bg-slate-700 text-white'
-                  : 'text-slate-700 hover:bg-slate-200'
+                  : 'bg-transparent text-slate-700 hover:bg-slate-200'
               }`}
             >
               All Checkers
@@ -124,7 +124,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 className={`w-full text-left px-3 py-2 rounded-md text-sm transition-colors ${
                   selectedCheckerId === checker.id
                     ? 'bg-slate-700 text-white'
-                    : 'text-slate-700 hover:bg-slate-200'
+                    : 'bg-transparent text-slate-700 hover:bg-slate-200'
                 }`}
               >
                 {checker.email}

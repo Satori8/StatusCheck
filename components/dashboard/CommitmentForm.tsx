@@ -230,7 +230,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   value={formData.title}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
                     errors.title ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
                   }`}
                   placeholder="Enter a clear, concise title"
@@ -250,7 +250,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   onChange={handleChange}
                   disabled={isSubmitting}
                   rows={3}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 resize-none"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500 resize-none"
                   placeholder="Provide additional details about this commitment"
                 />
               </div>
@@ -267,7 +267,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   value={formData.project}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
                     errors.project ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
                   }`}
                   placeholder="Enter project name"
@@ -286,7 +286,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   value={formData.assignee}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
                     errors.assignee ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
                   }`}
                 >
@@ -311,7 +311,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   value={formData.checker}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
                     errors.checker ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
                   }`}
                 >
@@ -338,7 +338,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   onChange={handleChange}
                   disabled={isSubmitting}
                   min={new Date().toISOString().split('T')[0]}
-                  className={`w-full px-3 py-2 border rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 ${
+                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 ${
                     errors.deadline ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
                   }`}
                 />
@@ -356,7 +356,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   value={formData.status}
                   onChange={handleChange}
                   disabled={isSubmitting}
-                  className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
+                  className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 focus:border-slate-500"
                 >
                   {statusOptions.map(option => (
                     <option key={option.value} value={option.value}>
@@ -368,7 +368,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
 
               {/* Backend error display */}
               {backendError && (
-                <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+                <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
                   <p className="text-sm text-red-600">{backendError}</p>
                 </div>
               )}
@@ -386,7 +386,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className={`px-4 py-2 text-white rounded-md transition-colors ${
+                  className={`px-4 py-2 text-white rounded-lg transition-colors ${
                     isSubmitting 
                       ? 'bg-slate-400 cursor-not-allowed'
                       : 'bg-slate-700 hover:bg-slate-800'
