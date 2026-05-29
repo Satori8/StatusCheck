@@ -19,7 +19,10 @@
     "Documented Supabase SMTP rate limit bypass guide to toggle Email Confirmation settings off in the cloud dashboard",
     "Renamed all border-radius elements to rounded-lg across the form inputs and dropdown select selectors to match site-wide token schemas",
     "Fixed global CSS leakage in dashboard where inactive sidebar project/checker filters and view switcher buttons inherited dark gray backgrounds by explicitly defining bg-transparent on inactive states",
-    "Designed and engineered an elite sliding segmented control tab switcher for AuthPortal with spring physics (layoutId) and precise vector icons (LogIn, UserPlus), removing ugly horizontal lines"
+    "Designed and engineered an elite sliding segmented control tab switcher for AuthPortal with spring physics (layoutId) and precise vector icons (LogIn, UserPlus), removing ugly horizontal lines",
+    "Implemented custom appearance-none select dropdown styles in app/globals.css with clean inline SVG chevron chevrons to render true, perfect rounded corners on Windows",
+    "Configured intelligent, user-friendly client-side warnings catching over_email_send_rate_limit errors on signup, pointing directly to the Supabase dashboard solution",
+    "Reworked landing page grid to a sophisticated 12-column asymmetric layout (max-w-6xl mx-auto) to bring text and card columns closer together"
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",
