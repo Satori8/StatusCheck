@@ -674,7 +674,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-20 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-4 w-72 left-0 md:left-auto md:right-0">
+          <div className="absolute z-20 bottom-full mb-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-80 left-0 md:left-auto md:right-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -822,7 +822,7 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-10" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-20 mt-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64 right-0 flex flex-col">
+          <div className="absolute z-20 bottom-full mb-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-64 right-0 flex flex-col">
             <style dangerouslySetInnerHTML={{ __html: `
               .custom-scrollbar::-webkit-scrollbar {
                 width: 5px;

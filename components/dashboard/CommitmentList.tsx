@@ -259,7 +259,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                               handleMarkAsDone(commitment);
                             }}
                             disabled={commitment.status === 'done'}
-                            className={`p-1 rounded-md transition-colors ${commitment.status === 'done' ? 'text-slate-300 cursor-not-allowed' : 'text-emerald-600 hover:bg-emerald-50'}`}
+                            className={`p-1.5 rounded-md transition-colors ${commitment.status === 'done' ? 'text-slate-300 bg-slate-100/50 cursor-not-allowed' : 'bg-emerald-50 text-emerald-600 hover:bg-emerald-100/80'}`}
                             title="Mark as Done"
                           >
                             <Check className="w-4 h-4" />
@@ -269,7 +269,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                               e.stopPropagation();
                               onEditCommitment(commitment);
                             }}
-                            className="p-1 text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
+                            className="p-1.5 bg-slate-50 text-slate-600 hover:bg-slate-100 rounded-md transition-colors"
                             title="Edit"
                           >
                             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +282,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                                 e.stopPropagation();
                                 handleDeleteCommitment(commitment.id);
                               }}
-                              className="p-1 text-red-600 hover:bg-red-50 rounded-md transition-colors"
+                              className="p-1.5 bg-red-50 text-red-600 hover:bg-red-100 rounded-md transition-colors"
                               title="Delete"
                             >
                               <Trash2 className="w-4 h-4" />
