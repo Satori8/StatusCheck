@@ -532,11 +532,13 @@ const CustomDropdown: React.FC<DropdownProps> = ({
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left disabled:opacity-50 text-sm ${
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left text-sm select-none ${
+          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        } ${
           error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
         }`}
       >
@@ -544,7 +546,7 @@ const CustomDropdown: React.FC<DropdownProps> = ({
         <svg className={`w-4 h-4 ml-2 text-slate-500 transition-transform ${isOpen ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
         </svg>
-      </button>
+      </div>
       
       {isOpen && (
         <>
@@ -552,20 +554,20 @@ const CustomDropdown: React.FC<DropdownProps> = ({
           <ul className="absolute z-20 w-full mt-1 bg-white border border-slate-200 rounded-lg shadow-lg max-h-60 overflow-y-auto py-1 text-sm">
             {options.map(opt => (
               <li key={opt.value}>
-                <button
-                  type="button"
+                <div
+                  role="button"
                   onClick={() => {
                     onChange(opt.value);
                     setIsOpen(false);
                   }}
-                  className={`w-full text-left px-3 py-2 transition-colors ${
+                  className={`w-full text-left px-3 py-2 transition-colors cursor-pointer select-none text-sm ${
                     opt.value === value
                       ? 'bg-slate-800 text-white font-semibold'
                       : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                   }`}
                 >
                   {opt.label}
-                </button>
+                </div>
               </li>
             ))}
           </ul>
@@ -657,11 +659,13 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
-        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left disabled:opacity-50 text-sm ${
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between px-3 py-2 border rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left text-sm select-none ${
+          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        } ${
           error ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
         }`}
       >
@@ -669,7 +673,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
         <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
-      </button>
+      </div>
 
       {isOpen && (
         <>
@@ -677,31 +681,31 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
           <div className="absolute z-20 bottom-full mb-1 bg-white border border-slate-200 rounded-xl shadow-xl p-3 w-80 left-0 md:left-auto md:right-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-              <button
-                type="button"
+              <div
+                role="button"
                 onClick={handlePrevMonth}
-                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors"
+                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors cursor-pointer select-none"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
-              </button>
-              <span className="font-semibold text-slate-800 text-sm">
+              </div>
+              <span className="font-semibold text-slate-800 text-sm select-none">
                 {monthNames[month]} {year}
               </span>
-              <button
-                type="button"
+              <div
+                role="button"
                 onClick={handleNextMonth}
-                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors"
+                className="p-1.5 bg-slate-50 hover:bg-slate-100 border border-slate-200/80 rounded-lg text-slate-600 transition-colors cursor-pointer select-none"
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
-              </button>
+              </div>
             </div>
 
             {/* Weekdays */}
-            <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500 mb-2">
+            <div className="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-500 mb-2 select-none">
               <div>Su</div>
               <div>Mo</div>
               <div>Tu</div>
@@ -723,27 +727,23 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                 const today = isToday(day);
 
                 return (
-                  <button
+                  <div
                     key={`day-${day}`}
-                    type="button"
-                    disabled={past}
-                    onClick={() => handleDayClick(day)}
-                    className="h-8 w-8 flex items-center justify-center focus:outline-none relative mx-auto"
+                    role="button"
+                    tabIndex={past ? -1 : 0}
+                    onClick={() => !past && handleDayClick(day)}
+                    className={`h-7 w-7 text-xs font-semibold rounded-full flex items-center justify-center transition-colors mx-auto select-none ${
+                      selected
+                        ? 'bg-slate-800 text-white font-bold shadow-sm cursor-pointer'
+                        : past
+                          ? 'bg-transparent text-slate-300 cursor-not-allowed'
+                          : today
+                            ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50 cursor-pointer'
+                            : 'bg-transparent hover:bg-slate-100 text-slate-700 cursor-pointer'
+                    }`}
                   >
-                    <span
-                      className={`w-6 h-6 rounded-full flex items-center justify-center text-xs font-medium transition-colors ${
-                        selected
-                          ? 'bg-slate-800 text-white font-semibold shadow-sm'
-                          : past
-                            ? 'bg-transparent text-slate-300 cursor-not-allowed'
-                            : today
-                              ? 'bg-slate-100 text-slate-800 font-bold border border-slate-300 hover:bg-slate-200/50'
-                              : 'bg-transparent hover:bg-slate-100 text-slate-700'
-                      }`}
-                    >
-                      {day}
-                    </span>
-                  </button>
+                    {day}
+                  </div>
                 );
               })}
             </div>
@@ -811,17 +811,19 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
 
   return (
     <div className="relative">
-      <button
-        type="button"
-        disabled={disabled}
-        onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left disabled:opacity-50 text-sm"
+      <div
+        role="button"
+        tabIndex={disabled ? -1 : 0}
+        onClick={() => !disabled && setIsOpen(!isOpen)}
+        className={`w-full flex items-center justify-between px-3 py-2 border border-slate-300 rounded-lg bg-white text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-500 text-left text-sm select-none ${
+          disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+        }`}
       >
         <span>{displayValue}</span>
         <svg className="w-5 h-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
         </svg>
-      </button>
+      </div>
 
       {isOpen && (
         <>
@@ -850,23 +852,23 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
                 outline: none !important;
               }
             `}} />
-            <div className="flex gap-2 max-h-48 overflow-hidden mb-2">
+            <div className="flex gap-2 max-h-48 overflow-hidden mb-2 select-none">
               {/* Hours Column */}
               <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40 custom-scrollbar outline-none focus:outline-none">
                 <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Hour</div>
                 {hours.map(h => (
-                  <button
+                  <div
                     key={`h-${h}`}
-                    type="button"
+                    role="button"
                     onClick={() => handleHourSelect(h)}
-                    className={`w-full text-center py-1 text-xs font-semibold outline-none focus:outline-none ${
+                    className={`w-full text-center py-1 text-xs font-semibold cursor-pointer select-none ${
                       hour === h
                         ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
                         : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                     }`}
                   >
                     {h}
-                  </button>
+                  </div>
                 ))}
               </div>
 
@@ -874,37 +876,37 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
               <div className="flex-1 overflow-y-auto border border-slate-100 rounded-lg max-h-40 custom-scrollbar outline-none focus:outline-none">
                 <div className="text-center text-[10px] font-bold text-slate-500 py-1 bg-slate-50 border-b border-slate-100 sticky top-0 uppercase tracking-wider">Min</div>
                 {minutes.map(m => (
-                  <button
+                  <div
                     key={`m-${m}`}
-                    type="button"
+                    role="button"
                     onClick={() => handleMinuteSelect(m)}
-                    className={`w-full text-center py-1 text-xs font-semibold outline-none focus:outline-none ${
+                    className={`w-full text-center py-1 text-xs font-semibold cursor-pointer select-none ${
                       minute === m
                         ? 'bg-slate-800 text-white hover:bg-slate-800 font-bold'
                         : 'bg-slate-50/80 text-slate-700 hover:bg-slate-200/70'
                     }`}
                   >
                     {m}
-                  </button>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <div className="flex justify-between items-center border-t border-slate-100 pt-2">
-              <button
-                type="button"
+            <div className="flex justify-between items-center border-t border-slate-100 pt-2 select-none">
+              <div
+                role="button"
                 onClick={handleClear}
-                className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/80 font-medium px-2.5 py-1.5 rounded-lg transition-colors"
+                className="text-xs text-red-600 bg-red-50 hover:bg-red-100 border border-red-200/80 font-medium px-2.5 py-1.5 rounded-lg transition-colors cursor-pointer select-none"
               >
                 Clear
-              </button>
-              <button
-                type="button"
+              </div>
+              <div
+                role="button"
                 onClick={() => setIsOpen(false)}
-                className="text-xs text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 font-semibold px-3 py-1.5 rounded-lg transition-colors"
+                className="text-xs text-slate-700 bg-slate-50 hover:bg-slate-100 border border-slate-200 font-semibold px-3 py-1.5 rounded-lg transition-colors cursor-pointer select-none"
               >
                 OK
-              </button>
+              </div>
             </div>
           </div>
         </>
