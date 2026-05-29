@@ -23,7 +23,11 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
           : await register(formData);
 
         if (result?.error) {
-          setError(result.error);
+          if (result.error.includes('over_email_send_rate_limit') || result.error.includes('rate_limit') || result.error.includes('email_send')) {
+            setError('Supabase free-tier SMTP email rate limit reached. To bypass this permanently, please go to your Supabase Auth Dashboard -> Providers -> Email and turn OFF "Confirm Email". Your account may have already been registered, you can try signing in directly.');
+          } else {
+            setError(result.error);
+          }
         } else if (type === 'register' && result && 'success' in result) {
           setIsRegistered(true);
         }
