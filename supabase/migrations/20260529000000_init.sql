@@ -7,6 +7,7 @@ CREATE TYPE commitment_status AS ENUM ('to_check', 'done', 'expired', 'not_actua
 CREATE TABLE public.profiles (
   id UUID PRIMARY KEY REFERENCES auth.users(id) ON DELETE CASCADE,
   email TEXT NOT NULL UNIQUE,
+  name TEXT,
   role user_role NOT NULL DEFAULT 'member',
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
 );
@@ -29,10 +30,11 @@ CREATE TABLE public.commitments (
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
 BEGIN
-  INSERT INTO public.profiles (id, email, role)
+  INSERT INTO public.profiles (id, email, name, role)
   VALUES (
     NEW.id,
     NEW.email,
+    COALESCE(NEW.raw_user_meta_data->>'name', split_part(NEW.email, '@', 1)),
     CASE 
       WHEN NEW.raw_user_meta_data->>'role' = 'manager' THEN 'manager'::public.user_role
       ELSE 'member'::public.user_role

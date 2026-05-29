@@ -14,6 +14,7 @@ interface Profile {
   id: string
   email: string
   role: 'manager' | 'member'
+  name?: string | null
 }
 
 interface Commitment {
@@ -40,6 +41,7 @@ interface DashboardPageClientProps {
     email: string
     role: 'manager' | 'member'
     id: string
+    name?: string | null
   }
 }
 
@@ -88,7 +90,9 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
         commitment.title.toLowerCase().includes(query) ||
         commitment.description?.toLowerCase().includes(query) ||
         commitment.project.toLowerCase().includes(query) ||
+        commitment.assignee?.name?.toLowerCase().includes(query) ||
         commitment.assignee?.email?.toLowerCase().includes(query) ||
+        commitment.checker?.name?.toLowerCase().includes(query) ||
         commitment.checker?.email?.toLowerCase().includes(query)
       );
     }
@@ -127,7 +131,8 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
   const checkers = useMemo(() => {
     return profiles.map(profile => ({
       id: profile.id,
-      email: profile.email
+      email: profile.email,
+      name: profile.name
     }));
   }, [profiles]);
 

@@ -12,9 +12,10 @@ interface SidebarProps {
   currentUserProfile: {
     email: string;
     role: 'manager' | 'member';
+    name?: string | null;
   };
   projects: { name: string; description?: string | null }[];
-  checkers: { id: string; email: string }[];
+  checkers: { id: string; email: string; name?: string | null }[];
   isMobile: boolean;
   onToggleMobile: () => void;
 }
@@ -148,7 +149,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div className="p-6 border-b border-slate-200">
           <div className="space-y-2">
             <p className="text-sm font-medium text-slate-600">Signed in as</p>
-            <p className="text-slate-800 truncate font-semibold">{currentUserProfile.email}</p>
+            <p className="text-slate-800 truncate font-semibold">{currentUserProfile.name || currentUserProfile.email}</p>
             <div
               className={`inline-block px-2.5 py-0.5 text-xs font-semibold rounded-full border ${
                 currentUserProfile.role === 'manager'
@@ -311,7 +312,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     : 'bg-transparent text-slate-600 hover:text-slate-900 hover:bg-slate-200/50'
                 }`}
               >
-                {checker.email}
+                {checker.name || checker.email}
               </button>
             ))}
           </div>

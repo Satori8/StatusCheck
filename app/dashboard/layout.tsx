@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   // For now, we'll use the user's email and role from auth data
   const { data: authData } = await supabase
     .from('profiles')
-    .select('email, role, id')
+    .select('email, role, id, name')
     .eq('id', user.id)
     .single();
 
@@ -29,6 +29,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
     email: user.email || 'unknown@statuscheck.com',
     role: 'member' as const, // default role
     id: user.id,
+    name: user.user_metadata?.name || null,
   };
 
   // Fetch projects directly from the database table
@@ -42,7 +43,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   // Fetch checkers (all users with profiles)
   const { data: checkersData } = await supabase
     .from('profiles')
-    .select('id, email');
+    .select('id, email, name');
 
   const checkers = checkersData || [];
 

@@ -26,6 +26,7 @@ interface Profile {
   id: string;
   email: string;
   role: 'manager' | 'member';
+  name?: string | null;
 }
 
 interface CommitmentListProps {
@@ -211,7 +212,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                       </svg>
                       <span className="text-sm text-slate-700 truncate">
-                        {commitment.assignee?.email || 'Unassigned'}
+                        {commitment.assignee?.name || commitment.assignee?.email || 'Unassigned'}
                       </span>
                     </div>
 
@@ -308,7 +309,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
                           </svg>
                           <span className="text-slate-500">Checker:</span>
-                          <span className="text-slate-700 truncate">{commitment.checker?.email || 'Unassigned'}</span>
+                          <span className="text-slate-700 truncate">{commitment.checker?.name || commitment.checker?.email || 'Unassigned'}</span>
                         </div>
                         <div className="flex items-center space-x-2">
                           <svg className="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

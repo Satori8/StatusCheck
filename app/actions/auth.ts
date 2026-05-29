@@ -26,6 +26,7 @@ export async function login(formData: FormData) {
 export async function register(formData: FormData) {
   const supabase = createClient();
 
+  const name = formData.get('name') as string;
   const email = formData.get('email') as string;
   const password = formData.get('password') as string;
   const role = formData.get('role') as 'manager' | 'member';
@@ -36,6 +37,7 @@ export async function register(formData: FormData) {
     options: {
       data: {
         role,
+        name: name ? name.trim() : undefined,
       },
     },
   });

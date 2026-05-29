@@ -25,7 +25,7 @@ interface CommitmentFormProps {
     role: 'manager' | 'member';
     id: string;
   };
-  checkers: { id: string; email: string }[];
+  checkers: { id: string; email: string; name?: string | null }[];
   editingCommitment: Commitment | null;
   projects: { name: string; description?: string | null }[];
 }
@@ -360,7 +360,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   <option value="">Select Assignee</option>
                   {checkers.map(profile => (
                     <option key={profile.id} value={profile.id}>
-                      {profile.email}
+                      {profile.name || profile.email}
                     </option>
                   ))}
                 </select>
@@ -385,7 +385,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   <option value="">Select Checker</option>
                   {checkers.map(checker => (
                     <option key={checker.id} value={checker.id}>
-                      {checker.email}
+                      {checker.name || checker.email}
                     </option>
                   ))}
                 </select>

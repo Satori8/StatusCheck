@@ -70,6 +70,22 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
   return (
     <form action={handleSubmit} className="glass-panel space-y-6">
       <div className="space-y-4">
+        {type === 'register' && (
+          <div>
+            <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-1">
+              Full Name
+            </label>
+            <input
+              id="name"
+              name="name"
+              type="text"
+              required
+              placeholder="John Doe"
+              className="w-full text-white bg-slate-900/50 border border-slate-700/50 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-slate-500"
+            />
+          </div>
+        )}
+
         <div>
           <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-1">
             Email Address

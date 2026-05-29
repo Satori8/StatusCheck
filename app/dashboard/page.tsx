@@ -19,7 +19,7 @@ export default async function DashboardPage() {
   // Fetch user profile from Supabase
   const { data: authData } = await supabase
     .from('profiles')
-    .select('email, role, id')
+    .select('email, role, id, name')
     .eq('id', user.id)
     .single();
 
@@ -27,6 +27,7 @@ export default async function DashboardPage() {
     email: user.email || 'unknown@statuscheck.com',
     role: 'member' as const, // default role
     id: user.id,
+    name: user.user_metadata?.name || null,
   };
 
   // Fetch data in parallel

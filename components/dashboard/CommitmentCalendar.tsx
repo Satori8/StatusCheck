@@ -29,6 +29,7 @@ interface Profile {
   id: string;
   email: string;
   role: 'manager' | 'member';
+  name?: string | null;
 }
 
 interface CommitmentCalendarProps {
@@ -293,7 +294,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
                     </svg>
                     <span className="text-slate-500 w-24">Assignee:</span>
                     <span className="text-slate-800 font-medium truncate flex-1">
-                      {selectedEvent.assignee?.email || 'Unassigned'}
+                      {selectedEvent.assignee?.name || selectedEvent.assignee?.email || 'Unassigned'}
                     </span>
                   </div>
 
@@ -304,7 +305,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
                     </svg>
                     <span className="text-slate-500 w-24">Checker:</span>
                     <span className="text-slate-800 font-medium truncate flex-1">
-                      {selectedEvent.checker?.email || 'Unassigned'}
+                      {selectedEvent.checker?.name || selectedEvent.checker?.email || 'Unassigned'}
                     </span>
                   </div>
 
