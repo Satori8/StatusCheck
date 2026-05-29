@@ -44,8 +44,7 @@ export async function register(formData: FormData) {
     return { error: error.message };
   }
 
-  revalidatePath('/', 'layout');
-  redirect('/dashboard');
+  return { success: true };
 }
 
 export async function logout() {

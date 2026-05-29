@@ -42,7 +42,7 @@ export default function AuthPortal() {
           exit={{ opacity: 0, y: -10 }}
           transition={{ duration: 0.2 }}
         >
-          <AuthForm type={activeTab} />
+          <AuthForm type={activeTab} setActiveTab={setActiveTab} />
         </motion.div>
       </AnimatePresence>
     </div>
