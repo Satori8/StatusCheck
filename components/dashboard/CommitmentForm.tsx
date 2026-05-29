@@ -54,6 +54,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     assignee: currentUserProfile.id,
     checker: currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || ''),
     deadline: '',
+    time: '',
     status: 'to_check' as CommitmentStatus,
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -71,13 +72,19 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
       
       if (editingCommitment) {
         // Edit mode - populate form with existing commitment data
+        const deadlineVal = editingCommitment.deadline || '';
+        const parts = deadlineVal.split('T');
+        const datePart = parts[0] || '';
+        const timePart = parts[1] ? parts[1].slice(0, 5) : '';
+
         setFormData({
           title: editingCommitment.title,
           description: editingCommitment.description || '',
           project: editingCommitment.project,
           assignee: editingCommitment.assignee_id || currentUserProfile.id,
           checker: editingCommitment.checker_id || (currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || '')),
-          deadline: editingCommitment.deadline ? editingCommitment.deadline.split('T')[0] : '',
+          deadline: datePart,
+          time: timePart,
           status: editingCommitment.status,
         });
       } else {
@@ -89,6 +96,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           assignee: currentUserProfile.id,
           checker: currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || ''),
           deadline: '',
+          time: '',
           status: 'to_check',
         });
       }
@@ -148,10 +156,15 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     setBackendError(null);
 
     try {
+      // Combine date + time into ISO string: ${date}T${time || '00:00'}:00
+      const deadlineISO = formData.deadline
+        ? `${formData.deadline}T${formData.time || '00:00'}:00`
+        : null;
+
       // Auto-transition: if deadline is shifted from past to future, restore 'expired' status to 'to_check' (actual)
       let finalStatus = formData.status;
-      if (formData.deadline) {
-        const deadlineDate = new Date(formData.deadline);
+      if (deadlineISO) {
+        const deadlineDate = new Date(deadlineISO);
         const isFuture = deadlineDate > new Date();
         if (isFuture && formData.status === 'expired') {
           finalStatus = 'to_check';
@@ -165,7 +178,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
         project: formData.project,
         assignee_id: formData.assignee,
         checker_id: formData.checker,
-        deadline: formData.deadline || null,
+        deadline: deadlineISO,
         status: finalStatus,
       };
 
@@ -394,21 +407,39 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
 
               {/* Deadline */}
               <div>
-                <label htmlFor="deadline" className="block text-sm font-medium text-slate-700 mb-1">
-                  Deadline <span className="text-red-500">*</span>
-                </label>
-                <input
-                  type="date"
-                  id="deadline"
-                  name="deadline"
-                  value={formData.deadline}
-                  onChange={handleChange}
-                  disabled={isSubmitting}
-                  min={new Date().toISOString().split('T')[0]}
-                  className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
-                    errors.deadline ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
-                  }`}
-                />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label htmlFor="deadline" className="block text-sm font-medium text-slate-700 mb-1">
+                      Deadline <span className="text-slate-500 text-xs font-normal">(date required, time optional)</span> <span className="text-red-500">*</span>
+                    </label>
+                    <input
+                      type="date"
+                      id="deadline"
+                      name="deadline"
+                      value={formData.deadline}
+                      onChange={handleChange}
+                      disabled={isSubmitting}
+                      min={new Date().toISOString().split('T')[0]}
+                      className={`w-full px-3 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 ${
+                        errors.deadline ? 'border-red-300 focus:ring-red-500' : 'border-slate-300 focus:border-slate-500'
+                      }`}
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="time" className="block text-sm font-medium text-slate-700 mb-1">
+                      Time (optional)
+                    </label>
+                    <input
+                      type="time"
+                      id="time"
+                      name="time"
+                      value={formData.time}
+                      onChange={handleChange}
+                      disabled={isSubmitting}
+                      className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-500 bg-white text-slate-800 focus:border-slate-500"
+                    />
+                  </div>
+                </div>
                 {errors.deadline && <p className="mt-1 text-sm text-red-600">{errors.deadline}</p>}
               </div>
 
