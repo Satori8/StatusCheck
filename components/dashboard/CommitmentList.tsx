@@ -111,7 +111,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-                  className="bg-[#11121d] border border-[#24263b] rounded-2xl hover:border-blue-500/25 hover:bg-[#161726]/30 transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30"
+                  className="group bg-[#11121d] border border-[#24263b] rounded-2xl hover:border-[#143c90]/40 hover:bg-[#161726]/30 transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30"
                   onClick={() => onEditCommitment(commitment)}
                 >
                   {/* Mobile Header */}
@@ -146,7 +146,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
 
                     {/* Project */}
                     <div className="flex items-center space-x-2 mb-3 md:mb-0 min-w-0">
-                      <Briefcase size={14} className="text-blue-500 flex-shrink-0" />
+                      <Briefcase size={14} className="text-[#60a5fa] flex-shrink-0" />
                       <span className="text-xs font-semibold text-[#f1f5f9] truncate">
                         {commitment.project}
                       </span>
@@ -195,7 +195,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                     {/* Action Buttons (never clips/wraps) */}
                     <div className="flex items-center justify-between md:justify-end gap-3 min-w-0 whitespace-nowrap flex-shrink-0">
                       {canEditCommitment(commitment) && (
-                        <div className="flex items-center space-x-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
+                        <div className="flex items-center space-x-1.5 opacity-100 md:opacity-60 group-hover:opacity-100 transition-all duration-200">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

@@ -133,7 +133,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Brand Header */}
         <div className="p-6 border-b border-[#24263b] bg-[#0d0e15]/40">
           <div className="flex items-center space-x-3">
-            <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/30 flex items-center justify-center text-blue-400 font-bold text-sm shadow-inner">
+            <div className="w-8 h-8 rounded-lg bg-[#143c90]/10 border border-[#143c90]/30 flex items-center justify-center text-[#60a5fa] font-bold text-sm shadow-inner">
               SC
             </div>
             <div>
@@ -201,7 +201,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setSelectedProject(null)}
                 className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-medium tracking-wide transition-all border-0 ${
                   selectedProject === null
-                    ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold shadow-sm'
+                    ? 'bg-[#143c90]/10 border border-[#143c90]/20 text-[#60a5fa] font-semibold shadow-sm'
                     : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                 }`}
               >
@@ -212,7 +212,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   key={project.name}
                   className={`group flex items-center justify-between px-3 py-2 rounded-xl text-xs font-medium transition-all ${
                     selectedProject === project.name
-                      ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold'
+                      ? 'bg-[#143c90]/10 border border-[#143c90]/20 text-[#60a5fa] font-semibold'
                       : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                   }`}
                   onClick={() => {
@@ -235,7 +235,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       }}
                       className={`p-1 rounded border-0 bg-transparent transition-colors ${
                         selectedProject === project.name
-                          ? 'text-blue-400/80 hover:text-blue-300 hover:bg-[#161726]'
+                          ? 'text-[#60a5fa]/80 hover:text-blue-300 hover:bg-[#161726]'
                           : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]'
                       }`}
                       title={currentUserProfile.role === 'manager' ? 'Edit Project' : 'Project Details'}
@@ -272,7 +272,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                 onClick={() => setSelectedCheckerId(null)}
                 className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-medium tracking-wide transition-all border-0 ${
                   selectedCheckerId === null
-                    ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold shadow-sm'
+                    ? 'bg-[#143c90]/10 border border-[#143c90]/20 text-[#60a5fa] font-semibold shadow-sm'
                     : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                 }`}
               >
@@ -284,7 +284,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   onClick={() => setSelectedCheckerId(checker.id)}
                   className={`w-full flex items-center px-3 py-2 rounded-xl text-xs font-medium transition-all border-0 ${
                     selectedCheckerId === checker.id
-                      ? 'bg-blue-500/10 border border-blue-500/20 text-blue-400 font-semibold'
+                      ? 'bg-[#143c90]/10 border border-[#143c90]/20 text-[#60a5fa] font-semibold'
                       : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                   }`}
                 >
@@ -385,7 +385,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       <button
                         type="submit"
                         disabled={isSubmitting}
-                        className="flex-1 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
+                        className="flex-1 px-4 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
                       >
                         {isSubmitting ? 'Saving...' : 'Save Changes'}
                       </button>
@@ -429,7 +429,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       )}
                       <button
                         onClick={() => setSelectedDetailProject(null)}
-                        className={`px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all text-xs font-bold uppercase tracking-wider ${
+                        className={`px-4 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-xl transition-all text-xs font-bold uppercase tracking-wider ${
                           currentUserProfile.role === 'manager' ? 'w-auto' : 'w-full'
                         }`}
                       >
@@ -521,7 +521,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     <button
                       type="submit"
                       disabled={isSubmitting}
-                      className="flex-1 px-4 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
+                      className="flex-1 px-4 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-sm"
                     >
                       {isSubmitting ? 'Creating...' : 'Create Project'}
                     </button>

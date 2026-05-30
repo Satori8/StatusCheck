@@ -40,10 +40,10 @@
   --fc-button-border-color: #24263b !important;
   --fc-button-text-color: #f1f5f9 !important;
   --fc-button-hover-bg-color: #24263b !important;
-  --fc-button-hover-border-color: #3b82f6 !important;
-  --fc-button-active-bg-color: #2563eb !important;
+  --fc-button-hover-border-color: #143c90 !important;
+  --fc-button-active-bg-color: #143c90 !important;
   
-  --fc-today-bg-color: rgba(59, 130, 246, 0.05) !important;
+  --fc-today-bg-color: rgba(20, 60, 144, 0.05) !important;
   font-family: inherit !important;
 }
 
@@ -70,12 +70,12 @@
 
 /* Today Day Cell Ring */
 .fc .fc-day-today {
-  box-shadow: inset 0 0 0 2px rgba(59, 130, 246, 0.3) !important;
+  box-shadow: inset 0 0 0 2px rgba(20, 60, 144, 0.3) !important;
 }
 
 /* Highlight today's date number */
 .fc .fc-day-today .fc-daygrid-day-number {
-  background-color: #3b82f6 !important;
+  background-color: #143c90 !important;
   color: #ffffff !important;
   border-radius: 9999px !important;
   padding: 0.25rem 0.5rem !important;
@@ -121,7 +121,7 @@
 
 .fc .custom-event:hover {
   background-color: #1b1d30 !important;
-  border-color: #3b82f6 !important;
+  border-color: #143c90 !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4) !important;
 }
 
@@ -139,13 +139,13 @@
 
 .fc .fc-button-primary:hover {
   background-color: #161726 !important;
-  border-color: #3b82f6 !important;
+  border-color: #143c90 !important;
 }
 
 .fc .fc-button-primary:not(:disabled):active, 
 .fc .fc-button-primary:not(:disabled).fc-button-active {
-  background-color: #3b82f6 !important;
-  border-color: #3b82f6 !important;
+  background-color: #143c90 !important;
+  border-color: #143c90 !important;
   color: #ffffff !important;
 }
 

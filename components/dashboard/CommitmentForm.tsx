@@ -391,7 +391,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
                   <button
                     type="button"
                     onClick={handleCreateProjectRealtime}
-                    className="flex-1 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider border-none shadow-md"
+                    className="flex-1 py-1.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-xl text-[10px] font-bold uppercase tracking-wider border-none shadow-md"
                   >
                     Create
                   </button>
@@ -750,7 +750,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                         : past
                           ? 'bg-transparent text-[#24263b] cursor-not-allowed'
                           : today
-                            ? 'bg-blue-500/10 text-blue-400 font-bold border border-blue-500/20 hover:bg-blue-500/20 cursor-pointer'
+                            ? 'bg-[#143c90]/10 text-blue-400 font-bold border border-[#143c90]/20 hover:bg-[#143c90]/20 cursor-pointer'
                             : 'bg-transparent hover:bg-[#161726] text-[#64748b] hover:text-[#f1f5f9] cursor-pointer'
                     }`}
                   >

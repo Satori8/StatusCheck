@@ -6,7 +6,7 @@ export default function Home() {
     <div className="min-h-[100dvh] w-full max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-16 px-6 py-16 items-center">
       {/* Left Column Description */}
       <div className="lg:col-span-7 flex flex-col justify-center items-start space-y-8 pr-0 lg:pr-12">
-        <div className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full border border-blue-500/20 text-blue-400 bg-blue-500/5">
+        <div className="inline-flex items-center px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.2em] rounded-full border border-[#143c90]/20 text-[#60a5fa] bg-[#143c90]/5">
           Release 1.0.0
         </div>
         
@@ -43,7 +43,7 @@ export default function Home() {
           </div>
           
           <div className="flex items-center space-x-4 text-[#f1f5f9]">
-            <div className="w-10 h-10 rounded-xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 flex-shrink-0 shadow-inner">
+            <div className="w-10 h-10 rounded-xl bg-[#143c90]/10 border border-[#143c90]/20 flex items-center justify-center text-[#60a5fa] flex-shrink-0 shadow-inner">
               <ShieldCheck size={18} weight="bold" />
             </div>
             <div className="min-w-0">

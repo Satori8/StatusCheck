@@ -152,10 +152,10 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
         {/* Stats Header */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Commitments */}
-          <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-5 relative overflow-hidden group hover:border-blue-500/20 transition-all duration-300">
+          <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-5 relative overflow-hidden group hover:border-[#143c90]/30 transition-all duration-300">
             <div className="flex items-center justify-between mb-3">
               <span className="text-[10px] font-bold text-[#64748b] tracking-widest uppercase">Total Commitments</span>
-              <div className="w-8 h-8 rounded-lg bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400">
+              <div className="w-8 h-8 rounded-lg bg-[#143c90]/10 border border-[#143c90]/20 flex items-center justify-center text-blue-400">
                 <ClipboardText size={16} weight="bold" />
               </div>
             </div>
@@ -262,7 +262,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                 setEditingCommitment(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/10 border-none"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none"
             >
               <Plus size={14} weight="bold" />
               <span>Add Commitment</span>
@@ -280,7 +280,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           {filteredCommitments.length === 0 ? (
             <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-16 text-center max-w-xl mx-auto shadow-2xl">
               <div className="mb-6 flex justify-center">
-                <div className="w-16 h-16 rounded-2xl bg-blue-500/10 border border-blue-500/20 flex items-center justify-center text-blue-400 shadow-inner">
+                <div className="w-16 h-16 rounded-2xl bg-[#143c90]/10 border border-[#143c90]/20 flex items-center justify-center text-blue-400 shadow-inner">
                   <ClipboardText size={28} weight="bold" />
                 </div>
               </div>
@@ -292,7 +292,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
               </p>
               <button
                 onClick={() => setIsFormOpen(true)}
-                className="px-5 py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-blue-500/10 border-none"
+                className="px-5 py-3 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none"
               >
                 Create First Commitment
               </button>
