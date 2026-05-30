@@ -47,29 +47,6 @@ interface CommitmentListProps {
   };
 }
 
-const cardStatusStyles = {
-  to_check: {
-    bg: 'bg-amber-500/5 hover:bg-amber-500/10',
-    border: 'border-amber-500/20 border-l-[4px] border-l-amber-500/80 hover:border-amber-500/40',
-  },
-  done: {
-    bg: 'bg-emerald-500/5 hover:bg-emerald-500/10',
-    border: 'border-emerald-500/20 border-l-[4px] border-l-emerald-500/80 hover:border-emerald-500/40',
-  },
-  expired: {
-    bg: 'bg-red-500/5 hover:bg-red-500/10',
-    border: 'border-red-500/20 border-l-[4px] border-l-red-500/80 hover:border-red-500/40',
-  },
-  not_actual: {
-    bg: 'bg-slate-500/5 hover:bg-slate-500/10',
-    border: 'border-slate-500/20 border-l-[4px] border-l-slate-500/80 hover:border-slate-500/40',
-  },
-  ideas_backlog: {
-    bg: 'bg-indigo-500/5 hover:bg-indigo-500/10',
-    border: 'border-indigo-500/20 border-l-[4px] border-l-indigo-500/80 hover:border-indigo-500/40',
-  },
-};
-
 export const CommitmentList: React.FC<CommitmentListProps> = ({
   commitments,
   onEditCommitment,
@@ -126,7 +103,6 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
           <AnimatePresence>
             {filteredCommitments.map((commitment) => {
               const isExpanded = expandedCommitmentId === commitment.id;
-              const statusStyle = cardStatusStyles[commitment.status as keyof typeof cardStatusStyles] || cardStatusStyles.to_check;
 
               return (
                 <motion.div
@@ -135,7 +111,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-                  className={`group rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30 ${statusStyle.bg} border ${statusStyle.border}`}
+                  className={`group rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30 status-card-${commitment.status}`}
                   onClick={() => onEditCommitment(commitment)}
                 >
                   {/* Mobile Header */}

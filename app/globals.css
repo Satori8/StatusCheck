@@ -297,3 +297,56 @@ input:focus-visible, textarea:focus-visible, select:focus-visible, button:focus-
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* ==========================================
+   SOLID CARD STATUS TINTS (GUARANTEED VISIBLE)
+   ========================================== */
+.status-card-to_check {
+  background-color: rgba(245, 158, 11, 0.055) !important;
+  border-color: rgba(245, 158, 11, 0.22) !important;
+  border-left: 4px solid rgba(245, 158, 11, 0.85) !important;
+}
+.status-card-to_check:hover {
+  background-color: rgba(245, 158, 11, 0.09) !important;
+  border-color: rgba(245, 158, 11, 0.38) !important;
+}
+
+.status-card-done {
+  background-color: rgba(16, 185, 129, 0.055) !important;
+  border-color: rgba(16, 185, 129, 0.22) !important;
+  border-left: 4px solid rgba(16, 185, 129, 0.85) !important;
+}
+.status-card-done:hover {
+  background-color: rgba(16, 185, 129, 0.09) !important;
+  border-color: rgba(16, 185, 129, 0.38) !important;
+}
+
+.status-card-expired {
+  background-color: rgba(239, 68, 68, 0.055) !important;
+  border-color: rgba(239, 68, 68, 0.22) !important;
+  border-left: 4px solid rgba(239, 68, 68, 0.85) !important;
+}
+.status-card-expired:hover {
+  background-color: rgba(239, 68, 68, 0.09) !important;
+  border-color: rgba(239, 68, 68, 0.38) !important;
+}
+
+.status-card-not_actual {
+  background-color: rgba(100, 116, 139, 0.055) !important;
+  border-color: rgba(100, 116, 139, 0.22) !important;
+  border-left: 4px solid rgba(100, 116, 139, 0.85) !important;
+}
+.status-card-not_actual:hover {
+  background-color: rgba(100, 116, 139, 0.09) !important;
+  border-color: rgba(100, 116, 139, 0.38) !important;
+}
+
+.status-card-ideas_backlog {
+  background-color: rgba(99, 102, 241, 0.055) !important;
+  border-color: rgba(99, 102, 241, 0.22) !important;
+  border-left: 4px solid rgba(99, 102, 241, 0.85) !important;
+}
+.status-card-ideas_backlog:hover {
+  background-color: rgba(99, 102, 241, 0.09) !important;
+  border-color: rgba(99, 102, 241, 0.38) !important;
+}
