@@ -90,24 +90,30 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   };
 
   // Handle event drag & drop (moving commitment to another day)
-  const handleEventDrop = async (dropInfo: { event: { id: string; start: Date | null }; revert: () => void }) => {
-    const { event } = dropInfo;
+  const handleEventDrop = async (dropInfo: { 
+    event: { id: string; start: Date | null }; 
+    oldEvent?: { start: Date | null }; 
+    revert: () => void; 
+  }) => {
+    const { event, oldEvent } = dropInfo;
     const commitment = commitments.find(c => c.id === event.id);
     
     if (commitment && event.start) {
+      // Prevent database round-trips and UI hangs when dropping on the same day
+      const oldTime = oldEvent?.start?.getTime();
+      const newTime = event?.start?.getTime();
+      if (oldTime === newTime) {
+        dropInfo.revert();
+        setTimeout(() => {
+          setCalendarKey(prev => prev + 1);
+        }, 0);
+        return;
+      }
+
       const year = event.start.getFullYear();
       const month = String(event.start.getMonth() + 1).padStart(2, '0');
       const day = String(event.start.getDate()).padStart(2, '0');
       const newDate = `${year}-${month}-${day}T00:00:00`;
-      
-      // Prevent database round-trips and UI hangs when dropping on the same day
-      const oldDatePart = commitment.deadline ? commitment.deadline.split('T')[0] : '';
-      const newDatePart = `${year}-${month}-${day}`;
-      if (oldDatePart === newDatePart) {
-        // Increment key to force-reset FullCalendar's DOM state and clear drag highlight locks instantly
-        setCalendarKey(prev => prev + 1);
-        return;
-      }
       
       const result = await updateCommitment(commitment.id, {
         deadline: newDate
