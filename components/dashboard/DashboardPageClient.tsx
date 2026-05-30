@@ -382,6 +382,8 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           checkers={checkers}
           editingCommitment={editingCommitment}
           projects={projects}
+          defaultProject={selectedProject}
+          defaultStatus={activeView === 'backlog' ? 'ideas_backlog' : 'to_check'}
         />
       </div>
     </ErrorBoundary>

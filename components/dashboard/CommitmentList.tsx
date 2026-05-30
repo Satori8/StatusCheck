@@ -83,13 +83,14 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
 
   return (
     <div className="space-y-4">
-      {/* List Header Desktop */}
-      <div className="hidden md:grid grid-cols-12 gap-4 px-4 py-2.5 text-[10px] font-bold text-[#64748b] border-b border-[#24263b] uppercase tracking-widest">
-        <div className="col-span-5 flex items-center">Title & Details</div>
-        <div className="col-span-2 flex items-center">Project</div>
-        <div className="col-span-2 flex items-center">Assignee</div>
-        <div className="col-span-2 flex items-center">Deadline</div>
-        <div className="col-span-1 flex items-center justify-end">Status</div>
+      {/* List Header Desktop — Optimized for responsive shrinking, 50px bigger deadline */}
+      <div className="hidden md:grid grid-cols-[3.2fr_1.2fr_1.2fr_2.1fr_1.1fr_1.2fr] gap-4 px-5 py-3 text-[10px] font-bold text-[#64748b] border-b border-[#24263b] uppercase tracking-widest">
+        <div className="flex items-center min-w-0">Title & Details</div>
+        <div className="flex items-center min-w-0">Project</div>
+        <div className="flex items-center min-w-0">Assignee</div>
+        <div className="flex items-center min-w-0">Deadline</div>
+        <div className="flex items-center min-w-0">Status</div>
+        <div className="flex items-center justify-end min-w-0">Actions</div>
       </div>
 
       {/* Commitments List */}
@@ -129,30 +130,30 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                     </button>
                   </div>
 
-                  {/* Desktop/Expanded Content Grid */}
-                  <div className={`px-5 py-4 ${isExpanded ? 'block' : 'hidden md:grid'} md:grid-cols-12 md:gap-4 md:items-center`}>
-                    {/* Title and Description */}
-                    <div className="col-span-5 mb-4 md:mb-0 pr-4">
-                      <h3 className="font-bold text-[#f1f5f9] text-sm leading-snug hover:text-blue-400 transition-colors">
+                  {/* Desktop/Expanded Content Grid — Fully responsive column priorities */}
+                  <div className={`px-5 py-4 ${isExpanded ? 'block' : 'hidden md:grid'} md:grid-cols-[3.2fr_1.2fr_1.2fr_2.1fr_1.1fr_1.2fr] md:gap-4 md:items-center`}>
+                    {/* Title and Description (Detail shrinks first) */}
+                    <div className="mb-4 md:mb-0 pr-4 min-w-0 flex-1">
+                      <h3 className="font-bold text-[#f1f5f9] text-sm leading-snug hover:text-blue-400 transition-colors truncate">
                         {commitment.title}
                       </h3>
                       {commitment.description && (
-                        <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed break-words whitespace-pre-wrap line-clamp-2 max-w-[55ch]">
+                        <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed break-words whitespace-pre-wrap line-clamp-1 max-w-[55ch]">
                           {commitment.description}
                         </p>
                       )}
                     </div>
 
                     {/* Project */}
-                    <div className="col-span-2 flex items-center space-x-2 mb-3 md:mb-0">
-                      <Briefcase size={14} className="text-blue-500" />
+                    <div className="flex items-center space-x-2 mb-3 md:mb-0 min-w-0">
+                      <Briefcase size={14} className="text-blue-500 flex-shrink-0" />
                       <span className="text-xs font-semibold text-[#f1f5f9] truncate">
                         {commitment.project}
                       </span>
                     </div>
 
                     {/* Assignee */}
-                    <div className="col-span-2 flex items-center space-x-2 mb-3 md:mb-0">
+                    <div className="flex items-center space-x-2 mb-3 md:mb-0 min-w-0">
                       <div className="w-5 h-5 rounded-md bg-[#161726] border border-[#24263b] flex items-center justify-center text-[10px] font-mono font-bold text-[#f1f5f9] flex-shrink-0">
                         {commitment.assignee?.name ? commitment.assignee.name.slice(0,2).toUpperCase() : commitment.assignee?.email.slice(0,2).toUpperCase()}
                       </div>
@@ -161,11 +162,11 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                       </span>
                     </div>
 
-                    {/* Deadline */}
-                    <div className="col-span-2 flex flex-col justify-center space-y-1 mb-4 md:mb-0">
+                    {/* Deadline (50px Wider & never overlaps/word-wraps) */}
+                    <div className="flex flex-col justify-center space-y-1 mb-4 md:mb-0 min-w-0 whitespace-nowrap">
                       <div className="flex items-center space-x-2">
                         <CalendarBlank size={14} className="text-[#64748b] flex-shrink-0" />
-                        <span className="text-xs font-semibold text-[#f1f5f9] font-mono">
+                        <span className="text-xs font-semibold text-[#f1f5f9] font-mono truncate">
                           {commitment.deadline ? (
                             new Date(commitment.deadline).toLocaleDateString('en-US', {
                               month: 'short',
@@ -186,12 +187,13 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                       </div>
                     </div>
 
-                    {/* Status and Action Buttons */}
-                    <div className="col-span-1 flex items-center justify-between md:justify-end gap-3">
-                      <div>
-                        <StatusBadge status={commitment.status} showIcon={false} />
-                      </div>
+                    {/* Status badge (adapts without wrapping) */}
+                    <div className="mb-4 md:mb-0 flex items-center min-w-0 whitespace-nowrap">
+                      <StatusBadge status={commitment.status} showIcon={false} />
+                    </div>
 
+                    {/* Action Buttons (never clips/wraps) */}
+                    <div className="flex items-center justify-between md:justify-end gap-3 min-w-0 whitespace-nowrap flex-shrink-0">
                       {canEditCommitment(commitment) && (
                         <div className="flex items-center space-x-1.5 opacity-100 md:opacity-0 group-hover:opacity-100 transition-opacity">
                           <button

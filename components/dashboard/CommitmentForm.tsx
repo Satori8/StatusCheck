@@ -10,6 +10,8 @@ import {
   CaretRight, 
   Check
 } from '@phosphor-icons/react';
+import { createProject } from '@/app/actions/projects';
+import { useRouter } from 'next/navigation';
 
 type CommitmentStatus = 'to_check' | 'done' | 'expired' | 'not_actual' | 'ideas_backlog';
 
@@ -36,6 +38,8 @@ interface CommitmentFormProps {
   checkers: { id: string; email: string; name?: string | null }[];
   editingCommitment: Commitment | null;
   projects: { name: string; description?: string | null }[];
+  defaultProject?: string | null;
+  defaultStatus?: CommitmentStatus;
 }
 
 const statusOptions: { value: CommitmentStatus; label: string }[] = [
@@ -54,16 +58,19 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
   checkers,
   editingCommitment,
   projects,
+  defaultProject = null,
+  defaultStatus = 'to_check',
 }) => {
+  const router = useRouter();
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    project: '',
+    project: defaultProject || '',
     assignee: currentUserProfile.id,
     checker: currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || ''),
     deadline: '',
     time: '',
-    status: 'to_check' as CommitmentStatus,
+    status: defaultStatus || ('to_check' as CommitmentStatus),
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [backendError, setBackendError] = useState<string | null>(null);
@@ -71,6 +78,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
   
   const [showNewProjectInput, setShowNewProjectInput] = useState(false);
   const [newProjectName, setNewProjectName] = useState('');
+  const [newProjectDesc, setNewProjectDesc] = useState('');
 
   const projectOptions = [
     { value: '', label: 'Select Project' },
@@ -98,6 +106,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     if (isOpen) {
       setShowNewProjectInput(false);
       setNewProjectName('');
+      setNewProjectDesc('');
       
       if (editingCommitment) {
         // Edit mode - populate form with existing commitment data
@@ -117,22 +126,22 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           status: editingCommitment.status,
         });
       } else {
-        // Create mode - reset to defaults
+        // Create mode - reset to defaults (incorporating auto-sets)
         setFormData({
           title: '',
           description: '',
-          project: '',
+          project: defaultProject || '',
           assignee: currentUserProfile.id,
           checker: currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || ''),
           deadline: '',
           time: '',
-          status: 'to_check',
+          status: defaultStatus || 'to_check',
         });
       }
       setErrors({});
       setBackendError(null);
     }
-  }, [isOpen, editingCommitment, currentUserProfile.id, checkers, currentUserProfile.role]);
+  }, [isOpen, editingCommitment, currentUserProfile.id, checkers, currentUserProfile.role, defaultProject, defaultStatus]);
 
   const handleProjectSelect = (val: string) => {
     if (val === '__new__') {
@@ -141,6 +150,25 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     } else {
       setShowNewProjectInput(false);
       setFormData(prev => ({ ...prev, project: val }));
+    }
+  };
+
+  const handleCreateProjectRealtime = async () => {
+    if (!newProjectName.trim()) return;
+    setIsSubmitting(true);
+    setBackendError(null);
+    
+    const result = await createProject(newProjectName.trim(), newProjectDesc.trim() || undefined);
+    setIsSubmitting(false);
+    
+    if (result.error) {
+      setBackendError(result.error);
+    } else {
+      setFormData(prev => ({ ...prev, project: newProjectName.trim() }));
+      setShowNewProjectInput(false);
+      setNewProjectName('');
+      setNewProjectDesc('');
+      router.refresh();
     }
   };
 
@@ -184,10 +212,12 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     setBackendError(null);
 
     try {
-      // Combine date + time into ISO string: ${date}T${time || '00:00'}:00
-      const deadlineISO = formData.deadline
-        ? `${formData.deadline}T${formData.time || '00:00'}:00`
-        : null;
+      // Bypasses check and sets to null automatically for backlog ideas
+      const deadlineISO = formData.status === 'ideas_backlog'
+        ? null
+        : formData.deadline
+          ? `${formData.deadline}T${formData.time || '00:00'}:00`
+          : null;
 
       // Auto-transition: if deadline is shifted from past to future, restore 'expired' status to 'to_check' (actual)
       let finalStatus = formData.status;
@@ -262,7 +292,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
       onClose={onClose}
       title={editingCommitment ? 'Edit Commitment' : 'Add New Commitment'}
     >
-      <form onSubmit={handleSubmit} className="space-y-5 text-[#f1f5f9]">
+      <form onSubmit={handleSubmit} className="space-y-5 text-[#f1f5f9] pb-36">
         {/* Title */}
         <div className="space-y-1.5">
           <label htmlFor="title" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
@@ -300,7 +330,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           />
         </div>
 
-        {/* Project Selection */}
+        {/* Project Selection / Realtime Creation Box */}
         <div className="space-y-1.5">
           <label htmlFor="project" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
             Project <span className="text-red-500">*</span>
@@ -316,28 +346,57 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
               error={!!errors.project}
             />
           ) : (
-            <div className="flex space-x-2">
-              <input
-                type="text"
-                value={newProjectName}
-                onChange={(e) => {
-                  setNewProjectName(e.target.value);
-                  setFormData(prev => ({ ...prev, project: e.target.value }));
-                }}
-                placeholder="Enter new project name"
-                className="flex-1 px-3 py-2 bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40"
-              />
-              <button
-                type="button"
-                onClick={() => {
-                  setShowNewProjectInput(false);
-                  setNewProjectName('');
-                  setFormData(prev => ({ ...prev, project: projects[0]?.name || '' }));
-                }}
-                className="px-4 py-2 bg-[#161726] hover:bg-[#1e2035] text-[#64748b] hover:text-[#f1f5f9] rounded-xl border border-[#24263b] text-xs font-bold uppercase tracking-wider"
-              >
-                Cancel
-              </button>
+            /* Nested Double Bezel Project Creation Box matching Left Sidebar */
+            <div className="p-1 bg-[#161726]/40 border border-[#24263b] rounded-[1.5rem] shadow-xl animate-in fade-in zoom-in-95 duration-200">
+              <div className="bg-[#11121d] border border-[#24263b]/50 p-4 rounded-[calc(1.5rem-4px)] space-y-3.5">
+                <h4 className="text-[10px] font-bold text-white uppercase tracking-widest mb-1">Create New Project</h4>
+                
+                <div className="space-y-1">
+                  <label className="block text-[9px] font-bold text-[#64748b] tracking-wider uppercase">Project Name *</label>
+                  <input
+                    type="text"
+                    value={newProjectName}
+                    onChange={(e) => {
+                      setNewProjectName(e.target.value);
+                    }}
+                    placeholder="e.g. Q4 Launch"
+                    className="w-full px-3 py-2 bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl text-xs focus:outline-none"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <label className="block text-[9px] font-bold text-[#64748b] tracking-wider uppercase">Description</label>
+                  <textarea
+                    value={newProjectDesc}
+                    onChange={(e) => setNewProjectDesc(e.target.value)}
+                    placeholder="e.g. Deliverable timeline"
+                    rows={2}
+                    className="w-full px-3 py-2 bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl text-xs focus:outline-none resize-none"
+                  />
+                </div>
+
+                <div className="flex space-x-2 pt-1">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowNewProjectInput(false);
+                      setNewProjectName('');
+                      setNewProjectDesc('');
+                      setFormData(prev => ({ ...prev, project: projects[0]?.name || '' }));
+                    }}
+                    className="flex-1 py-1.5 bg-[#161726] hover:bg-[#1e2035] text-[#64748b] hover:text-[#f1f5f9] border border-[#24263b] rounded-xl text-[10px] font-bold uppercase tracking-wider"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreateProjectRealtime}
+                    className="flex-1 py-1.5 bg-blue-500 hover:bg-blue-600 text-white rounded-xl text-[10px] font-bold uppercase tracking-wider border-none shadow-md"
+                  >
+                    Create
+                  </button>
+                </div>
+              </div>
             </div>
           )}
           {!showNewProjectInput && projects.find(p => p.name === formData.project)?.description && (
@@ -382,33 +441,35 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           {errors.checker && <p className="text-xs text-red-400 mt-1">{errors.checker}</p>}
         </div>
 
-        {/* Deadline */}
-        <div className="space-y-1.5">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-1.5">
-              <label htmlFor="deadline" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
-                Deadline <span className="text-red-500">*</span>
-              </label>
-              <CustomDatePicker
-                value={formData.deadline}
-                onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
-                disabled={isSubmitting}
-                error={!!errors.deadline}
-              />
+        {/* Deadline (Fully Bypassed/Hidden for Backlog Ideas) */}
+        {formData.status !== 'ideas_backlog' && (
+          <div className="space-y-1.5">
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <label htmlFor="deadline" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+                  Deadline <span className="text-red-500">*</span>
+                </label>
+                <CustomDatePicker
+                  value={formData.deadline}
+                  onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
+                  disabled={isSubmitting}
+                  error={!!errors.deadline}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <label htmlFor="time" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+                  Time (optional)
+                </label>
+                <CustomTimePicker
+                  value={formData.time}
+                  onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
+                  disabled={isSubmitting}
+                />
+              </div>
             </div>
-            <div className="space-y-1.5">
-              <label htmlFor="time" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
-                Time (optional)
-              </label>
-              <CustomTimePicker
-                value={formData.time}
-                onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
-                disabled={isSubmitting}
-              />
-            </div>
+            {errors.deadline && <p className="text-xs text-red-400 mt-1">{errors.deadline}</p>}
           </div>
-          {errors.deadline && <p className="text-xs text-red-400 mt-1">{errors.deadline}</p>}
-        </div>
+        )}
 
         {/* Status */}
         <div className="space-y-1.5">
@@ -447,7 +508,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
             className={`px-5 py-3 text-white rounded-xl transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider border-none shadow-lg shadow-blue-500/10 ${
               isSubmitting 
                 ? 'bg-[#24263b] text-[#64748b] cursor-not-allowed'
-                : 'bg-blue-500 hover:bg-blue-600'
+                : 'bg-[#143c90] hover:bg-[#1e4fb8]'
             }`}
           >
             {isSubmitting ? (
@@ -517,7 +578,7 @@ const CustomDropdown: React.FC<DropdownProps> = ({
                   }}
                   className={`w-full text-left px-3 py-2 transition-colors rounded-lg cursor-pointer select-none text-xs font-semibold flex items-center justify-between ${
                     opt.value === value
-                      ? 'bg-blue-500 text-white font-bold'
+                      ? 'bg-[#143c90] text-white font-bold'
                       : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]'
                   }`}
                 >
@@ -632,7 +693,8 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-50 bottom-full mb-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-72 left-0 md:left-auto md:right-0">
+          {/* Opens downward (top-full) and aligned to the right edge (right-0) of the input, avoiding sidebar cuts */}
+          <div className="absolute z-50 top-full mt-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-72 right-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -684,7 +746,7 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
                     onClick={() => handleDayClick(day)}
                     className={`h-7 w-7 text-xs font-semibold rounded-full flex items-center justify-center transition-all select-none border-none ${
                       selected
-                        ? 'bg-blue-500 text-white font-bold shadow-md cursor-pointer'
+                        ? 'bg-[#143c90] text-white font-bold shadow-md cursor-pointer'
                         : past
                           ? 'bg-transparent text-[#24263b] cursor-not-allowed'
                           : today
@@ -776,7 +838,8 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          <div className="absolute z-50 bottom-full mb-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-60 right-0 flex flex-col">
+          {/* Opens downward (top-full) and aligned to the right edge (right-0) of the input, avoiding sidebar cuts */}
+          <div className="absolute z-50 top-full mt-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-60 right-0 flex flex-col">
             <style dangerouslySetInnerHTML={{ __html: `
               .custom-scrollbar::-webkit-scrollbar {
                 width: 4px;
@@ -811,7 +874,7 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
                     onClick={() => handleHourSelect(h)}
                     className={`w-full text-center py-1 text-xs font-semibold cursor-pointer border-none select-none transition-colors ${
                       hour === h
-                        ? 'bg-blue-500 text-white font-bold'
+                        ? 'bg-[#143c90] text-white font-bold'
                         : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#11121d]'
                     }`}
                   >
@@ -830,7 +893,7 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
                     onClick={() => handleMinuteSelect(m)}
                     className={`w-full text-center py-1 text-xs font-semibold cursor-pointer border-none select-none transition-colors ${
                       minute === m
-                        ? 'bg-blue-500 text-white font-bold'
+                        ? 'bg-[#143c90] text-white font-bold'
                         : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#11121d]'
                     }`}
                   >

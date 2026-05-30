@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from 'react';
 import { login, register } from '@/app/actions/auth';
-import { CircleNotch, CheckCircle, Warning } from '@phosphor-icons/react';
+import { CircleNotch, CheckCircle, Warning, CaretDown, Check } from '@phosphor-icons/react';
 
 interface AuthFormProps {
   type: 'signin' | 'register';
@@ -13,6 +13,10 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState<string | null>(null);
   const [isRegistered, setIsRegistered] = useState(false);
+
+  // Custom role dropdown state
+  const [selectedRole, setSelectedRole] = useState<'manager' | 'member' | ''>('');
+  const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
     setError(null);
@@ -39,7 +43,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
 
   if (isRegistered) {
     return (
-      <div className="glass-panel space-y-6 text-center py-8 fade-in">
+      <div className="glass-panel space-y-6 text-center py-8 fade-in w-full max-w-[450px]">
         <div className="flex justify-center">
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
             <CheckCircle size={32} weight="bold" />
@@ -59,7 +63,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
             setIsRegistered(false);
             setActiveTab?.('signin');
           }}
-          className="w-full flex items-center justify-center space-x-2 bg-[#24263b] hover:bg-[#313552] border border-[#24263b] text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-wider rounded-xl py-3 text-xs"
+          className="w-full flex items-center justify-center space-x-2 bg-[#24263b] hover:bg-[#313552] border border-[#24263b] text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-wider rounded-xl py-3.5 text-xs whitespace-nowrap"
         >
           <span>Continue to Sign In</span>
         </button>
@@ -68,8 +72,8 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
   }
 
   return (
-    <form action={handleSubmit} className="glass-panel space-y-6 bg-[#11121d] border border-[#24263b] shadow-2xl p-6 rounded-2xl">
-      <div className="space-y-4">
+    <form action={handleSubmit} className="glass-panel space-y-6 bg-[#11121d] border border-[#24263b] shadow-2xl p-7 rounded-2xl w-full max-w-[450px] mx-auto">
+      <div className="space-y-4.5">
         {type === 'register' && (
           <div className="space-y-1.5">
             <label htmlFor="name" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
@@ -121,20 +125,69 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
             <label htmlFor="role" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
               Role
             </label>
+            
+            {/* Custom Role Dropdown matching forms & calendar widgets */}
             <div className="relative">
-              <select
-                id="role"
-                name="role"
-                required
-                className="w-full bg-[#161726] border border-[#24263b] text-[#f1f5f9] rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500/40 transition-all appearance-none"
-                defaultValue=""
+              <input type="hidden" name="role" value={selectedRole} required />
+              
+              <div
+                role="button"
+                tabIndex={0}
+                onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
+                className={`w-full flex items-center justify-between px-3 py-2.5 border rounded-xl bg-[#161726] text-[#f1f5f9] focus:outline-none focus:ring-2 focus:ring-blue-500/40 text-left text-sm select-none transition-all ${
+                  isRoleDropdownOpen ? 'border-blue-500/40' : 'border-[#24263b]'
+                }`}
               >
-                <option value="" disabled className="bg-[#11121d] text-[#64748b]">Select your team role</option>
-                <option value="manager" className="bg-[#11121d] text-[#f1f5f9]">Manager</option>
-                <option value="member" className="bg-[#11121d] text-[#f1f5f9]">Member</option>
-              </select>
+                <span className="truncate">
+                  {selectedRole === 'manager' ? 'Manager' : selectedRole === 'member' ? 'Member' : 'Select your team role'}
+                </span>
+                <CaretDown size={14} weight="bold" className={`text-[#64748b] transition-transform duration-300 ${isRoleDropdownOpen ? 'rotate-180' : ''}`} />
+              </div>
+
+              {isRoleDropdownOpen && (
+                <>
+                  <div className="fixed inset-0 z-40" onClick={() => setIsRoleDropdownOpen(false)} />
+                  <ul className="absolute z-50 w-full mt-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl py-1.5 text-sm">
+                    <li className="px-1">
+                      <div
+                        role="button"
+                        onClick={() => {
+                          setSelectedRole('manager');
+                          setIsRoleDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 transition-colors rounded-lg cursor-pointer select-none text-xs font-semibold flex items-center justify-between ${
+                          selectedRole === 'manager'
+                            ? 'bg-[#143c90] text-white font-bold'
+                            : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]'
+                        }`}
+                      >
+                        <span>Manager</span>
+                        {selectedRole === 'manager' && <Check size={12} weight="bold" />}
+                      </div>
+                    </li>
+                    <li className="px-1">
+                      <div
+                        role="button"
+                        onClick={() => {
+                          setSelectedRole('member');
+                          setIsRoleDropdownOpen(false);
+                        }}
+                        className={`w-full text-left px-3 py-2 transition-colors rounded-lg cursor-pointer select-none text-xs font-semibold flex items-center justify-between ${
+                          selectedRole === 'member'
+                            ? 'bg-[#143c90] text-white font-bold'
+                            : 'text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]'
+                        }`}
+                      >
+                        <span>Member</span>
+                        {selectedRole === 'member' && <Check size={12} weight="bold" />}
+                      </div>
+                    </li>
+                  </ul>
+                </>
+              )}
             </div>
-            <p className="text-[10px] text-[#64748b] font-mono leading-relaxed">
+            
+            <p className="text-[10px] text-[#64748b] font-mono leading-relaxed mt-1">
               Managers create and verify commitments, Members execute commitments
             </p>
           </div>
@@ -148,10 +201,11 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
         </div>
       )}
 
+      {/* Enlarged Button to fit long text and custom fonts perfectly without wrapping */}
       <button
         type="submit"
         disabled={isPending}
-        className="w-full flex items-center justify-center space-x-2 bg-blue-500 hover:bg-blue-600 text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-wider rounded-xl py-3 text-xs border-none shadow-lg shadow-blue-500/10 disabled:bg-[#24263b] disabled:text-[#64748b]"
+        className="w-full flex items-center justify-center space-x-2 bg-[#143c90] hover:bg-[#1e4fb8] text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-widest rounded-xl py-3.5 text-xs border-none shadow-lg shadow-blue-500/10 disabled:bg-[#24263b] disabled:text-[#64748b] whitespace-nowrap px-6"
       >
         {isPending && <CircleNotch size={14} className="animate-spin" />}
         <span>

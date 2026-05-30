@@ -18,15 +18,15 @@ const config: Config = {
         "slate-glass": "#161726",
         "slate-glass-border": "#24263b",
         
-        // Custom Accent Colors - Muted Electric Blue
+        // Custom Accent Colors - rgb(20 60 144) (Royal Blue)
         primary: {
-          DEFAULT: "#3b82f6",
-          hover: "#2563eb",
-          dark: "#1d4ed8"
+          DEFAULT: "#143c90",
+          hover: "#1e4fb8",
+          dark: "#0d2861"
         },
         accent: {
-          DEFAULT: "#3b82f6",
-          hover: "#2563eb"
+          DEFAULT: "#143c90",
+          hover: "#1e4fb8"
         },
         
         // Functional Status Colors

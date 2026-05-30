@@ -59,7 +59,7 @@ export const StatusBadge: React.FC<StatusBadgeProps> = ({
 
   return (
     <div
-      className={`inline-flex items-center space-x-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] rounded-full border ${config.bg} ${config.text} ${config.border} ${className}`}
+      className={`inline-flex items-center space-x-1.5 px-2.5 py-1 text-[10px] font-bold uppercase tracking-[0.15em] rounded-full border whitespace-nowrap ${config.bg} ${config.text} ${config.border} ${className}`}
     >
       {showIcon && <StatusIcon size={12} weight="bold" className="flex-shrink-0" />}
       <span>{config.label}</span>

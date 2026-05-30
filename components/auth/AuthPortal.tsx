@@ -9,7 +9,7 @@ export default function AuthPortal() {
   const [activeTab, setActiveTab] = useState<'signin' | 'register'>('signin');
 
   return (
-    <div className="w-full max-w-md space-y-6">
+    <div className="w-full max-w-[450px] space-y-6">
       {/* Premium Segmented Control / Sliding Pill Switcher */}
       <div className="bg-zinc-950/40 border border-white/10 backdrop-blur-xl p-1.5 rounded-full flex relative w-full shadow-inner">
         {/* Sign In Tab */}
