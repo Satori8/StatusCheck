@@ -102,7 +102,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const oldDatePart = commitment.deadline ? commitment.deadline.split('T')[0] : '';
       const newDatePart = `${year}-${month}-${day}`;
       if (oldDatePart === newDatePart) {
-        dropInfo.revert();
+        // Visually accept the drop as successful on the same day. FullCalendar naturally cleans up the drag states instantly!
         return;
       }
       
