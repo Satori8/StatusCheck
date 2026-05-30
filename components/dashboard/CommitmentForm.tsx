@@ -40,6 +40,7 @@ interface CommitmentFormProps {
   projects: { name: string; description?: string | null }[];
   defaultProject?: string | null;
   defaultStatus?: CommitmentStatus;
+  defaultDeadline?: string | null;
 }
 
 const statusOptions: { value: CommitmentStatus; label: string }[] = [
@@ -60,6 +61,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
   projects,
   defaultProject = null,
   defaultStatus = 'to_check',
+  defaultDeadline = null,
 }) => {
   const router = useRouter();
   const [formData, setFormData] = useState({
@@ -68,7 +70,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     project: defaultProject || '',
     assignee: currentUserProfile.id,
     checker: currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || ''),
-    deadline: '',
+    deadline: defaultDeadline || '',
     time: '',
     status: defaultStatus || ('to_check' as CommitmentStatus),
   });
@@ -133,7 +135,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
           project: defaultProject || '',
           assignee: currentUserProfile.id,
           checker: currentUserProfile.role === 'manager' ? currentUserProfile.id : (checkers[0]?.id || ''),
-          deadline: '',
+          deadline: defaultDeadline || '',
           time: '',
           status: defaultStatus || 'to_check',
         });
@@ -141,7 +143,7 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
       setErrors({});
       setBackendError(null);
     }
-  }, [isOpen, editingCommitment, currentUserProfile.id, checkers, currentUserProfile.role, defaultProject, defaultStatus]);
+  }, [isOpen, editingCommitment, currentUserProfile.id, checkers, currentUserProfile.role, defaultProject, defaultStatus, defaultDeadline]);
 
   const handleProjectSelect = (val: string) => {
     if (val === '__new__') {
@@ -443,29 +445,27 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
 
         {/* Deadline (Fully Bypassed/Hidden for Backlog Ideas) */}
         {formData.status !== 'ideas_backlog' && (
-          <div className="space-y-1.5">
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <label htmlFor="deadline" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
-                  Deadline <span className="text-red-500">*</span>
-                </label>
-                <CustomDatePicker
-                  value={formData.deadline}
-                  onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
-                  disabled={isSubmitting}
-                  error={!!errors.deadline}
-                />
-              </div>
-              <div className="space-y-1.5">
-                <label htmlFor="time" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
-                  Time (optional)
-                </label>
-                <CustomTimePicker
-                  value={formData.time}
-                  onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
-                  disabled={isSubmitting}
-                />
-              </div>
+          <div className="space-y-4">
+            <div className="space-y-1.5">
+              <label htmlFor="deadline" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+                Deadline <span className="text-red-500">*</span>
+              </label>
+              <CustomDatePicker
+                value={formData.deadline}
+                onChange={(val) => setFormData(prev => ({ ...prev, deadline: val }))}
+                disabled={isSubmitting}
+                error={!!errors.deadline}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <label htmlFor="time" className="block text-[10px] font-bold text-[#64748b] tracking-wider uppercase">
+                Time (optional)
+              </label>
+              <CustomTimePicker
+                value={formData.time}
+                onChange={(val) => setFormData(prev => ({ ...prev, time: val }))}
+                disabled={isSubmitting}
+              />
             </div>
             {errors.deadline && <p className="text-xs text-red-400 mt-1">{errors.deadline}</p>}
           </div>
@@ -693,8 +693,8 @@ const CustomDatePicker: React.FC<DatePickerProps> = ({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          {/* Opens downward (top-full) and aligned to the right edge (right-0) of the input, avoiding sidebar cuts */}
-          <div className="absolute z-50 top-full mt-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-72 right-0">
+          {/* Opens upward (bottom-full) and aligned to the right edge (right-0) of the input */}
+          <div className="absolute z-50 bottom-full mb-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-72 right-0">
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
               <button
@@ -838,8 +838,8 @@ const CustomTimePicker: React.FC<TimePickerProps> = ({
       {isOpen && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setIsOpen(false)} />
-          {/* Opens downward (top-full) and aligned to the right edge (right-0) of the input, avoiding sidebar cuts */}
-          <div className="absolute z-50 top-full mt-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-60 right-0 flex flex-col">
+          {/* Opens upward (bottom-full) and aligned to the right edge (right-0) of the input */}
+          <div className="absolute z-50 bottom-full mb-1.5 bg-[#11121d] border border-[#24263b] rounded-xl shadow-2xl p-4 w-60 right-0 flex flex-col">
             <style dangerouslySetInnerHTML={{ __html: `
               .custom-scrollbar::-webkit-scrollbar {
                 width: 4px;

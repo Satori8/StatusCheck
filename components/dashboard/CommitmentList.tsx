@@ -47,6 +47,29 @@ interface CommitmentListProps {
   };
 }
 
+const cardStatusStyles = {
+  to_check: {
+    bg: 'bg-[#11121d] hover:bg-amber-500/[0.02]',
+    border: 'border-[#24263b]/80 border-l-[3px] border-l-amber-500/60 hover:border-amber-500/40',
+  },
+  done: {
+    bg: 'bg-[#11121d] hover:bg-emerald-500/[0.02]',
+    border: 'border-[#24263b]/80 border-l-[3px] border-l-emerald-500/60 hover:border-emerald-500/40',
+  },
+  expired: {
+    bg: 'bg-[#11121d] hover:bg-red-500/[0.02]',
+    border: 'border-[#24263b]/80 border-l-[3px] border-l-red-500/60 hover:border-red-500/40',
+  },
+  not_actual: {
+    bg: 'bg-[#11121d] hover:bg-slate-500/[0.02]',
+    border: 'border-[#24263b]/80 border-l-[3px] border-l-slate-500/60 hover:border-slate-500/40',
+  },
+  ideas_backlog: {
+    bg: 'bg-[#11121d] hover:bg-indigo-500/[0.02]',
+    border: 'border-[#24263b]/80 border-l-[3px] border-l-indigo-500/60 hover:border-indigo-500/40',
+  },
+};
+
 export const CommitmentList: React.FC<CommitmentListProps> = ({
   commitments,
   onEditCommitment,
@@ -103,6 +126,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
           <AnimatePresence>
             {filteredCommitments.map((commitment) => {
               const isExpanded = expandedCommitmentId === commitment.id;
+              const statusStyle = cardStatusStyles[commitment.status as keyof typeof cardStatusStyles] || cardStatusStyles.to_check;
 
               return (
                 <motion.div
@@ -111,7 +135,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-                  className="group bg-[#11121d] border border-[#24263b] rounded-2xl hover:border-[#143c90]/40 hover:bg-[#161726]/30 transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30"
+                  className={`group rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30 ${statusStyle.bg} border ${statusStyle.border}`}
                   onClick={() => onEditCommitment(commitment)}
                 >
                   {/* Mobile Header */}

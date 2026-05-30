@@ -48,6 +48,7 @@ interface CommitmentCalendarProps {
     email: string;
     role: 'manager' | 'member';
   };
+  onAddCommitmentWithDate?: (dateStr: string) => void;
 }
 
 const statusColors = {
@@ -61,13 +62,30 @@ const statusColors = {
 export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   commitments,
   onEditCommitment,
-  currentUserProfile
+  currentUserProfile,
+  onAddCommitmentWithDate
 }) => {
   const router = useRouter();
   const [selectedEvent, setSelectedEvent] = useState<Commitment | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const calendarRef = useRef<FullCalendar | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
+
+  const lastClickRef = useRef<{ dateStr: string; time: number } | null>(null);
+
+  const handleDateClick = (info: { dateStr: string }) => {
+    const now = Date.now();
+    if (
+      lastClickRef.current &&
+      lastClickRef.current.dateStr === info.dateStr &&
+      now - lastClickRef.current.time < 300
+    ) {
+      if (onAddCommitmentWithDate) {
+        onAddCommitmentWithDate(info.dateStr);
+      }
+    }
+    lastClickRef.current = { dateStr: info.dateStr, time: now };
+  };
 
   // Handle event drag & drop (moving commitment to another day)
   const handleEventDrop = async (dropInfo: { event: { id: string; start: Date | null }; revert: () => void }) => {
@@ -210,6 +228,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
             }))}
           eventContent={renderEventContent}
           eventClick={handleEventClick}
+          dateClick={handleDateClick}
           editable={true}
           eventDrop={handleEventDrop}
           height="auto"

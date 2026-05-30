@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
       {/* Sidebar Container */}
       <aside
-        className={`fixed inset-y-0 left-0 z-30 w-72 bg-[#11121d] border-r border-[#24263b] transform transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] md:translate-x-0 ${
+        className={`fixed md:relative inset-y-0 left-0 z-30 w-72 flex-shrink-0 bg-[#11121d] border-r border-[#24263b] transform transition-transform duration-300 ease-[cubic-bezier(0.32,0.72,0,1)] md:translate-x-0 ${
           isMobile ? 'translate-x-0' : '-translate-x-full'
         }`}
       >

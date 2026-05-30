@@ -66,6 +66,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
   const [activeView, setActiveView] = useState<'calendar' | 'list' | 'backlog'>('calendar');
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingCommitment, setEditingCommitment] = useState<Commitment | null>(null);
+  const [prefilledDate, setPrefilledDate] = useState<string | null>(null);
 
   // Filter commitments based on current filter state
   const filteredCommitments = useMemo(() => {
@@ -260,6 +261,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
             <button
               onClick={() => {
                 setEditingCommitment(null);
+                setPrefilledDate(null);
                 setIsFormOpen(true);
               }}
               className="flex items-center space-x-2 px-5 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none"
@@ -291,7 +293,11 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                   : 'There are no active commitments configured for this project yet.'}
               </p>
               <button
-                onClick={() => setIsFormOpen(true)}
+                onClick={() => {
+                  setEditingCommitment(null);
+                  setPrefilledDate(null);
+                  setIsFormOpen(true);
+                }}
                 className="px-5 py-3 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none"
               >
                 Create First Commitment
@@ -318,6 +324,11 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                       commitments={filteredCommitments}
                       onEditCommitment={handleEditCommitment}
                       currentUserProfile={currentUserProfile}
+                      onAddCommitmentWithDate={(dateStr) => {
+                        setEditingCommitment(null);
+                        setPrefilledDate(dateStr);
+                        setIsFormOpen(true);
+                      }}
                     />
                   </div>
                 </motion.div>
@@ -376,6 +387,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           onClose={() => {
             setIsFormOpen(false);
             setEditingCommitment(null);
+            setPrefilledDate(null);
           }}
           onSubmitSuccess={handleFormSuccess}
           currentUserProfile={currentUserProfile}
@@ -384,6 +396,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           projects={projects}
           defaultProject={selectedProject}
           defaultStatus={activeView === 'backlog' ? 'ideas_backlog' : 'to_check'}
+          defaultDeadline={prefilledDate}
         />
       </div>
     </ErrorBoundary>
