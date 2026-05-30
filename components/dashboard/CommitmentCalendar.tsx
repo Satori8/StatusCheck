@@ -71,6 +71,8 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   const calendarRef = useRef<FullCalendar | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
+  const [calendarKey, setCalendarKey] = useState(0);
+
   const lastClickRef = useRef<{ dateStr: string; time: number } | null>(null);
 
   const handleDateClick = (info: { dateStr: string }) => {
@@ -102,7 +104,8 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const oldDatePart = commitment.deadline ? commitment.deadline.split('T')[0] : '';
       const newDatePart = `${year}-${month}-${day}`;
       if (oldDatePart === newDatePart) {
-        // Visually accept the drop as successful on the same day. FullCalendar naturally cleans up the drag states instantly!
+        // Increment key to force-reset FullCalendar's DOM state and clear drag highlight locks instantly
+        setCalendarKey(prev => prev + 1);
         return;
       }
       
@@ -212,6 +215,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       {/* FullCalendar Component */}
       <div className="bg-[#0d0e15] rounded-xl shadow-2xl border border-[#24263b] overflow-hidden">
         <FullCalendar
+          key={calendarKey}
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
