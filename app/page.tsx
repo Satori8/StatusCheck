@@ -55,7 +55,7 @@ export default function Home() {
       </div>
 
       {/* Right Column AuthPortal */}
-      <div className="lg:col-span-5 flex flex-col justify-center items-center w-full">
+      <div className="lg:col-span-5 flex flex-col justify-center items-center w-full max-w-[500px] mx-auto">
         {/* Doppelrand Double-Bezel Nested Shell */}
         <div className="w-full p-2 bg-[#161726]/40 border border-[#24263b] rounded-[2rem] shadow-2xl">
           <div className="bg-[#11121d] border border-[#24263b]/50 p-6 md:p-8 rounded-[calc(2rem-8px)]">

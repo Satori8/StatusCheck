@@ -43,7 +43,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
 
   if (isRegistered) {
     return (
-      <div className="glass-panel space-y-6 text-center py-8 fade-in w-full max-w-[450px]">
+      <div className="glass-panel space-y-6 text-center py-8 fade-in w-full max-w-[480px]">
         <div className="flex justify-center">
           <div className="w-16 h-16 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400">
             <CheckCircle size={32} weight="bold" />
@@ -72,7 +72,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
   }
 
   return (
-    <form action={handleSubmit} className="glass-panel space-y-6 bg-[#11121d] border border-[#24263b] shadow-2xl p-7 rounded-2xl w-full max-w-[450px] mx-auto">
+    <form action={handleSubmit} className="glass-panel space-y-6 bg-[#11121d] border border-[#24263b] shadow-2xl p-7 rounded-2xl w-full max-w-[480px] mx-auto">
       <div className="space-y-4.5">
         {type === 'register' && (
           <div className="space-y-1.5">
@@ -208,7 +208,7 @@ export default function AuthForm({ type, setActiveTab }: AuthFormProps) {
         className="w-full flex items-center justify-center space-x-2 bg-[#143c90] hover:bg-[#1e4fb8] text-white active:scale-[0.98] transition-all duration-200 font-bold uppercase tracking-widest rounded-xl py-3.5 text-xs border-none shadow-lg shadow-blue-500/10 disabled:bg-[#24263b] disabled:text-[#64748b] whitespace-nowrap px-6"
       >
         {isPending && <CircleNotch size={14} className="animate-spin" />}
-        <span>
+        <span className="whitespace-nowrap">
           {type === 'signin' ? 'Sign In' : 'Create Account'}
         </span>
       </button>
