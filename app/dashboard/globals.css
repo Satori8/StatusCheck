@@ -111,7 +111,7 @@
   padding: 6px 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25) !important;
   cursor: grab !important;
-  transition: all 0.3s cubic-bezier(0.32, 0.72, 0, 1) !important;
+  transition: background-color 0.2s cubic-bezier(0.32, 0.72, 0, 1), border-color 0.2s cubic-bezier(0.32, 0.72, 0, 1), box-shadow 0.2s cubic-bezier(0.32, 0.72, 0, 1) !important;
 }
 
 .fc .custom-event:active {

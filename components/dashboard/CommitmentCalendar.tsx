@@ -239,13 +239,13 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
           eventClassNames={(arg) => {
             const status = arg.event.extendedProps.status;
             const statusStyles = {
-              to_check: 'bg-amber-500/[0.04] hover:bg-amber-500/[0.08] border-amber-500/20 border-l-[3px] border-l-amber-500',
-              done: 'bg-emerald-500/[0.04] hover:bg-emerald-500/[0.08] border-emerald-500/20 border-l-[3px] border-l-emerald-500',
-              expired: 'bg-red-500/[0.04] hover:bg-red-500/[0.08] border-red-500/20 border-l-[3px] border-l-red-500',
-              not_actual: 'bg-slate-500/[0.04] hover:bg-slate-500/[0.08] border-slate-500/20 border-l-[3px] border-l-slate-500',
-              ideas_backlog: 'bg-indigo-500/[0.04] hover:bg-indigo-500/[0.08] border-indigo-500/20 border-l-[3px] border-l-indigo-500',
+              to_check: 'bg-amber-500/5 hover:bg-amber-500/10 border-amber-500/20 border-l-[3px] border-l-amber-500',
+              done: 'bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/20 border-l-[3px] border-l-emerald-500',
+              expired: 'bg-red-500/5 hover:bg-red-500/10 border-red-500/20 border-l-[3px] border-l-red-500',
+              not_actual: 'bg-slate-500/5 hover:bg-slate-500/10 border-slate-500/20 border-l-[3px] border-l-slate-500',
+              ideas_backlog: 'bg-indigo-500/5 hover:bg-indigo-500/10 border-indigo-500/20 border-l-[3px] border-l-indigo-500',
             };
-            return `${statusStyles[status as keyof typeof statusStyles] || ''} rounded-xl transition-all p-1`;
+            return `${statusStyles[status as keyof typeof statusStyles] || ''} rounded-xl transition-colors duration-200 p-1`;
           }}
           dayCellClassNames="hover:bg-white/[0.01] transition-colors"
           

@@ -49,24 +49,24 @@ interface CommitmentListProps {
 
 const cardStatusStyles = {
   to_check: {
-    bg: 'bg-amber-500/[0.04] hover:bg-amber-500/[0.08]',
-    border: 'border-amber-500/15 border-l-[4px] border-l-amber-500/80 hover:border-amber-500/40',
+    bg: 'bg-amber-500/5 hover:bg-amber-500/10',
+    border: 'border-amber-500/20 border-l-[4px] border-l-amber-500/80 hover:border-amber-500/40',
   },
   done: {
-    bg: 'bg-emerald-500/[0.04] hover:bg-emerald-500/[0.08]',
-    border: 'border-emerald-500/15 border-l-[4px] border-l-emerald-500/80 hover:border-emerald-500/40',
+    bg: 'bg-emerald-500/5 hover:bg-emerald-500/10',
+    border: 'border-emerald-500/20 border-l-[4px] border-l-emerald-500/80 hover:border-emerald-500/40',
   },
   expired: {
-    bg: 'bg-red-500/[0.04] hover:bg-red-500/[0.08]',
-    border: 'border-red-500/15 border-l-[4px] border-l-red-500/80 hover:border-red-500/40',
+    bg: 'bg-red-500/5 hover:bg-red-500/10',
+    border: 'border-red-500/20 border-l-[4px] border-l-red-500/80 hover:border-red-500/40',
   },
   not_actual: {
-    bg: 'bg-slate-500/[0.04] hover:bg-slate-500/[0.08]',
-    border: 'border-slate-500/15 border-l-[4px] border-l-slate-500/80 hover:border-slate-500/40',
+    bg: 'bg-slate-500/5 hover:bg-slate-500/10',
+    border: 'border-slate-500/20 border-l-[4px] border-l-slate-500/80 hover:border-slate-500/40',
   },
   ideas_backlog: {
-    bg: 'bg-indigo-500/[0.04] hover:bg-indigo-500/[0.08]',
-    border: 'border-indigo-500/15 border-l-[4px] border-l-indigo-500/80 hover:border-indigo-500/40',
+    bg: 'bg-indigo-500/5 hover:bg-indigo-500/10',
+    border: 'border-indigo-500/20 border-l-[4px] border-l-indigo-500/80 hover:border-indigo-500/40',
   },
 };
 
