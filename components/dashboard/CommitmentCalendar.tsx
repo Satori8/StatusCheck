@@ -98,6 +98,14 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const day = String(event.start.getDate()).padStart(2, '0');
       const newDate = `${year}-${month}-${day}T00:00:00`;
       
+      // Prevent database round-trips and UI hangs when dropping on the same day
+      const oldDatePart = commitment.deadline ? commitment.deadline.split('T')[0] : '';
+      const newDatePart = `${year}-${month}-${day}`;
+      if (oldDatePart === newDatePart) {
+        dropInfo.revert();
+        return;
+      }
+      
       const result = await updateCommitment(commitment.id, {
         deadline: newDate
       });
@@ -238,14 +246,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
           // Custom styling classes
           eventClassNames={(arg) => {
             const status = arg.event.extendedProps.status;
-            const statusStyles = {
-              to_check: 'bg-amber-500/5 hover:bg-amber-500/10 border-amber-500/20 border-l-[3px] border-l-amber-500',
-              done: 'bg-emerald-500/5 hover:bg-emerald-500/10 border-emerald-500/20 border-l-[3px] border-l-emerald-500',
-              expired: 'bg-red-500/5 hover:bg-red-500/10 border-red-500/20 border-l-[3px] border-l-red-500',
-              not_actual: 'bg-slate-500/5 hover:bg-slate-500/10 border-slate-500/20 border-l-[3px] border-l-slate-500',
-              ideas_backlog: 'bg-indigo-500/5 hover:bg-indigo-500/10 border-indigo-500/20 border-l-[3px] border-l-indigo-500',
-            };
-            return `${statusStyles[status as keyof typeof statusStyles] || ''} rounded-xl transition-colors duration-200 p-1`;
+            return `status-event-${status} rounded-xl transition-colors duration-200 p-1`;
           }}
           dayCellClassNames="hover:bg-white/[0.01] transition-colors"
           

@@ -169,3 +169,56 @@
   scrollbar-width: thin;
   scrollbar-color: #24263b #0d0e15;
 }
+
+/* ==========================================
+   CALENDAR EVENT STATUS CARD TINTS
+   ========================================== */
+.fc .custom-event.status-event-to_check {
+  background-color: rgba(245, 158, 11, 0.055) !important;
+  border-color: rgba(245, 158, 11, 0.22) !important;
+  border-left: 3px solid rgba(245, 158, 11, 0.85) !important;
+}
+.fc .custom-event.status-event-to_check:hover {
+  background-color: rgba(245, 158, 11, 0.09) !important;
+  border-color: rgba(245, 158, 11, 0.38) !important;
+}
+
+.fc .custom-event.status-event-done {
+  background-color: rgba(16, 185, 129, 0.055) !important;
+  border-color: rgba(16, 185, 129, 0.22) !important;
+  border-left: 3px solid rgba(16, 185, 129, 0.85) !important;
+}
+.fc .custom-event.status-event-done:hover {
+  background-color: rgba(16, 185, 129, 0.09) !important;
+  border-color: rgba(16, 185, 129, 0.38) !important;
+}
+
+.fc .custom-event.status-event-expired {
+  background-color: rgba(239, 68, 68, 0.055) !important;
+  border-color: rgba(239, 68, 68, 0.22) !important;
+  border-left: 3px solid rgba(239, 68, 68, 0.85) !important;
+}
+.fc .custom-event.status-event-expired:hover {
+  background-color: rgba(239, 68, 68, 0.09) !important;
+  border-color: rgba(239, 68, 68, 0.38) !important;
+}
+
+.fc .custom-event.status-event-not_actual {
+  background-color: rgba(100, 116, 139, 0.055) !important;
+  border-color: rgba(100, 116, 139, 0.22) !important;
+  border-left: 3px solid rgba(100, 116, 139, 0.85) !important;
+}
+.fc .custom-event.status-event-not_actual:hover {
+  background-color: rgba(100, 116, 139, 0.09) !important;
+  border-color: rgba(100, 116, 139, 0.38) !important;
+}
+
+.fc .custom-event.status-event-ideas_backlog {
+  background-color: rgba(99, 102, 241, 0.055) !important;
+  border-color: rgba(99, 102, 241, 0.22) !important;
+  border-left: 3px solid rgba(99, 102, 241, 0.85) !important;
+}
+.fc .custom-event.status-event-ideas_backlog:hover {
+  background-color: rgba(99, 102, 241, 0.09) !important;
+  border-color: rgba(99, 102, 241, 0.38) !important;
+}
