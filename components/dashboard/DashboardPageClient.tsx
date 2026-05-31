@@ -151,13 +151,13 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
     <ErrorBoundary>
       <div className="space-y-8">
         {/* Page Title Section */}
-        <div>
+        <div className="mb-4">
           <h1 className="text-xs font-bold text-blue-400 tracking-widest uppercase mb-1">Commitments Overview</h1>
-          <p className="text-base font-semibold text-[#64748b]">Manage &amp; track team commitments</p>
+          <p className="text-base font-semibold text-[#64748b]">Manage & track team commitments</p>
         </div>
 
         {/* Stats Header */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {/* Total Commitments */}
           <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-5 relative overflow-hidden group hover:border-[#143c90]/30 transition-all duration-300">
             <div className="flex items-center justify-between mb-3">
@@ -204,104 +204,107 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
         </div>
 
         {/* Toolbar: View Title + Switcher + Add Button + Search (Unified in ONE line) */}
-        <div className="flex flex-row flex-wrap items-center gap-3 bg-transparent pb-2 w-full">
-          {/* Dynamic View Title */}
-          <div className="flex items-center flex-shrink-0">
-            {activeView === 'calendar' && (
-              <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
-                <Calendar size={14} className="mr-2 text-blue-400" />
-                <span className="hidden sm:inline">Calendar Overview</span>
-                <span className="sm:hidden">Calendar</span>
-              </h2>
-            )}
-            {activeView === 'list' && (
-              <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
-                <ListBullets size={14} className="mr-2 text-blue-400" />
-                <span className="hidden sm:inline">Detailed Commitments</span>
-                <span className="sm:hidden">List</span>
-              </h2>
-            )}
-            {activeView === 'backlog' && (
-              <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
-                <Lightbulb size={14} className="mr-2 text-blue-400" />
-                <span className="hidden sm:inline">Ideas Backlog</span>
-                <span className="sm:hidden">Backlog</span>
-              </h2>
-            )}
-          </div>
-
-          {/* Vertical Divider */}
-          <span className="h-4 w-px bg-[#24263b] hidden md:inline select-none" />
-
-          {/* View Switcher Sliding Pill */}
-          <div className="bg-[#11121d] border border-[#24263b] rounded-full p-1 flex relative shadow-inner flex-shrink-0">
-            <button
-              onClick={() => setActiveView('calendar')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
-                activeView === 'calendar' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
-              }`}
-            >
-              <Calendar size={12} weight="bold" />
-              <span className="hidden xs:inline">Calendar</span>
+        <div className="flex flex-row flex-wrap items-center justify-between gap-3 bg-transparent py-4">
+          {/* Left Side: Dynamic View Title + Switcher + Add Button */}
+          <div className="flex flex-row flex-wrap items-center gap-3">
+            {/* Dynamic View Title */}
+            <div className="flex items-center flex-shrink-0">
               {activeView === 'calendar' && (
-                <motion.div
-                  layoutId="active-view-pill"
-                  className="absolute inset-0 bg-[#24263b] border border-blue-500/10 rounded-full -z-10"
-                  transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                />
+                <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
+                  <Calendar size={14} className="mr-2 text-blue-400" />
+                  <span className="hidden sm:inline">Calendar Overview</span>
+                  <span className="sm:hidden">Calendar</span>
+                </h2>
               )}
-            </button>
-            <button
-              onClick={() => setActiveView('list')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
-                activeView === 'list' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
-              }`}
-            >
-              <ListBullets size={12} weight="bold" />
-              <span className="hidden xs:inline">List</span>
               {activeView === 'list' && (
-                <motion.div
-                  layoutId="active-view-pill"
-                  className="absolute inset-0 bg-[#24263b] border border-blue-500/10 rounded-full -z-10"
-                  transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                />
+                <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
+                  <ListBullets size={14} className="mr-2 text-blue-400" />
+                  <span className="hidden sm:inline">Detailed Commitments</span>
+                  <span className="sm:hidden">List</span>
+                </h2>
               )}
-            </button>
-            <button
-              onClick={() => setActiveView('backlog')}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
-                activeView === 'backlog' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
-              }`}
-            >
-              <Lightbulb size={12} weight="bold" />
-              <span className="hidden xs:inline">Backlog</span>
               {activeView === 'backlog' && (
-                <motion.div
-                  layoutId="active-view-pill"
-                  className="absolute inset-0 bg-[#24263b] border border-blue-500/10 rounded-full -z-10"
-                  transition={{ type: 'spring', stiffness: 350, damping: 25 }}
-                />
+                <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
+                  <Lightbulb size={14} className="mr-2 text-blue-400" />
+                  <span className="hidden sm:inline">Ideas Backlog</span>
+                  <span className="sm:hidden">Backlog</span>
+                </h2>
               )}
+            </div>
+
+            {/* Vertical Divider */}
+            <span className="h-4 w-px bg-[#24263b] hidden md:inline select-none" />
+
+            {/* View Switcher Sliding Pill */}
+            <div className="bg-[#11121d] border border-[#24263b] rounded-full p-1 flex relative shadow-inner flex-shrink-0">
+              <button
+                onClick={() => setActiveView('calendar')}
+                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
+                  activeView === 'calendar' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
+                }`}
+              >
+                <Calendar size={14} weight="bold" />
+                <span>Calendar</span>
+                {activeView === 'calendar' && (
+                  <motion.div
+                    layoutId="active-view-pill"
+                    className="absolute inset-0 bg-[#24263b] border border-blue-500/10 rounded-full -z-10"
+                    transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                  />
+                )}
+              </button>
+              <button
+                onClick={() => setActiveView('list')}
+                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
+                  activeView === 'list' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
+                }`}
+              >
+                <ListBullets size={14} weight="bold" />
+                <span>List</span>
+                {activeView === 'list' && (
+                  <motion.div
+                    layoutId="active-view-pill"
+                    className="absolute inset-0 bg-[#24263b] border border-blue-500/10 rounded-full -z-10"
+                    transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                  />
+                )}
+              </button>
+              <button
+                onClick={() => setActiveView('backlog')}
+                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
+                  activeView === 'backlog' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
+                }`}
+              >
+                <Lightbulb size={14} weight="bold" />
+                <span>Backlog</span>
+                {activeView === 'backlog' && (
+                  <motion.div
+                    layoutId="active-view-pill"
+                    className="absolute inset-0 bg-[#24263b] border border-blue-500/10 rounded-full -z-10"
+                    transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+                  />
+                )}
+              </button>
+            </div>
+
+            {/* Add Commitment Button */}
+            <button
+              onClick={() => {
+                setEditingCommitment(null);
+                setPrefilledDate(null);
+                setIsFormOpen(true);
+              }}
+              className="flex items-center space-x-2 px-5 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none flex-shrink-0 cursor-pointer"
+            >
+              <Plus size={14} weight="bold" />
+              <span>Add Commitment</span>
             </button>
           </div>
 
-          {/* Search Input (compact sizing) */}
-          <div className="w-full sm:w-48 md:w-56 flex-shrink-0">
+          {/* Right Side: Search Input */}
+          <div className="w-full sm:w-64 md:w-80 flex-shrink-0">
             <SearchInput placeholder="Search commitments..." className="w-full" />
           </div>
-
-          {/* Add Commitment Button */}
-          <button
-            onClick={() => {
-              setEditingCommitment(null);
-              setPrefilledDate(null);
-              setIsFormOpen(true);
-            }}
-            className="flex items-center space-x-1.5 px-4 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-[10px] font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none flex-shrink-0 cursor-pointer"
-          >
-            <Plus size={12} weight="bold" />
-            <span>Add Commitment</span>
-          </button>
         </div>
 
         {/* Main Content Area */}

@@ -99,12 +99,15 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     const commitment = commitments.find(c => c.id === event.id);
     
     if (commitment && event.start) {
-      // Same-day drop: revert synchronously to keep FullCalendar's internal state
-      // perfectly in sync with React props and prevent drag freezes
+      // Same-day drop: revert to keep FullCalendar's internal state
+      // in sync with React props and prevent drag freezes
       const oldTime = oldEvent?.start?.getTime();
       const newTime = event?.start?.getTime();
       if (oldTime === newTime) {
-        dropInfo.revert();
+        // Use setTimeout to ensure revert happens after FullCalendar's animation frame
+        setTimeout(() => {
+          dropInfo.revert();
+        }, 0);
         return;
       }
 
