@@ -203,14 +203,37 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           </div>
         </div>
 
-        {/* Toolbar: Switcher + Add + Search */}
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
+        {/* Toolbar: View Title + Switcher + Add Button + Search */}
+        <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4 bg-transparent pb-2">
+          {/* Left Side: Dynamic View Title */}
+          <div className="flex items-center min-w-[200px]">
+            {activeView === 'calendar' && (
+              <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
+                <Calendar size={14} className="mr-2 text-blue-400" />
+                Calendar Overview
+              </h2>
+            )}
+            {activeView === 'list' && (
+              <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
+                <ListBullets size={14} className="mr-2 text-blue-400" />
+                Detailed Commitments
+              </h2>
+            )}
+            {activeView === 'backlog' && (
+              <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
+                <Lightbulb size={14} className="mr-2 text-blue-400" />
+                Ideas Backlog
+              </h2>
+            )}
+          </div>
+
+          {/* Right Side Actions Group */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3 w-full lg:w-auto">
             {/* View Switcher Sliding Pill */}
-            <div className="bg-[#11121d] border border-[#24263b] rounded-full p-1 flex relative shadow-inner">
+            <div className="bg-[#11121d] border border-[#24263b] rounded-full p-1 flex relative shadow-inner flex-shrink-0">
               <button
                 onClick={() => setActiveView('calendar')}
-                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none ${
+                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
                   activeView === 'calendar' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
                 }`}
               >
@@ -226,7 +249,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
               </button>
               <button
                 onClick={() => setActiveView('list')}
-                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none ${
+                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
                   activeView === 'list' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
                 }`}
               >
@@ -242,7 +265,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
               </button>
               <button
                 onClick={() => setActiveView('backlog')}
-                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none ${
+                className={`flex items-center space-x-1.5 px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full relative z-10 transition-colors duration-200 bg-transparent border-none cursor-pointer ${
                   activeView === 'backlog' ? 'text-white' : 'text-[#64748b] hover:text-[#f1f5f9]'
                 }`}
               >
@@ -265,14 +288,15 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                 setPrefilledDate(null);
                 setIsFormOpen(true);
               }}
-              className="flex items-center space-x-2 px-5 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none"
+              className="flex items-center space-x-2 px-5 py-2.5 bg-[#143c90] hover:bg-[#1e4fb8] text-white rounded-full transition-all active:scale-[0.98] duration-200 text-xs font-bold uppercase tracking-wider shadow-lg shadow-[#143c90]/15 border-none flex-shrink-0 cursor-pointer"
             >
               <Plus size={14} weight="bold" />
               <span>Add Commitment</span>
             </button>
-          </div>
 
-          <SearchInput placeholder="Search commitments..." className="w-full sm:w-64" />
+            {/* Search Input */}
+            <SearchInput placeholder="Search commitments..." className="w-full sm:w-64" />
+          </div>
         </div>
 
         {/* Main Content Area */}
@@ -312,12 +336,6 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                   transition={{ duration: 0.2 }}
                 >
                   <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-6 shadow-2xl">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center">
-                        <Calendar size={14} className="mr-2 text-blue-400" />
-                        Calendar Overview
-                      </h2>
-                    </div>
                     <CommitmentCalendar
                       commitments={filteredCommitments}
                       onEditCommitment={handleEditCommitment}
@@ -340,12 +358,6 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
                 >
                   <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-6 shadow-2xl">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center">
-                        <ListBullets size={14} className="mr-2 text-blue-400" />
-                        Detailed Commitments
-                      </h2>
-                    </div>
                     <CommitmentList
                       commitments={filteredCommitments}
                       onEditCommitment={handleEditCommitment}
@@ -362,12 +374,6 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
                 >
                   <div className="bg-[#11121d] border border-[#24263b] rounded-2xl p-6 shadow-2xl">
-                    <div className="flex items-center justify-between mb-6">
-                      <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center">
-                        <Lightbulb size={14} className="mr-2 text-blue-400" />
-                        Ideas Backlog
-                      </h2>
-                    </div>
                     <CommitmentList
                       commitments={filteredCommitments}
                       onEditCommitment={handleEditCommitment}
