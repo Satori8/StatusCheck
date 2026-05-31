@@ -150,6 +150,12 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
   return (
     <ErrorBoundary>
       <div className="space-y-8">
+        {/* Page Title Section */}
+        <div>
+          <h1 className="text-xs font-bold text-blue-400 tracking-widest uppercase mb-1">Commitments Overview</h1>
+          <p className="text-base font-semibold text-[#64748b]">Manage &amp; track team commitments</p>
+        </div>
+
         {/* Stats Header */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Total Commitments */}
@@ -197,14 +203,9 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           </div>
         </div>
 
-        {/* Main Header */}
-        <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-6 pb-6 border-b border-[#24263b]/60">
-          <div>
-            <h1 className="text-xl font-bold text-[#f1f5f9] tracking-wide uppercase text-xs tracking-widest text-blue-400 mb-1">Commitments Overview</h1>
-            <h2 className="text-2xl font-extrabold text-white tracking-tight">Manage & track team commitments</h2>
-          </div>
-
-          <div className="flex flex-wrap items-center gap-4">
+        {/* Toolbar: Switcher + Add + Search */}
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
             {/* View Switcher Sliding Pill */}
             <div className="bg-[#11121d] border border-[#24263b] rounded-full p-1 flex relative shadow-inner">
               <button
@@ -270,11 +271,8 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
               <span>Add Commitment</span>
             </button>
           </div>
-        </div>
 
-        {/* Filter & Search Bar */}
-        <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          <SearchInput placeholder="Search commitments..." className="w-full max-w-md" />
+          <SearchInput placeholder="Search commitments..." className="w-full sm:w-64" />
         </div>
 
         {/* Main Content Area */}
@@ -329,6 +327,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
                         setPrefilledDate(dateStr);
                         setIsFormOpen(true);
                       }}
+                      selectedProject={selectedProject}
                     />
                   </div>
                 </motion.div>

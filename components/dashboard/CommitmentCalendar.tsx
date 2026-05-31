@@ -49,6 +49,7 @@ interface CommitmentCalendarProps {
     role: 'manager' | 'member';
   };
   onAddCommitmentWithDate?: (dateStr: string) => void;
+  selectedProject?: string | null;
 }
 
 const statusColors = {
@@ -63,15 +64,14 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   commitments,
   onEditCommitment,
   currentUserProfile,
-  onAddCommitmentWithDate
+  onAddCommitmentWithDate,
+  selectedProject
 }) => {
   const router = useRouter();
   const [selectedEvent, setSelectedEvent] = useState<Commitment | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const calendarRef = useRef<FullCalendar | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
-
-  const [calendarKey, setCalendarKey] = useState(0);
 
   const lastClickRef = useRef<{ dateStr: string; time: number } | null>(null);
 
@@ -99,14 +99,12 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     const commitment = commitments.find(c => c.id === event.id);
     
     if (commitment && event.start) {
-      // Prevent database round-trips and UI hangs when dropping on the same day
+      // Same-day drop: no database call needed, just return silently
+      // Avoid calling revert() which fights FullCalendar's internal animation state
+      // and causes the drop animation to hang
       const oldTime = oldEvent?.start?.getTime();
       const newTime = event?.start?.getTime();
       if (oldTime === newTime) {
-        dropInfo.revert();
-        setTimeout(() => {
-          setCalendarKey(prev => prev + 1);
-        }, 0);
         return;
       }
 
@@ -218,10 +216,15 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
 
   return (
     <div>
+      {/* Project label — sits above the calendar header title as a second line */}
+      <div className="mb-2 flex items-center gap-2">
+        <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">
+          {selectedProject || 'All Projects'}
+        </span>
+      </div>
       {/* FullCalendar Component */}
       <div className="bg-[#0d0e15] rounded-xl shadow-2xl border border-[#24263b] overflow-hidden">
         <FullCalendar
-          key={calendarKey}
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
           initialView="dayGridMonth"
