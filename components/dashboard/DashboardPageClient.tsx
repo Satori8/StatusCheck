@@ -151,14 +151,6 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
   return (
     <ErrorBoundary>
       <div className="w-full">
-        {/* Page Title Section */}
-        <div className="mb-4">
-          <h1 className="text-base font-bold text-[#f1f5f9] select-none leading-none">
-            <span className="text-blue-400 uppercase text-xs tracking-widest font-extrabold mr-1">Commitments Overview.</span>
-            <span className="text-[#64748b] font-semibold text-sm">Manage & track team commitments</span>
-          </h1>
-        </div>
-
         {/* Stats Header */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           {/* Total Commitments */}
@@ -207,7 +199,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
         </div>
 
         {/* Toolbar: View Title + Project + Switcher + Add Button | Search */}
-        <div className="flex flex-row flex-wrap items-center justify-between gap-3 bg-transparent mb-4 w-full">
+        <div className="flex flex-row flex-wrap items-center justify-between gap-3 bg-transparent mb-6 w-full">
           {/* Left Side: Title, Project Name, View Switcher, Add Button */}
           <div className="flex flex-row flex-wrap items-center gap-3">
             {/* Dynamic View Title */}

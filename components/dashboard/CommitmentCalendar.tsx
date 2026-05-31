@@ -107,9 +107,8 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const newTime = event?.start?.getTime();
       
       if (oldTime === newTime) {
-        setTimeout(() => {
-          dropInfo.revert();
-        }, 0);
+        dropInfo.revert();
+        setLocalCommitments(prev => [...prev]);
         return;
       }
 
