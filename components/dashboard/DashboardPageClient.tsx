@@ -17,7 +17,8 @@ import {
   CheckCircle, 
   Warning, 
   Lightbulb, 
-  ClipboardText
+  ClipboardText,
+  Folder
 } from '@phosphor-icons/react';
 
 interface Profile {
@@ -149,11 +150,13 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
 
   return (
     <ErrorBoundary>
-      <div className="space-y-8">
+      <div className="w-full">
         {/* Page Title Section */}
         <div className="mb-4">
-          <h1 className="text-xs font-bold text-blue-400 tracking-widest uppercase mb-1">Commitments Overview</h1>
-          <p className="text-base font-semibold text-[#64748b]">Manage & track team commitments</p>
+          <h1 className="text-base font-bold text-[#f1f5f9] select-none leading-none">
+            <span className="text-blue-400 uppercase text-xs tracking-widest font-extrabold mr-1">Commitments Overview.</span>
+            <span className="text-[#64748b] font-semibold text-sm">Manage & track team commitments</span>
+          </h1>
         </div>
 
         {/* Stats Header */}
@@ -203,37 +206,42 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
           </div>
         </div>
 
-        {/* Toolbar: View Title + Switcher + Add Button + Search (Unified in ONE line) */}
-        <div className="flex flex-row flex-wrap items-center justify-between gap-3 bg-transparent py-4">
-          {/* Left Side: Dynamic View Title + Switcher + Add Button */}
+        {/* Toolbar: View Title + Project + Switcher + Add Button | Search */}
+        <div className="flex flex-row flex-wrap items-center justify-between gap-3 bg-transparent mb-4 w-full">
+          {/* Left Side: Title, Project Name, View Switcher, Add Button */}
           <div className="flex flex-row flex-wrap items-center gap-3">
             {/* Dynamic View Title */}
             <div className="flex items-center flex-shrink-0">
               {activeView === 'calendar' && (
                 <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
                   <Calendar size={14} className="mr-2 text-blue-400" />
-                  <span className="hidden sm:inline">Calendar Overview</span>
-                  <span className="sm:hidden">Calendar</span>
+                  <span>Calendar Overview</span>
                 </h2>
               )}
               {activeView === 'list' && (
                 <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
                   <ListBullets size={14} className="mr-2 text-blue-400" />
-                  <span className="hidden sm:inline">Detailed Commitments</span>
-                  <span className="sm:hidden">List</span>
+                  <span>Detailed Commitments</span>
                 </h2>
               )}
               {activeView === 'backlog' && (
                 <h2 className="text-xs font-bold text-[#64748b] tracking-widest uppercase flex items-center select-none">
                   <Lightbulb size={14} className="mr-2 text-blue-400" />
-                  <span className="hidden sm:inline">Ideas Backlog</span>
-                  <span className="sm:hidden">Backlog</span>
+                  <span>Ideas Backlog</span>
                 </h2>
               )}
             </div>
 
             {/* Vertical Divider */}
             <span className="h-4 w-px bg-[#24263b] hidden md:inline select-none" />
+
+            {/* Project / All Projects Selector Badge */}
+            <div className="flex items-center bg-[#11121d] border border-[#24263b] rounded-full px-3 py-1.5 flex-shrink-0 select-none">
+              <Folder size={12} className="text-blue-400 mr-1.5" />
+              <span className="text-[10px] font-bold text-[#f1f5f9] uppercase tracking-wider">
+                {selectedProject || 'All Projects'}
+              </span>
+            </div>
 
             {/* View Switcher Sliding Pill */}
             <div className="bg-[#11121d] border border-[#24263b] rounded-full p-1 flex relative shadow-inner flex-shrink-0">
@@ -301,7 +309,7 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
             </button>
           </div>
 
-          {/* Right Side: Search Input */}
+          {/* Right Side: Search Input (stuck to the right!) */}
           <div className="w-full sm:w-64 md:w-80 flex-shrink-0">
             <SearchInput placeholder="Search commitments..." className="w-full" />
           </div>

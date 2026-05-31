@@ -84,6 +84,10 @@ body {
   padding: 1rem;
 }
 
+.fc .fc-toolbar.fc-header-toolbar {
+  margin-bottom: 0 !important;
+}
+
 .fc .fc-toolbar-title {
   font-size: 1.25rem;
   font-weight: 600;

@@ -64,16 +64,20 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   commitments,
   onEditCommitment,
   currentUserProfile,
-  onAddCommitmentWithDate,
-  selectedProject
+  onAddCommitmentWithDate
 }) => {
   const router = useRouter();
+  const [localCommitments, setLocalCommitments] = useState<Commitment[]>(commitments);
   const [selectedEvent, setSelectedEvent] = useState<Commitment | null>(null);
   const [isPopoverOpen, setIsPopoverOpen] = useState(false);
   const calendarRef = useRef<FullCalendar | null>(null);
   const popoverRef = useRef<HTMLDivElement | null>(null);
 
   const lastClickRef = useRef<{ dateStr: string; time: number } | null>(null);
+
+  useEffect(() => {
+    setLocalCommitments(commitments);
+  }, [commitments]);
 
   const handleDateClick = (info: { dateStr: string }) => {
     const now = Date.now();
@@ -96,15 +100,13 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     revert: () => void; 
   }) => {
     const { event, oldEvent } = dropInfo;
-    const commitment = commitments.find(c => c.id === event.id);
+    const commitment = localCommitments.find(c => c.id === event.id);
     
     if (commitment && event.start) {
-      // Same-day drop: revert to keep FullCalendar's internal state
-      // in sync with React props and prevent drag freezes
       const oldTime = oldEvent?.start?.getTime();
       const newTime = event?.start?.getTime();
+      
       if (oldTime === newTime) {
-        // Use setTimeout to ensure revert happens after FullCalendar's animation frame
         setTimeout(() => {
           dropInfo.revert();
         }, 0);
@@ -115,6 +117,12 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const month = String(event.start.getMonth() + 1).padStart(2, '0');
       const day = String(event.start.getDate()).padStart(2, '0');
       const newDate = `${year}-${month}-${day}T00:00:00`;
+
+      // Optimistically update local commitments state immediately so FullCalendar
+      // and React remain perfectly synchronized without waiting for server refresh
+      setLocalCommitments(prev => 
+        prev.map(c => c.id === commitment.id ? { ...c, deadline: newDate } : c)
+      );
       
       updateCommitment(commitment.id, {
         deadline: newDate
@@ -123,6 +131,10 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
           router.refresh();
         } else {
           alert(result.error || 'Failed to update date');
+          // Rollback local state
+          setLocalCommitments(prev => 
+            prev.map(c => c.id === commitment.id ? { ...c, deadline: commitment.deadline } : c)
+          );
           dropInfo.revert();
         }
       });
@@ -149,7 +161,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   // Handle event click
   const handleEventClick = (clickInfo: { event: { id: string } }) => {
     const event = clickInfo.event;
-    const commitment = commitments.find(c => c.id === event.id);
+    const commitment = localCommitments.find(c => c.id === event.id);
     
     if (commitment) {
       setSelectedEvent(commitment);
@@ -187,7 +199,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
 
   // Custom event content renderer
   const renderEventContent = (eventInfo: { event: { id: string; title: string } }) => {
-    const commitment = commitments.find(c => c.id === eventInfo.event.id);
+    const commitment = localCommitments.find(c => c.id === eventInfo.event.id);
     const statusColor = statusColors[commitment?.status as keyof typeof statusColors] || 'bg-slate-500';
 
     return (
@@ -221,13 +233,6 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     <div>
       {/* FullCalendar Component */}
       <div className="bg-[#0d0e15] rounded-xl shadow-2xl border border-[#24263b] overflow-hidden p-6 relative">
-        {/* Dynamic Project/All Projects Subtitle — Centered directly above FullCalendar month/week header title */}
-        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 text-center select-none pointer-events-none">
-          <span className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] block">
-            {selectedProject || 'All Projects'}
-          </span>
-        </div>
-
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
@@ -237,7 +242,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
             center: 'title',
             right: 'dayGridMonth,dayGridWeek'
           }}
-          events={commitments
+          events={localCommitments
             .filter(c => c.deadline)
             .map(commitment => ({
               id: commitment.id,
