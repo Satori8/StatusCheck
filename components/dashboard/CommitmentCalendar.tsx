@@ -90,7 +90,7 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
   };
 
   // Handle event drag & drop (moving commitment to another day)
-  const handleEventDrop = async (dropInfo: { 
+  const handleEventDrop = (dropInfo: { 
     event: { id: string; start: Date | null }; 
     oldEvent?: { start: Date | null }; 
     revert: () => void; 
@@ -99,12 +99,12 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
     const commitment = commitments.find(c => c.id === event.id);
     
     if (commitment && event.start) {
-      // Same-day drop: no database call needed, just return silently
-      // Avoid calling revert() which fights FullCalendar's internal animation state
-      // and causes the drop animation to hang
+      // Same-day drop: revert synchronously to keep FullCalendar's internal state
+      // perfectly in sync with React props and prevent drag freezes
       const oldTime = oldEvent?.start?.getTime();
       const newTime = event?.start?.getTime();
       if (oldTime === newTime) {
+        dropInfo.revert();
         return;
       }
 
@@ -113,16 +113,16 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const day = String(event.start.getDate()).padStart(2, '0');
       const newDate = `${year}-${month}-${day}T00:00:00`;
       
-      const result = await updateCommitment(commitment.id, {
+      updateCommitment(commitment.id, {
         deadline: newDate
+      }).then((result) => {
+        if (result.success) {
+          router.refresh();
+        } else {
+          alert(result.error || 'Failed to update date');
+          dropInfo.revert();
+        }
       });
-      
-      if (result.success) {
-        router.refresh();
-      } else {
-        alert(result.error || 'Failed to update date');
-        dropInfo.revert();
-      }
     }
   };
 
@@ -216,14 +216,15 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
 
   return (
     <div>
-      {/* Project label — sits above the calendar header title as a second line */}
-      <div className="mb-2 flex items-center gap-2">
-        <span className="text-xs font-bold text-blue-400 uppercase tracking-widest">
-          {selectedProject || 'All Projects'}
-        </span>
-      </div>
       {/* FullCalendar Component */}
-      <div className="bg-[#0d0e15] rounded-xl shadow-2xl border border-[#24263b] overflow-hidden">
+      <div className="bg-[#0d0e15] rounded-xl shadow-2xl border border-[#24263b] overflow-hidden p-6 relative">
+        {/* Dynamic Project/All Projects Subtitle — Centered directly above FullCalendar month/week header title */}
+        <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 text-center select-none pointer-events-none">
+          <span className="text-[10px] font-bold text-blue-400 uppercase tracking-[0.2em] block">
+            {selectedProject || 'All Projects'}
+          </span>
+        </div>
+
         <FullCalendar
           ref={calendarRef}
           plugins={[dayGridPlugin, interactionPlugin]}
