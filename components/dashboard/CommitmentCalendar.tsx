@@ -107,12 +107,11 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const newTime = event?.start?.getTime();
       
       if (oldTime === newTime) {
-        // Synchronously revert FullCalendar's visual drag state
-        dropInfo.revert();
-        // Defer React state refresh by 300ms to let FullCalendar cleanly complete its unbinding and un-highlighting
+        // Since it's dropped on the same day, we do not call revert() to avoid animation/revert hangs.
+        // We simply defer a tiny state update to force FullCalendar's React wrapper to reconcile and clear any drag styling.
         setTimeout(() => {
           setLocalCommitments(prev => [...prev]);
-        }, 300);
+        }, 100);
         return;
       }
 
