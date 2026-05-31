@@ -107,8 +107,12 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const newTime = event?.start?.getTime();
       
       if (oldTime === newTime) {
+        // Synchronously revert FullCalendar's visual drag state
         dropInfo.revert();
-        setLocalCommitments(prev => [...prev]);
+        // Defer React state refresh by 300ms to let FullCalendar cleanly complete its unbinding and un-highlighting
+        setTimeout(() => {
+          setLocalCommitments(prev => [...prev]);
+        }, 300);
         return;
       }
 
@@ -116,26 +120,22 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
       const month = String(event.start.getMonth() + 1).padStart(2, '0');
       const day = String(event.start.getDate()).padStart(2, '0');
       const newDate = `${year}-${month}-${day}T00:00:00`;
-
-      // Optimistically update local commitments state immediately so FullCalendar
-      // and React remain perfectly synchronized without waiting for server refresh
-      setLocalCommitments(prev => 
-        prev.map(c => c.id === commitment.id ? { ...c, deadline: newDate } : c)
-      );
       
       updateCommitment(commitment.id, {
         deadline: newDate
       }).then((result) => {
-        if (result.success) {
-          router.refresh();
-        } else {
-          alert(result.error || 'Failed to update date');
-          // Rollback local state
-          setLocalCommitments(prev => 
-            prev.map(c => c.id === commitment.id ? { ...c, deadline: commitment.deadline } : c)
-          );
-          dropInfo.revert();
-        }
+        // Defer React/Next.js updates by 300ms to let FullCalendar finish its drop unbinding and transition cleanly
+        setTimeout(() => {
+          if (result.success) {
+            setLocalCommitments(prev => 
+              prev.map(c => c.id === commitment.id ? { ...c, deadline: newDate } : c)
+            );
+            router.refresh();
+          } else {
+            alert(result.error || 'Failed to update date');
+            dropInfo.revert();
+          }
+        }, 300);
       });
     }
   };

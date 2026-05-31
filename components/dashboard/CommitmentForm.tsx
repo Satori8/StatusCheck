@@ -113,9 +113,20 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
       if (editingCommitment) {
         // Edit mode - populate form with existing commitment data
         const deadlineVal = editingCommitment.deadline || '';
-        const parts = deadlineVal.split('T');
-        const datePart = parts[0] || '';
-        const timePart = parts[1] ? parts[1].slice(0, 5) : '';
+        let datePart = '';
+        let timePart = '';
+        
+        if (deadlineVal) {
+          const localDate = new Date(deadlineVal);
+          const year = localDate.getFullYear();
+          const month = String(localDate.getMonth() + 1).padStart(2, '0');
+          const day = String(localDate.getDate()).padStart(2, '0');
+          datePart = `${year}-${month}-${day}`;
+          
+          const hours = String(localDate.getHours()).padStart(2, '0');
+          const minutes = String(localDate.getMinutes()).padStart(2, '0');
+          timePart = `${hours}:${minutes}`;
+        }
 
         setFormData({
           title: editingCommitment.title,
@@ -214,12 +225,14 @@ export const CommitmentForm: React.FC<CommitmentFormProps> = ({
     setBackendError(null);
 
     try {
-      // Bypasses check and sets to null automatically for backlog ideas
-      const deadlineISO = formData.status === 'ideas_backlog'
-        ? null
-        : formData.deadline
-          ? `${formData.deadline}T${formData.time || '00:00'}:00`
-          : null;
+      // Convert local selected date and time into a UTC ISO string
+      let deadlineISO = null;
+      if (formData.status !== 'ideas_backlog' && formData.deadline) {
+        const [year, month, day] = formData.deadline.split('-').map(Number);
+        const [hours, minutes] = (formData.time || '00:00').split(':').map(Number);
+        const localDate = new Date(year, month - 1, day, hours, minutes, 0);
+        deadlineISO = localDate.toISOString();
+      }
 
       // Auto-transition: if deadline is shifted from past to future, restore 'expired' status to 'to_check' (actual)
       let finalStatus = formData.status;
