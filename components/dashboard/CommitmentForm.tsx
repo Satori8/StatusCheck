@@ -34,8 +34,9 @@ interface CommitmentFormProps {
     email: string;
     role: 'manager' | 'member';
     id: string;
+    name?: string | null;
   };
-  checkers: { id: string; email: string; name?: string | null }[];
+  checkers: { id: string; email: string; name?: string | null; role?: 'manager' | 'member' }[];
   editingCommitment: Commitment | null;
   projects: { name: string; description?: string | null }[];
   defaultProject?: string | null;

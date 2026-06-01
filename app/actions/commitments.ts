@@ -66,7 +66,7 @@ export async function getProfiles(): Promise<{ data?: Profile[], error?: string 
   try {
     const { data: profiles, error } = await supabase
       .from('profiles')
-      .select('id, email, role')
+      .select('id, email, role, name')
       .order('email', { ascending: true });
     
     if (error) {

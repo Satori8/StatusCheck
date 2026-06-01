@@ -5,7 +5,7 @@ import { useFilter } from './FilterContext';
 import { logout } from '@/app/actions/auth';
 import { createProject, deleteProject, updateProject } from '@/app/actions/projects';
 import { useRouter } from 'next/navigation';
-import { Plus, Trash, X, PencilSimple, Info, SignOut, List } from '@phosphor-icons/react';
+import { Plus, Trash, X, PencilSimple, Info, SignOut, List, Crown, User } from '@phosphor-icons/react';
 import { motion, AnimatePresence } from 'framer-motion';
 
 interface SidebarProps {
@@ -15,7 +15,7 @@ interface SidebarProps {
     name?: string | null;
   };
   projects: { name: string; description?: string | null }[];
-  checkers: { id: string; email: string; name?: string | null }[];
+  checkers: { id: string; email: string; name?: string | null; role?: 'manager' | 'member' }[];
   isMobile: boolean;
   onToggleMobile: () => void;
 }
@@ -288,7 +288,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       : 'bg-transparent text-[#64748b] hover:text-[#f1f5f9] hover:bg-[#161726]/50'
                   }`}
                 >
-                  <span className="truncate">{checker.name || checker.email}</span>
+                  <span className="flex items-center min-w-0 flex-1">
+                    {checker.role === 'manager' ? (
+                      <Crown size={14} weight="fill" className="text-amber-500 mr-2 flex-shrink-0" />
+                    ) : (
+                      <User size={14} className="text-slate-400 mr-2 flex-shrink-0" />
+                    )}
+                    <span className="truncate">{checker.name || checker.email}</span>
+                  </span>
                 </button>
               ))}
             </div>

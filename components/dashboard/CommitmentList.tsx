@@ -60,8 +60,21 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
   // Check if user can edit this commitment
   const canEditCommitment = (commitment: Commitment) => {
     return currentUserProfile.role === 'manager' || 
-           commitment.assignee?.email === currentUserProfile.email ||
-           commitment.checker?.email === currentUserProfile.email;
+            commitment.assignee?.email === currentUserProfile.email ||
+            commitment.checker?.email === currentUserProfile.email;
+  };
+
+  // Helper function to extract time from deadline if explicitly set
+  const getDeadlineTime = (deadline: string) => {
+    if (!deadline) return null;
+    const date = new Date(deadline);
+    if (date.getHours() === 0 && date.getMinutes() === 0) return null;
+    
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
   };
 
   // Handle commitment deletion (managers only)
@@ -111,9 +124,16 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.3, ease: [0.32, 0.72, 0, 1] }}
-                  className={`group rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30 status-card-${commitment.status}`}
+                  className={`group rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30 status-card-${commitment.status} relative`}
                   onClick={() => onEditCommitment(commitment)}
                 >
+                  {/* Absolute Deadline Time Badge (Right Top Corner) */}
+                  {getDeadlineTime(commitment.deadline) && (
+                    <div className="absolute top-3 right-4 bg-[#1e293b]/60 border border-[#334155]/60 text-[#94a3b8] font-mono text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm z-10">
+                      {getDeadlineTime(commitment.deadline)}
+                    </div>
+                  )}
+
                   {/* Mobile Header */}
                   <div className="md:hidden px-4 py-3 border-b border-[#24263b] bg-[#0d0e15]/20 flex items-center justify-between">
                     <h3 className="font-bold text-[#f1f5f9] text-sm truncate flex-1 mr-2">
@@ -137,6 +157,10 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                       <h3 className="font-bold text-[#f1f5f9] text-sm leading-snug hover:text-blue-400 transition-colors truncate">
                         {commitment.title}
                       </h3>
+                      {/* Assignee Name Text */}
+                      <span className="text-[10px] text-[#64748b] mt-1 block">
+                         Assigned to: <span className="text-[#94a3b8] font-semibold">{commitment.assignee?.name || commitment.assignee?.email?.split('@')[0] || 'Unassigned'}</span>
+                      </span>
                       {commitment.description && (
                         <p className="text-xs text-[#64748b] mt-1.5 leading-relaxed break-words whitespace-pre-wrap line-clamp-1 max-w-[55ch]">
                           {commitment.description}

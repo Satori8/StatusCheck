@@ -1,5 +1,5 @@
 {
-  "goal": "Perform a full visual redesign of the existing Next.js app to achieve a premium dark-mode SaaS aesthetic",
+  "goal": "Implement assignee/checker name display in task editing, sidebar checkers role-based icons, card assignee text, and top-right deadline time badges on task cards",
   "status": "completed",
   "completed_steps": [
     "Loaded and analyzed mandatory frontend, design-taste, high-end design, and motion performance skills.",
@@ -16,7 +16,13 @@
     "Overrode FullCalendar with professional dark theme colors, styled event elements, and popover detail overlays.",
     "Restructured `CommitmentList` rows separated by dark hairlines, equipped with hover haptic effects and status badges.",
     "Polished empty states, the ErrorBoundary alert layout, and the landing page grid.",
-    "Verified clean compilation with zero ESLint/TypeScript/Next.js warnings or build errors."
+    "Verified clean compilation with zero ESLint/TypeScript/Next.js warnings or build errors.",
+    "Fetched profile name and role fields in commitments queries and current user fetches to resolve emails to readable names.",
+    "Aligned TypeScript prop interfaces and types across all dashboard components to maintain strict type safety.",
+    "Added dynamic Crown (manager) and User (member) role icons beside checkers in the sidebar filter list.",
+    "Displayed 'Assigned to: Name' small text on both desktop and mobile task cards below the title.",
+    "Rendered absolute-positioned deadline time badges in the top-right corner of task cards when explicitly configured.",
+    "Validated 100% clean type-checking, zero lint warnings, and successfully compiled the production build."
   ],
   "active_guardrails": [
     "No explicit 'any' in frontend components",

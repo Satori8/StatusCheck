@@ -46,7 +46,7 @@ interface Commitment {
 
 interface DashboardPageClientProps {
   commitments: Commitment[];
-  profiles: Profile[];
+  profiles: { id: string; email: string; role: 'manager' | 'member'; name?: string | null }[];
   projects: { name: string; description?: string | null }[];
   currentUserProfile: {
     email: string;
@@ -144,7 +144,8 @@ export const DashboardPageClient: React.FC<DashboardPageClientProps> = ({
     return profiles.map(profile => ({
       id: profile.id,
       email: profile.email,
-      name: profile.name
+      name: profile.name,
+      role: profile.role
     }));
   }, [profiles]);
 

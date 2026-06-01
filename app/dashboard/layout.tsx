@@ -21,7 +21,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   // For now, we'll use the user's email and role from auth data
   const { data: authData } = await supabase
     .from('profiles')
-    .select('email, role, id')
+    .select('email, role, id, name')
     .eq('id', user.id)
     .single();
 
@@ -42,7 +42,7 @@ export default async function DashboardLayout({ children }: DashboardLayoutProps
   // Fetch checkers (all users with profiles)
   const { data: checkersData } = await supabase
     .from('profiles')
-    .select('id, email, name')
+    .select('id, email, name, role')
     .order('email', { ascending: true });
 
   const checkers = checkersData || [];

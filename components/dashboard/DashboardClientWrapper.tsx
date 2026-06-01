@@ -9,10 +9,11 @@ interface DashboardClientWrapperProps {
   currentUserProfile: {
     email: string;
     role: 'manager' | 'member';
+    id: string;
     name?: string | null;
   };
   projects: { name: string; description?: string | null }[];
-  checkers: { id: string; email: string; name?: string | null }[];
+  checkers: { id: string; email: string; name?: string | null; role?: 'manager' | 'member' }[];
 }
 
 export const DashboardClientWrapper: React.FC<DashboardClientWrapperProps> = ({
