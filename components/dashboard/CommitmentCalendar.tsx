@@ -195,10 +195,24 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
            commitment.checker?.email === currentUserProfile.email;
   };
 
+  // Helper function to extract time from deadline if explicitly set
+  const getDeadlineTime = (deadline: string) => {
+    if (!deadline) return null;
+    const date = new Date(deadline);
+    if (date.getHours() === 0 && date.getMinutes() === 0) return null;
+    
+    return date.toLocaleTimeString('en-US', {
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: true
+    });
+  };
+
   // Custom event content renderer
   const renderEventContent = (eventInfo: { event: { id: string; title: string } }) => {
     const commitment = localCommitments.find(c => c.id === eventInfo.event.id);
     const statusColor = statusColors[commitment?.status as keyof typeof statusColors] || 'bg-slate-500';
+    const deadlineTime = getDeadlineTime(commitment?.deadline || '');
 
     return (
       <div className="flex flex-col p-1.5 relative group/event w-full overflow-hidden">
@@ -213,6 +227,11 @@ export const CommitmentCalendar: React.FC<CommitmentCalendarProps> = ({
           >
             <X size={10} weight="bold" />
           </button>
+        )}
+        {deadlineTime && (
+          <div className="absolute top-1.5 right-1.5 text-[8px] font-mono font-bold text-[#64748b] bg-[#161726]/80 px-1 py-0.5 rounded border border-[#24263b] leading-none group-hover/event:opacity-0 transition-opacity z-10">
+            {deadlineTime}
+          </div>
         )}
         <div className="flex items-center space-x-1.5 min-w-0">
           <div className={`w-1.5 h-1.5 rounded-full ${statusColor} flex-shrink-0`} />

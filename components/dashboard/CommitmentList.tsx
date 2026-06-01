@@ -127,12 +127,7 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                   className={`group rounded-2xl transition-all duration-300 cursor-pointer overflow-hidden shadow-lg hover:shadow-black/30 status-card-${commitment.status} relative`}
                   onClick={() => onEditCommitment(commitment)}
                 >
-                  {/* Absolute Deadline Time Badge (Right Top Corner) */}
-                  {getDeadlineTime(commitment.deadline) && (
-                    <div className="absolute top-3 right-4 bg-[#1e293b]/60 border border-[#334155]/60 text-[#94a3b8] font-mono text-[10px] font-bold px-2 py-0.5 rounded-md shadow-sm z-10">
-                      {getDeadlineTime(commitment.deadline)}
-                    </div>
-                  )}
+
 
                   {/* Mobile Header */}
                   <div className="md:hidden px-4 py-3 border-b border-[#24263b] bg-[#0d0e15]/20 flex items-center justify-between">
@@ -192,11 +187,14 @@ export const CommitmentList: React.FC<CommitmentListProps> = ({
                         <CalendarBlank size={14} className="text-[#64748b] flex-shrink-0" />
                         <span className="text-xs font-semibold text-[#f1f5f9] font-mono truncate">
                           {commitment.deadline ? (
-                            new Date(commitment.deadline).toLocaleDateString('en-US', {
-                              month: 'short',
-                              day: 'numeric',
-                              year: 'numeric'
-                            })
+                            <>
+                              {new Date(commitment.deadline).toLocaleDateString('en-US', {
+                                month: 'short',
+                                day: 'numeric',
+                                year: 'numeric'
+                              })}
+                              {getDeadlineTime(commitment.deadline) && ` • ${getDeadlineTime(commitment.deadline)}`}
+                            </>
                           ) : (
                             <span className="text-[#64748b] italic">No deadline</span>
                           )}
