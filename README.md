@@ -1,5 +1,11 @@
 # Status Check (Executive Calendar)
 
+[![Next.js](https://img.shields.io/badge/Next.js-14-000000?style=for-the-badge&logo=nextdotjs&logoColor=white)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-3-38B2AC?style=for-the-badge&logo=tailwindcss&logoColor=white)](https://tailwindcss.com/)
+[![Supabase](https://img.shields.io/badge/Supabase-Backend-3ECF8E?style=for-the-badge&logo=supabase&logoColor=white)](https://supabase.com/)
+[![Framer Motion](https://img.shields.io/badge/Framer_Motion-11-F107A3?style=for-the-badge&logo=framer&logoColor=white)](https://framer.com/motion/)
+
 > **Precision accountability and commitment tracking designed strictly for modern high-performance teams.**  
 > A premium, zero-slop, role-based SaaS dashboard built with **Next.js 14 (App Router)**, **TypeScript**, **Tailwind CSS**, and **Supabase (Auth + PostgreSQL + RLS)**.
 
