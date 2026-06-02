@@ -21,3 +21,13 @@ Co-Authored-By: OpenCode AI <noreply@opencode.dev>
 - **Surgical Edits** — Never fully overwrite files. Use `edit` or symbol-scoped replacement tools.
 - **Diagnostics** — Run `cortexast_run_diagnostics` immediately after any edit.
 - **State Preservation** — Read and maintain `.opencode_state.json` at start and end of turns.
+
+## Repository Map
+
+A full codemap and extensive product-architectural atlas is available at `README.md` in the project root.
+
+Before working on any task, read `README.md` to understand:
+- Product value propositions and user role-based restrictions.
+- High-craft Design system metrics and color variables.
+- Technical architecture, cookie-based Supabase middleware route protection, and REST API/Server Actions logic.
+- Database models, schema references, triggers, and PostgreSQL enums.
