@@ -17,14 +17,14 @@
 
 By replacing messy spreadsheet trackers and chaotic messaging channels with a unified, high-craft calendar interface, Status Check ensures that commitments made are commitments executed.
 
-### Key Product Value Propositions (Marketing Manager Review)
+### Key Product Value Propositions
 *   **Absolute Accountability:** Every task represents a binding commitment between an **Author**, an **Assignee**, and a **Checker**.
 *   **Real-Time Status & Automation:** Eliminate manual follow-ups. Automated database triggers immediately flag overdue commitments as `expired`.
 *   **Role-Based Access Controls (RBAC):** Restrict core workflow management (creating, assigning, deleting tasks) to **Managers**, while empowering **Members** with intuitive, haptic-feedback status updates on their assigned responsibilities.
 *   **Conversion-Optimized Landing Experience:** A gorgeous, dual-column homepage with fluid entrance animations and a glassmorphic authentication terminal.
 *   **Zero-Slop Design Language:** No childish emojis, no cartoonish illustrations. Built using the **"Executive Slate"** design system with a premium, focused dark theme that commands respect.
 
-### Architectural Excellence (Tech Lead Review)
+### Architectural Excellence
 *   **State-of-the-Art Next.js 14 Stack:** Fully utilizes Server Actions (`'use server'`) for fast server-side processing, secure mutations, and automatic cache revalidation (`revalidatePath`).
 *   **Unified Middleware Route Protection:** Authenticates users and restricts `/dashboard` access entirely on the edge using a secure, cookie-based Supabase SSR middleware implementation (`@supabase/ssr`).
 *   **Secure Multi-Tenant Row-Level Security (RLS):** Employs robust PostgreSQL RLS rules directly at the database layer, acting as a foolproof safety net behind server-side validation.
